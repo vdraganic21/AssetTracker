@@ -1,0 +1,1 @@
+mosquitto_sub -h localhost -t assets/location
