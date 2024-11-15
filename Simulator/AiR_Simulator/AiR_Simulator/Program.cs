@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using MQTTnet;
 using MQTTnet.Client;
 using Microsoft.Extensions.Configuration;
+using System.IO;
+using MQTTnet.Server;
 
 namespace AssetDataSimulator
 {
@@ -12,13 +14,18 @@ namespace AssetDataSimulator
     {
         static async Task Main(string[] args)
         {
-            // Load environment variables from .env file
-            LoadEnv("config.env"); // Ensure the file is in the correct directory
+            LoadEnv(); 
 
             string brokerUrl = Environment.GetEnvironmentVariable("MQTT_BROKER_URL") ?? "localhost";
             int brokerPort = int.Parse(Environment.GetEnvironmentVariable("MQTT_BROKER_PORT") ?? "1883");
             string topic = Environment.GetEnvironmentVariable("ASSET_TOPIC") ?? "assets/location";
             int messageInterval = int.Parse(Environment.GetEnvironmentVariable("MESSAGE_INTERVAL") ?? "1000");
+
+            Console.WriteLine($"Broker URL: {brokerUrl}");
+            Console.WriteLine($"Broker Port: {brokerPort}");
+            Console.WriteLine($"Topic: {topic}");
+            Console.WriteLine($"Message Interval: {messageInterval} ms");
+            Console.WriteLine("##########################################");
 
             var mqttFactory = new MqttFactory();
             var mqttClient = mqttFactory.CreateMqttClient();
@@ -91,12 +98,29 @@ namespace AssetDataSimulator
             }
         }
 
-        // Method to load environment variables from a .env file
-        static void LoadEnv(string fileName)
+        static void LoadEnv()
         {
-            if (!System.IO.File.Exists(fileName)) return;
+            string fileName = "config.env";
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "config.env");
 
-            foreach (var line in System.IO.File.ReadAllLines(fileName))
+            Console.WriteLine("Loading env file from " + path);
+
+            if (!File.Exists(path))
+            {
+                Console.WriteLine($"Environment file not found. Creating with default values.");
+
+                var defaultEnvContent = new[]
+                {
+                    "MQTT_BROKER_URL=localhost",
+                    "MQTT_BROKER_PORT=1883",
+                    "ASSET_TOPIC=assets/location",
+                    "MESSAGE_INTERVAL=2000"
+                };
+
+                File.WriteAllLines(fileName, defaultEnvContent);
+            }
+
+            foreach (var line in File.ReadAllLines(fileName))
             {
                 if (string.IsNullOrWhiteSpace(line) || line.StartsWith("#")) continue;
 
