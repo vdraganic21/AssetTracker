@@ -1,12 +1,8 @@
-import './App.css'
-import { SynButton } from "@synergy-design-system/react";
-
+import "./App.css";
+import Header from "./components/Header";
 
 function App() {
-
-  return (
-    <SynButton type="submit">Submit me</SynButton>
-  )
+  return <Header />;
 }
 
-export default App
+export default App;
