@@ -1,0 +1,26 @@
+.main {
+    align-items: center;
+    border: 1px dashed #9747FF;
+    border-radius: var(--syn-border-radius-medium);
+    color: #9747FF;
+    display: flex;
+    flex: 1 0 auto;
+    flex-direction: column;
+    font: var(--syn-body-small-bold);
+    justify-content: center;
+    margin: var(--syn-spacing-2x-large) var(--syn-spacing-2x-large) 0;
+    padding: 0 var(--syn-spacing-small);
+  }
+
+  @container (max-width: 768px) {
+    .main {
+      margin: var(--syn-spacing-medium) var(--syn-spacing-medium) 0;
+    }
+  }
+
+  .main h1 {
+    color: var(--syn-typography-color-text);
+    font: var(--syn-heading-large);
+    margin: 0;
+    text-align: center;
+  }

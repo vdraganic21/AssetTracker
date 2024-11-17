@@ -2,7 +2,7 @@ import "./Footer.css";
 
 function Footer() {
   return (
-    <footer className="synergy-footer-demo">
+    <footer className="footer">
       <div className="footer-content" aria-label="Footer navigation">
         <nav className="link-wrapper">
           <a
