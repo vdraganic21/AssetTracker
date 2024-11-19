@@ -1,13 +1,14 @@
+import { RouterProvider } from "react-router-dom";
 import "./App.css";
-import AssetsManager from "./components/AssetsManager";
 import Header from "./components/Header";
+import { Router } from "@remix-run/router";
 
-function App() {
+function App({ router }: { router: Router }) {
   return (
     <div className="application">
       <Header />
       <div className="content">
-        <AssetsManager></AssetsManager>
+        <RouterProvider router={router}></RouterProvider>
       </div>
     </div>
   );
