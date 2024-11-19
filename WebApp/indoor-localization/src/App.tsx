@@ -1,15 +1,13 @@
 import "./App.css";
-import Footer from "./components/Footer";
+import AssetsManager from "./components/AssetsManager";
 import Header from "./components/Header";
-import Main from "./components/Main";
 
 function App() {
   return (
     <div className="application">
       <Header />
       <div className="content">
-        <Main />
-        <Footer />
+        <AssetsManager></AssetsManager>
       </div>
     </div>
   );
