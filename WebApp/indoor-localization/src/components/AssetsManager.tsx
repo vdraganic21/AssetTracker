@@ -1,4 +1,5 @@
 import {
+  SynButton,
   SynCheckbox,
   SynDivider,
   SynInput,
@@ -163,7 +164,15 @@ function AssetsManager() {
   return (
     <>
       <div className="content content-border">
-        <span className="syn-heading--x-large">Assets</span>
+        <div className="header-row">
+          <span className="syn-heading--3x-large">Assets</span>
+          <div className="button-group">
+            <SynButton variant="outline">Delete</SynButton>
+            <SynButton variant="filled" className="syn-border-radius-medium">
+              Add
+            </SynButton>
+          </div>
+        </div>
         <SynDivider className="content-divider" />
         <SynInput />
         <SynDivider className="content-divider" />
