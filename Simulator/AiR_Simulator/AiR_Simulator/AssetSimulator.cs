@@ -94,7 +94,7 @@ namespace AssetDataSimulator
 
                 if (validInstruction)
                 {
-                    result.Add($"{{\"asset_id\":{asset.AssetId},\"x\":{asset.X},\"y\":{asset.Y},\"orientation\":{asset.Orientation},\"status\":\"active\",\"timestamp\":\"{DateTime.UtcNow:yyyy-MM-ddTHH:mm:ss.fffZ}\"}}");
+                    result.Add($"{{\"asset_id\":{asset.AssetId},\"x\":{(int)Math.Round(asset.X)},\"y\":{(int)Math.Round(asset.Y)},\"orientation\":{(int)Math.Round(asset.Orientation)},\"status\":\"active\",\"timestamp\":\"{DateTime.UtcNow:yyyy-MM-ddTHH:mm:ss.fffZ}\"}}");
                 }
             }
 
