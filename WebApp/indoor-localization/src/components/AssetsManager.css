@@ -12,6 +12,20 @@
     justify-content: space-between;
     align-items: center;
 }
+
+.search-row {
+    display: flex;
+    align-items: center;
+    gap: var(--syn-spacing-medium); 
+  }
+  
+  .search-row .search-input {
+    flex-grow: 1;
+  }
+  
+  .search-row .sort-select {
+    width: 200px;
+  }
   
 .button-group {
     display: flex;

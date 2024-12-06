@@ -3,6 +3,8 @@ import {
   SynCheckbox,
   SynDivider,
   SynInput,
+  SynOption,
+  SynSelect,
 } from "@synergy-design-system/react";
 import Footer from "./Footer";
 import "./AssetsManager.css";
@@ -160,6 +162,15 @@ const assets = [
   },
 ];
 
+const sortOptions = [
+  { name: "Name - asc", value: "nameAsc" },
+  { name: "Name - desc", value: "nameDesc" },
+  { name: "Facility - asc", value: "facilityAsc" },
+  { name: "Facility - desc", value: "facilityDesc" },
+  { name: "Zone - asc", value: "zoneAsc" },
+  { name: "Zone - desc", value: "zoneDesc" },
+];
+
 function AssetsManager() {
   return (
     <>
@@ -174,7 +185,21 @@ function AssetsManager() {
           </div>
         </div>
         <SynDivider className="content-divider" />
-        <SynInput />
+        <div className="search-row">
+          <SynInput className="search-input" placeholder="Search" />
+          <p>Sort by:</p>
+          <SynSelect value={sortOptions[0]?.value} className="sort-select">
+            {sortOptions.map((sortOption, index) => (
+              <SynOption
+                tabIndex={index}
+                selected={0 == index}
+                value={sortOption.value}
+              >
+                {sortOption.name}
+              </SynOption>
+            ))}
+          </SynSelect>
+        </div>
         <SynDivider className="content-divider" />
         <table className="syn-table--default">
           <thead>
