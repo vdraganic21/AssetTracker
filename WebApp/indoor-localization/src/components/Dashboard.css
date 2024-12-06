@@ -1,6 +1,6 @@
 .side-panel {
     width: 80px; 
-    height: 100vh; 
+    flex: 1 0 auto;
     display: flex;
     padding-top: var(--syn-spacing-x-large);
     flex-direction: column;
