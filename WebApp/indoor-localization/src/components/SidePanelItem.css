@@ -17,9 +17,11 @@
     text-align: center;
     width: 100%;
     font-size: var(--syn-font-size-x-small);
+    user-select: none;
 }
 
 .side-panel-image {
     width: 24px;
     height: 24px;
+    user-select: none;
 }
