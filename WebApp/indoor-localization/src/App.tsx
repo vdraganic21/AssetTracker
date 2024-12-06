@@ -1,7 +1,7 @@
 import { Route, RouterProvider, Routes } from "react-router-dom";
 import "./App.css";
 import Header from "./components/Header";
-import Dashboard from "./components/Dashboard";
+import Dashboard from "./components/dashboard/Dashboard";
 import Reports from "./components/Reports";
 import FacilitiesManager from "./components/FacilitiesManager";
 import AssetsManager from "./components/AssetsManager";

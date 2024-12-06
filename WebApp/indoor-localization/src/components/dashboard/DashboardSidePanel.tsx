@@ -1,7 +1,8 @@
-import "./Dashboard.css";
+import "./DashboardSidePanel.css";
+import AssetsSidePanel from "./side_panel_content/AssetsSidePanel";
 import SidePanelItem from "./SidePanelItem";
 
-function Dashboard() {
+function DashboardSidePanel() {
   return (
     <div className="side-panel-container">
       <div className="side-panel-bar side-panel-border">
@@ -9,9 +10,11 @@ function Dashboard() {
         <SidePanelItem imageSrc={"/logo192.png"} name={"Facilities"} />
         <SidePanelItem imageSrc={"/logo192.png"} name={"Zones"} />
       </div>
-      <div className="side-panel-content side-panel-border">content</div>
+      <div className="side-panel-content side-panel-border">
+        <AssetsSidePanel></AssetsSidePanel>
+      </div>
     </div>
   );
 }
 
-export default Dashboard;
+export default DashboardSidePanel;
