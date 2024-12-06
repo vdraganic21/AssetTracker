@@ -2,6 +2,7 @@
     width: 80px; 
     height: 100vh; 
     display: flex;
+    padding-top: var(--syn-spacing-x-large);
     flex-direction: column;
     align-content: center;
 }
