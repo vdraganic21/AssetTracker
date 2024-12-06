@@ -1,8 +1,21 @@
-.side-panel {
+.side-panel-container{ 
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    flex-grow: 1; 
+}
+
+.side-panel-bar {
     width: 80px; 
-    flex: 1 0 auto;
     display: flex;
     padding-top: var(--syn-spacing-x-large);
+    flex-direction: column;
+    align-content: center;
+}
+
+.side-panel-content{
+    width: 320px; 
+    display: flex;
     flex-direction: column;
     align-content: center;
 }
