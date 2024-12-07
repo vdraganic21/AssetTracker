@@ -16,12 +16,19 @@ class DashboardDisplayManager {
     this.image.src = "/floorMapDemo.png"; // TODO remove demo floor map image
     this.image.onload = this.handleImageLoad.bind(this);
     this.setupEventListeners();
+    this.setupResizeListener();
   }
 
   private handleImageLoad() {
-    this.canvas.width = window.innerWidth;
-    this.canvas.height = window.innerHeight;
+    this.updateCanvasSize();
     this.draw();
+  }
+
+  private updateCanvasSize() {
+    if (this.canvas.parentElement) {
+      this.canvas.width = this.canvas.parentElement.offsetWidth;
+      this.canvas.height = this.canvas.parentElement.offsetHeight;
+    }
   }
 
   private draw() {
@@ -60,6 +67,13 @@ class DashboardDisplayManager {
 
   private handleMouseUp() {
     this.dragging = false;
+  }
+
+  private setupResizeListener() {
+    window.addEventListener("resize", () => {
+      this.updateCanvasSize();
+      this.draw();
+    });
   }
 
   public destroy() {
