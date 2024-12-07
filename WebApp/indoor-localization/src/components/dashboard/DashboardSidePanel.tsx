@@ -9,13 +9,13 @@ function DashboardSidePanel() {
   >();
   const [selectedItem, setSelectedItem] = useState<string | null>("Assets");
 
-  const handleItemClick = (name: string) => {
-    if (name == selectedItem) {
+  const handleItemClick = (newSelectedItem: string) => {
+    if (newSelectedItem == selectedItem) {
       setIsSidePanelOpen(!isSidePanelOpen);
       return;
     }
 
-    setSelectedItem(name);
+    setSelectedItem(newSelectedItem);
     setIsSidePanelOpen(true);
   };
 
