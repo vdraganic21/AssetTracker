@@ -8,9 +8,9 @@ namespace AssetDataSimulator
 {
     public class AssetSimulator
     {
-        public List<IoTAsset> Assets { get; }
+        public List<Asset> Assets { get; }
 
-        public AssetSimulator(List<IoTAsset> assets)
+        public AssetSimulator(List<Asset> assets)
         {
             Assets = assets;
         }

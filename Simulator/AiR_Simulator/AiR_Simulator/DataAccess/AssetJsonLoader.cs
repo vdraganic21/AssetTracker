@@ -8,7 +8,7 @@ namespace AiR_Simulator.DataAccess
 {
     public static class AssetJsonLoader
     {
-        public static List<IoTAsset> Load(string jsonFilePath)
+        public static List<Asset> Load(string jsonFilePath)
         {
             if (!File.Exists(jsonFilePath)) return null;
 
@@ -17,7 +17,7 @@ namespace AiR_Simulator.DataAccess
                 var jsonData = File.ReadAllText(jsonFilePath);
                 var assetDataList = JsonSerializer.Deserialize<List<AssetJsonObject>>(jsonData);
 
-                var assets = new List<IoTAsset>();
+                var assets = new List<Asset>();
 
                 if (assetDataList == null || assetDataList.Count == 0)
                 {
@@ -32,7 +32,7 @@ namespace AiR_Simulator.DataAccess
                         positions.Add((position.X, position.Y));
                     }
 
-                    assets.Add(new IoTAsset(assetData.AssetId, positions));
+                    assets.Add(new Asset(assetData.AssetId, positions));
                 }
 
                 return assets;

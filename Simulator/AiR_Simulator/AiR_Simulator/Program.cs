@@ -178,7 +178,7 @@ namespace AssetDataSimulator
             Console.WriteLine(new string('-', 35));
         }
 
-        static void PrintAssetData(IoTAsset asset)
+        static void PrintAssetData(Asset asset)
         {
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("| {0,-10} | {1,-20} |",

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace AiR_Simulator.Entities
 {
-    public class IoTAsset
+    public class Asset
     {
         public int AssetId { get; }
         public double X { get; private set; }
@@ -11,7 +11,7 @@ namespace AiR_Simulator.Entities
         public List<(double X, double Y)> Positions { get; }
         private int _currentPositionIndex;
 
-        public IoTAsset(int assetId, List<(double X, double Y)> positions)
+        public Asset(int assetId, List<(double X, double Y)> positions)
         {
             AssetId = assetId;
             Positions = positions;
