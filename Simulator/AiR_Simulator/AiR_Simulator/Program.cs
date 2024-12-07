@@ -12,16 +12,16 @@ namespace AssetDataSimulator
 {
     class Program
     {
+        private static string brokerUrl = Environment.GetEnvironmentVariable("MQTT_BROKER_URL") ?? "localhost";
+        private static int brokerPort = int.Parse(Environment.GetEnvironmentVariable("MQTT_BROKER_PORT") ?? "1883");
+        private static string topic = Environment.GetEnvironmentVariable("ASSET_TOPIC") ?? "assets/location";
+        private static int messageInterval = int.Parse(Environment.GetEnvironmentVariable("MESSAGE_INTERVAL") ?? "1000");
+        private static string jsonFilePath = "../../assets.json";
+        private static double movementSpeed = 1.0; // Units per second
+        
         static async Task Main(string[] args)
         {
             LoadEnv();
-
-            string brokerUrl = Environment.GetEnvironmentVariable("MQTT_BROKER_URL") ?? "localhost";
-            int brokerPort = int.Parse(Environment.GetEnvironmentVariable("MQTT_BROKER_PORT") ?? "1883");
-            string topic = Environment.GetEnvironmentVariable("ASSET_TOPIC") ?? "assets/location";
-            int messageInterval = int.Parse(Environment.GetEnvironmentVariable("MESSAGE_INTERVAL") ?? "1000");
-            string jsonFilePath = "../../assets.json";
-            double movementSpeed = 1.0; // Units per second
 
             Console.WriteLine($"Broker URL: {brokerUrl}");
             Console.WriteLine($"Broker Port: {brokerPort}");
