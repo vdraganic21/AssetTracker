@@ -13,24 +13,20 @@ namespace AiR_Simulator.DataAccess
     {
         public static List<IoTAsset> Load(string jsonFilePath)
         {
-            if (!File.Exists(jsonFilePath))
-            {
-                Console.WriteLine($"JSON file '{jsonFilePath}' not found.");
-                return null;
-            }
+            if (!File.Exists(jsonFilePath)) return null;
 
             try
             {
                 var jsonData = File.ReadAllText(jsonFilePath);
                 var assetDataList = JsonSerializer.Deserialize<List<AssetJson>>(jsonData);
 
+                var assets = new List<IoTAsset>();
+
                 if (assetDataList == null || assetDataList.Count == 0)
                 {
-                    Console.WriteLine("JSON file is empty or contains invalid data.");
-                    return null;
+                    return assets;
                 }
 
-                var assets = new List<IoTAsset>();
                 foreach (var assetData in assetDataList)
                 {
                     var positions = new List<(double X, double Y)>();
@@ -46,7 +42,6 @@ namespace AiR_Simulator.DataAccess
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error reading or parsing JSON file: {ex.Message}");
                 return null;
             }
         }
