@@ -19,6 +19,7 @@ function DashboardSidePanel() {
     newSelectedItem: string,
     selectedContent: JSX.Element
   ) => {
+    setSidePanelContent(selectedContent);
     if (newSelectedItem == selectedItem) {
       setIsSidePanelOpen(!isSidePanelOpen);
       return;
@@ -26,7 +27,6 @@ function DashboardSidePanel() {
 
     setSelectedItem(newSelectedItem);
     setIsSidePanelOpen(true);
-    setSidePanelContent(selectedContent);
   };
 
   const panelItems = [
