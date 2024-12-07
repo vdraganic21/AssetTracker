@@ -1,47 +1,65 @@
 using System;
+using System.Collections.Generic;
 
 namespace AssetDataSimulator
 {
     public class IoTAsset
     {
-        public int AssetId { get; private set; }
+        public int AssetId { get; }
+        public double X { get; private set; }
+        public double Y { get; private set; }
+        public List<(double X, double Y)> Positions { get; }
+        private int _currentPositionIndex;
 
-        public double X { get; set; } 
-        public double Y { get; set; }
-        public double Orientation { get; set; }
-
-        public IoTAsset(int assetId, double startX = 0, double startY = 0, double startOrientation = 0)
+        public IoTAsset(int assetId, List<(double X, double Y)> positions)
         {
             AssetId = assetId;
-            X = startX;
-            Y = startY;
-            Orientation = startOrientation;
+            Positions = positions;
+            if (Positions.Count > 0)
+            {
+                X = Positions[0].X;
+                Y = Positions[0].Y;
+            }
+            _currentPositionIndex = 0;
         }
 
-        public void Move(double distance)
+        public void MoveTowardNextPosition(double speed)
         {
-            // Convert orientation to radians
-            double radians = Orientation * Math.PI / 180;
+            if (Positions.Count == 0)
+            {
+                Console.WriteLine($"Asset {AssetId} has no positions to move to.");
+                return;
+            }
 
-            // Calculate the new X and Y movements
-            double  deltaY = distance * Math.Cos(radians);
-            double deltaX = distance * Math.Sin(radians);
+            // Get the next position in the sequence
+            var (goalX, goalY) = Positions[_currentPositionIndex];
 
-            X += deltaX;
-            Y += deltaY;
-        }
+            // Calculate distance and direction
+            double dx = goalX - X;
+            double dy = goalY - Y;
+            double distance = Math.Sqrt(dx * dx + dy * dy);
 
-        public void Turn(double degrees)
-        {
-            Orientation = (Orientation + degrees) % 360;
-            if (Orientation < 0) Orientation += 360; // Normalize to 0-360
-            Orientation = Math.Round(Orientation, 2);
-        }
+            // Define a threshold for "arriving" at the target
+            const double arrivalThreshold = 0.1;
 
-        // ToString method to display the asset's state
-        public override string ToString()
-        {
-            return $"AssetId: {AssetId}, Position: ({X:F2}, {Y:F2}), Orientation: {Orientation:F2}°";
+            // If close enough to the goal, snap to it and move to the next position
+            if (distance <= arrivalThreshold)
+            {
+                X = goalX;
+                Y = goalY;
+                Console.WriteLine($"Asset {AssetId} reached position ({goalX}, {goalY}).");
+
+                _currentPositionIndex = (_currentPositionIndex + 1) % Positions.Count;
+                return;
+            }
+
+            // Calculate the maximum distance we can move in this step
+            double moveDistance = Math.Min(speed, distance); // Don't overshoot the target
+            double stepX = (dx / distance) * moveDistance;
+            double stepY = (dy / distance) * moveDistance;
+
+            X += stepX;
+            Y += stepY;
         }
     }
 }

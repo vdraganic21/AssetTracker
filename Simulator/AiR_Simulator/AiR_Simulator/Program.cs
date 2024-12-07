@@ -6,9 +6,7 @@ using MQTTnet;
 using MQTTnet.Client;
 using Microsoft.Extensions.Configuration;
 using System.IO;
-using MQTTnet.Server;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace AssetDataSimulator
 {
@@ -22,7 +20,8 @@ namespace AssetDataSimulator
             int brokerPort = int.Parse(Environment.GetEnvironmentVariable("MQTT_BROKER_PORT") ?? "1883");
             string topic = Environment.GetEnvironmentVariable("ASSET_TOPIC") ?? "assets/location";
             int messageInterval = int.Parse(Environment.GetEnvironmentVariable("MESSAGE_INTERVAL") ?? "1000");
-            string instructionFile = "../../AssetInstructions.txt";
+            string jsonFilePath = "../../assets.json";
+            double movementSpeed = 1.0; // Units per second
 
             Console.WriteLine($"Broker URL: {brokerUrl}");
             Console.WriteLine($"Broker Port: {brokerPort}");
@@ -61,37 +60,31 @@ namespace AssetDataSimulator
                 Console.WriteLine($"Failed to connect: {ex.Message}");
             }
 
-            // Initialize Assets from instruction file
-            List<IoTAsset> assets = LoadAssetsFromInstructionFile(instructionFile);
+            var assets = LoadAssetsFromJson(jsonFilePath);
 
             if (assets == null || assets.Count == 0)
             {
-                Console.WriteLine("No assets were initialized from the instruction file.");
+                Console.WriteLine("No assets were initialized from the JSON file.");
                 return;
             }
 
-            // Initialize AssetSimulator with the assets and the instruction file
-            var simulator = new AssetSimulator(assets, instructionFile);
+            var simulator = new AssetSimulator(jsonFilePath);
 
             while (true)
             {
                 try
                 {
-                    var simulatedDataList = simulator.SimulateNextStep();
+                    var simulatedDataList = simulator.SimulateNextStep(movementSpeed);
 
-                    // Printing assets in a table-like format horizontally
+                    // Print asset state in a table-like format
                     PrintAssetsHeader();
 
-                    int assetCount = simulatedDataList.Count;
-                    for (int i = 0; i < assetCount; i++)
+                    foreach (var asset in simulator.Assets)
                     {
-                        var assetData = simulatedDataList[i];
-                        var asset = simulator.Assets[i];
-
-                        // Print each asset's details in a row
                         PrintAssetData(asset);
                     }
 
+                    // Publish updates to the MQTT broker
                     if (isConnected)
                     {
                         foreach (var simulatedData in simulatedDataList)
@@ -160,58 +153,59 @@ namespace AssetDataSimulator
             }
         }
 
-        static List<IoTAsset> LoadAssetsFromInstructionFile(string instructionFile)
+        static List<IoTAsset> LoadAssetsFromJson(string jsonFilePath)
         {
-            List<IoTAsset> assets = new List<IoTAsset>();
-
-            if (!File.Exists(instructionFile))
+            if (!File.Exists(jsonFilePath))
             {
-                Console.WriteLine($"Instruction file '{instructionFile}' not found.");
+                Console.WriteLine($"JSON file '{jsonFilePath}' not found.");
                 return null;
             }
 
-            var lines = File.ReadAllLines(instructionFile)
-                .Where(line => !string.IsNullOrWhiteSpace(line) && !line.StartsWith("#"))
-                .ToList();
-
-            if (lines.Count == 0)
+            try
             {
-                Console.WriteLine("Instruction file is empty or contains only comments.");
-                return null;
-            }
+                var jsonData = File.ReadAllText(jsonFilePath);
+                var assetDataList = JsonSerializer.Deserialize<List<AssetJson>>(jsonData);
 
-            foreach (var line in lines)
-            {
-                // This expects the format: ASSET_ID X Y ORIENTATION
-                var parts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
-                if (parts.Length == 4 && int.TryParse(parts[0], out int assetId) &&
-                    double.TryParse(parts[1], out double x) &&
-                    double.TryParse(parts[2], out double y) &&
-                    double.TryParse(parts[3], out double orientation))
+                if (assetDataList == null || assetDataList.Count == 0)
                 {
-                    assets.Add(new IoTAsset(assetId, x, y, orientation));
+                    Console.WriteLine("JSON file is empty or contains invalid data.");
+                    return null;
                 }
+
+                var assets = new List<IoTAsset>();
+                foreach (var assetData in assetDataList)
+                {
+                    var positions = new List<(double X, double Y)>();
+                    foreach (var position in assetData.Positions)
+                    {
+                        positions.Add((position.X, position.Y));
+                    }
+
+                    assets.Add(new IoTAsset(assetData.AssetId, positions));
+                }
+
+                return assets;
             }
-
-            return assets;
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error reading or parsing JSON file: {ex.Message}");
+                return null;
+            }
         }
-
 
         static void PrintAssetsHeader()
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine("| {0,-10} | {1,-20} | {2,-11} |", "Asset ID", "Position (X, Y)", "Orientation");
-            Console.WriteLine(new string('-', 50));  // Adds a separator line
+            Console.WriteLine("| {0,-10} | {1,-20} |", "Asset ID", "Position (X, Y)");
+            Console.WriteLine(new string('-', 35));  // Updated separator line
         }
 
         static void PrintAssetData(IoTAsset asset)
         {
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("| {0,-10} | {1,-20} | {2,-11} |",
+            Console.WriteLine("| {0,-10} | {1,-20} |",
                 asset.AssetId,
-                $"({asset.X:F2}, {asset.Y:F2})",
-                $"{asset.Orientation:F2}°");
+                $"({asset.X:F2}, {asset.Y:F2})");
         }
     }
 }
