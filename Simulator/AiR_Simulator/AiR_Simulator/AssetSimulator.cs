@@ -9,35 +9,9 @@ namespace AssetDataSimulator
     {
         public List<IoTAsset> Assets { get; }
 
-        public AssetSimulator(string jsonFilePath)
+        public AssetSimulator(List<IoTAsset> assets)
         {
-            Assets = LoadAssetsFromJsonFile(jsonFilePath);
-        }
-
-        private List<IoTAsset> LoadAssetsFromJsonFile(string jsonFilePath)
-        {
-            if (!File.Exists(jsonFilePath))
-            {
-                Console.WriteLine($"JSON file {jsonFilePath} not found.");
-                return new List<IoTAsset>();
-            }
-
-            var jsonData = File.ReadAllText(jsonFilePath);
-            var assetDataList = JsonSerializer.Deserialize<List<AssetJson>>(jsonData);
-
-            var assets = new List<IoTAsset>();
-            foreach (var assetData in assetDataList)
-            {
-                var positions = new List<(double X, double Y)>();
-                foreach (var position in assetData.Positions)
-                {
-                    positions.Add((position.X, position.Y));
-                }
-
-                assets.Add(new IoTAsset(assetData.AssetId, positions));
-            }
-
-            return assets;
+            Assets = assets;
         }
 
         public List<string> SimulateNextStep(double speed)

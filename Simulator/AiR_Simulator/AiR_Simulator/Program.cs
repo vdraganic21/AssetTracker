@@ -23,11 +23,7 @@ namespace AssetDataSimulator
         {
             LoadEnv();
 
-            Console.WriteLine($"Broker URL: {brokerUrl}");
-            Console.WriteLine($"Broker Port: {brokerPort}");
-            Console.WriteLine($"Topic: {topic}");
-            Console.WriteLine($"Message Interval: {messageInterval} ms");
-            Console.WriteLine("##########################################");
+            OutputStartMessages();
 
             Console.WriteLine("Press any key to start...");
             Console.ReadKey();
@@ -71,7 +67,7 @@ namespace AssetDataSimulator
                 return;
             }
 
-            var simulator = new AssetSimulator(jsonFilePath);
+            var simulator = new AssetSimulator(assets);
 
             while (true)
             {
@@ -121,6 +117,15 @@ namespace AssetDataSimulator
                     Console.WriteLine($"Simulation error: {ex.Message}");
                 }
             }
+        }
+
+        private static void OutputStartMessages()
+        {
+            Console.WriteLine($"Broker URL: {brokerUrl}");
+            Console.WriteLine($"Broker Port: {brokerPort}");
+            Console.WriteLine($"Topic: {topic}");
+            Console.WriteLine($"Message Interval: {messageInterval} ms");
+            Console.WriteLine("##########################################");
         }
 
         static void LoadEnv()
