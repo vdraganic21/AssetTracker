@@ -29,6 +29,9 @@ namespace AssetDataSimulator
             Console.WriteLine($"Message Interval: {messageInterval} ms");
             Console.WriteLine("##########################################");
 
+            Console.WriteLine("Press any key to start...");
+            Console.ReadKey();
+
             var mqttFactory = new MqttFactory();
             var mqttClient = mqttFactory.CreateMqttClient();
 
