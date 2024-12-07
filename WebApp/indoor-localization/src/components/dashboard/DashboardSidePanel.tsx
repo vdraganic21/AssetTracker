@@ -2,14 +2,23 @@ import { useState } from "react";
 import "./DashboardSidePanel.css";
 import SidePanelContentContainer from "./SidePanelContentContainer";
 import SidePanelItem from "./SidePanelItem";
+import AssetsSidePanel from "./side_panel_content/AssetsSidePanel";
+import FacilitiesSidePanel from "./side_panel_content/FacilitiesSidePanel";
+import ZonesSidePanel from "./side_panel_content/ZonesSidePanel";
 
 function DashboardSidePanel() {
-  let [isSidePanelOpen = false, setIsSidePanelOpen] = useState<
+  const [isSidePanelOpen = false, setIsSidePanelOpen] = useState<
     boolean | null
   >();
   const [selectedItem, setSelectedItem] = useState<string | null>("Assets");
 
-  const handleItemClick = (newSelectedItem: string) => {
+  const [sidePanelContent, setSidePanelContent] =
+    useState<JSX.Element | null>();
+
+  const handleItemClick = (
+    newSelectedItem: string,
+    selectedContent: JSX.Element
+  ) => {
     if (newSelectedItem == selectedItem) {
       setIsSidePanelOpen(!isSidePanelOpen);
       return;
@@ -17,12 +26,17 @@ function DashboardSidePanel() {
 
     setSelectedItem(newSelectedItem);
     setIsSidePanelOpen(true);
+    setSidePanelContent(selectedContent);
   };
 
   const panelItems = [
-    { name: "Assets", imageSrc: "/logo192.png" },
-    { name: "Facilities", imageSrc: "/logo192.png" },
-    { name: "Zones", imageSrc: "/logo192.png" },
+    { name: "Assets", imageSrc: "/logo192.png", content: AssetsSidePanel() },
+    {
+      name: "Facilities",
+      imageSrc: "/logo192.png",
+      content: FacilitiesSidePanel(),
+    },
+    { name: "Zones", imageSrc: "/logo192.png", content: ZonesSidePanel() },
   ];
 
   return (
@@ -34,11 +48,15 @@ function DashboardSidePanel() {
             imageSrc={item.imageSrc}
             name={item.name}
             selected={selectedItem === item.name}
-            onClick={() => handleItemClick(item.name)}
+            onClick={() => handleItemClick(item.name, item.content)}
           />
         ))}
       </div>
-      {isSidePanelOpen && <SidePanelContentContainer />}
+      {isSidePanelOpen && (
+        <SidePanelContentContainer>
+          {sidePanelContent}
+        </SidePanelContentContainer>
+      )}
     </div>
   );
 }
