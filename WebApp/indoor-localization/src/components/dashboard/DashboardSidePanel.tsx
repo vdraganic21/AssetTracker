@@ -19,27 +19,24 @@ function DashboardSidePanel() {
     setIsSidePanelOpen(true);
   };
 
+  const panelItems = [
+    { name: "Assets", imageSrc: "/logo192.png" },
+    { name: "Facilities", imageSrc: "/logo192.png" },
+    { name: "Zones", imageSrc: "/logo192.png" },
+  ];
+
   return (
     <div className="side-panel-container">
       <div className="side-panel-bar side-panel-border">
-        <SidePanelItem
-          imageSrc={"/logo192.png"}
-          name={"Assets"}
-          selected={selectedItem === "Assets"}
-          onClick={() => handleItemClick("Assets")}
-        />
-        <SidePanelItem
-          imageSrc={"/logo192.png"}
-          name={"Facilities"}
-          selected={selectedItem === "Facilities"}
-          onClick={() => handleItemClick("Facilities")}
-        />
-        <SidePanelItem
-          imageSrc={"/logo192.png"}
-          name={"Zones"}
-          selected={selectedItem === "Zones"}
-          onClick={() => handleItemClick("Zones")}
-        />
+        {panelItems.map((item) => (
+          <SidePanelItem
+            key={item.name}
+            imageSrc={item.imageSrc}
+            name={item.name}
+            selected={selectedItem === item.name}
+            onClick={() => handleItemClick(item.name)}
+          />
+        ))}
       </div>
       {isSidePanelOpen && <SidePanelContentContainer />}
     </div>
