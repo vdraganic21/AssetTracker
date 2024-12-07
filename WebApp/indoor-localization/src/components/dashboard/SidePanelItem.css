@@ -7,8 +7,12 @@
     justify-content: center;
 }
 
+.side-panel-item-selected{
+    background-color: var(--syn-color-neutral-200);
+}
+
 .side-panel-item:hover{
-    background-color: var(--syn-color-neutral-100);
+    background-color: var(--syn-color-primary-200);
     cursor: pointer;
 }
 

@@ -1,8 +1,23 @@
 import "./SidePanelItem.css";
 
-function SidePanelItem({ imageSrc, name }: { imageSrc: string; name: string }) {
+type SidePanelItemProps = {
+  imageSrc: string;
+  name: string;
+  selected: boolean;
+  onClick: () => void;
+};
+
+function SidePanelItem({
+  imageSrc,
+  name,
+  selected,
+  onClick,
+}: SidePanelItemProps) {
   return (
-    <div className="side-panel-item">
+    <div
+      className={`side-panel-item ${selected && "side-panel-item-selected"}`}
+      onClick={onClick}
+    >
       <img src={imageSrc} className="side-panel-image" alt={name} />
       <div className="side-panel-text">{name}</div>
     </div>
