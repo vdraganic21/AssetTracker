@@ -1,8 +1,12 @@
 .side-panel-container{ 
     display: flex;
+    position: absolute;
     flex-direction: row;
     justify-content: flex-start;
     flex-grow: 1; 
+    z-index: 10;
+    background: var(--syn-color-neutral-0);
+    height: 100%;
 }
 
 .side-panel-bar {
