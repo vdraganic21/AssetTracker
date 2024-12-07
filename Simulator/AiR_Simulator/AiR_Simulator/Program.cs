@@ -18,7 +18,7 @@ namespace AssetDataSimulator
         private static string topic = Environment.GetEnvironmentVariable("ASSET_TOPIC") ?? "assets/location";
         private static int messageInterval = int.Parse(Environment.GetEnvironmentVariable("MESSAGE_INTERVAL") ?? "1000");
         private static string jsonFilePath = "../../assets.json";
-        private static double movementSpeed = 1.0; // Units per second
+        private static double movementSpeed = 1.0;
         
         static async Task Main(string[] args)
         {
@@ -76,39 +76,9 @@ namespace AssetDataSimulator
                 {
                     var simulatedDataList = simulator.SimulateNextStep(movementSpeed);
 
-                    // Print asset state in a table-like format
-                    PrintAssetsHeader();
+                    OutputAssetsStatusTable(simulator);
 
-                    foreach (var asset in simulator.Assets)
-                    {
-                        PrintAssetData(asset);
-                    }
-
-                    // Publish updates to the MQTT broker
-                    if (isConnected)
-                    {
-                        foreach (var simulatedData in simulatedDataList)
-                        {
-                            var messagePayload = new MqttApplicationMessageBuilder()
-                                .WithTopic(topic)
-                                .WithPayload(simulatedData)
-                                .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce)
-                                .WithRetainFlag(false)
-                                .Build();
-
-                            try
-                            {
-                                await mqttClient.PublishAsync(messagePayload, CancellationToken.None);
-                                Console.ForegroundColor = ConsoleColor.Yellow;
-                                Console.WriteLine($"Published to {topic}: {simulatedData}");
-                            }
-                            catch (Exception pubEx)
-                            {
-                                Console.ForegroundColor = ConsoleColor.Red;
-                                Console.WriteLine($"Failed to publish message: {pubEx.Message}");
-                            }
-                        }
-                    }
+                    await PublishUpdatesToBroker(mqttClient, isConnected, simulatedDataList);
 
                     await Task.Delay(messageInterval);
                 }
@@ -117,6 +87,44 @@ namespace AssetDataSimulator
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine($"Simulation error: {ex.Message}");
                 }
+            }
+        }
+
+        private static async Task PublishUpdatesToBroker(IMqttClient mqttClient, bool isConnected, List<string> simulatedDataList)
+        {
+            if (isConnected)
+            {
+                foreach (var simulatedData in simulatedDataList)
+                {
+                    var messagePayload = new MqttApplicationMessageBuilder()
+                        .WithTopic(topic)
+                        .WithPayload(simulatedData)
+                        .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce)
+                        .WithRetainFlag(false)
+                        .Build();
+
+                    try
+                    {
+                        await mqttClient.PublishAsync(messagePayload, CancellationToken.None);
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine($"Published to {topic}: {simulatedData}");
+                    }
+                    catch (Exception pubEx)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"Failed to publish message: {pubEx.Message}");
+                    }
+                }
+            }
+        }
+
+        private static void OutputAssetsStatusTable(AssetSimulator simulator)
+        {
+            PrintAssetsHeader();
+
+            foreach (var asset in simulator.Assets)
+            {
+                PrintAssetData(asset);
             }
         }
 
@@ -166,7 +174,7 @@ namespace AssetDataSimulator
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("| {0,-10} | {1,-20} |", "Asset ID", "Position (X, Y)");
-            Console.WriteLine(new string('-', 35));  // Updated separator line
+            Console.WriteLine(new string('-', 35));
         }
 
         static void PrintAssetData(IoTAsset asset)
