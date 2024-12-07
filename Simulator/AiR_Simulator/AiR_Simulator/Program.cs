@@ -7,6 +7,7 @@ using MQTTnet.Client;
 using Microsoft.Extensions.Configuration;
 using System.IO;
 using System.Collections.Generic;
+using AiR_Simulator.DataAccess;
 
 namespace AssetDataSimulator
 {
@@ -59,7 +60,7 @@ namespace AssetDataSimulator
                 Console.WriteLine($"Failed to connect: {ex.Message}");
             }
 
-            var assets = LoadAssetsFromJson(jsonFilePath);
+            var assets = AssetJsonLoader.Load(jsonFilePath);
 
             if (assets == null || assets.Count == 0)
             {
@@ -158,46 +159,6 @@ namespace AssetDataSimulator
                 {
                     Environment.SetEnvironmentVariable(parts[0], parts[1]);
                 }
-            }
-        }
-
-        static List<IoTAsset> LoadAssetsFromJson(string jsonFilePath)
-        {
-            if (!File.Exists(jsonFilePath))
-            {
-                Console.WriteLine($"JSON file '{jsonFilePath}' not found.");
-                return null;
-            }
-
-            try
-            {
-                var jsonData = File.ReadAllText(jsonFilePath);
-                var assetDataList = JsonSerializer.Deserialize<List<AssetJson>>(jsonData);
-
-                if (assetDataList == null || assetDataList.Count == 0)
-                {
-                    Console.WriteLine("JSON file is empty or contains invalid data.");
-                    return null;
-                }
-
-                var assets = new List<IoTAsset>();
-                foreach (var assetData in assetDataList)
-                {
-                    var positions = new List<(double X, double Y)>();
-                    foreach (var position in assetData.Positions)
-                    {
-                        positions.Add((position.X, position.Y));
-                    }
-
-                    assets.Add(new IoTAsset(assetData.AssetId, positions));
-                }
-
-                return assets;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error reading or parsing JSON file: {ex.Message}");
-                return null;
             }
         }
 
