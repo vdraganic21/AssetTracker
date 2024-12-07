@@ -11,6 +11,7 @@ function DashboardSidePanel() {
         <SidePanelItem imageSrc={"/logo192.png"} name={"Zones"} />
       </div>
       <SidePanel></SidePanel>
+      <SidePanel></SidePanel>
     </div>
   );
 }
