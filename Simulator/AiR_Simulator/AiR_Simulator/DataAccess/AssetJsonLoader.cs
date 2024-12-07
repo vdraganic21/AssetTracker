@@ -1,11 +1,8 @@
-﻿using AssetDataSimulator;
+﻿using AiR_Simulator.Entities;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace AiR_Simulator.DataAccess
 {
@@ -18,7 +15,7 @@ namespace AiR_Simulator.DataAccess
             try
             {
                 var jsonData = File.ReadAllText(jsonFilePath);
-                var assetDataList = JsonSerializer.Deserialize<List<AssetJson>>(jsonData);
+                var assetDataList = JsonSerializer.Deserialize<List<AssetJsonObject>>(jsonData);
 
                 var assets = new List<IoTAsset>();
 

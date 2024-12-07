@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using AiR_Simulator.Entities;
 
 namespace AssetDataSimulator
 {

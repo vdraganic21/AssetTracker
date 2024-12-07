@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using System.IO;
 using System.Collections.Generic;
 using AiR_Simulator.DataAccess;
+using AiR_Simulator.Entities;
 
 namespace AssetDataSimulator
 {
