@@ -1,5 +1,5 @@
 import "./DashboardSidePanel.css";
-import SidePanel from "./SidePanel";
+import SidePanelContentContainer from "./SidePanelContentContainer";
 import SidePanelItem from "./SidePanelItem";
 
 function DashboardSidePanel() {
@@ -10,8 +10,7 @@ function DashboardSidePanel() {
         <SidePanelItem imageSrc={"/logo192.png"} name={"Facilities"} />
         <SidePanelItem imageSrc={"/logo192.png"} name={"Zones"} />
       </div>
-      <SidePanel></SidePanel>
-      <SidePanel></SidePanel>
+      <SidePanelContentContainer></SidePanelContentContainer>
     </div>
   );
 }
