@@ -17,7 +17,7 @@ namespace AssetDataSimulator
         private static string brokerUrl = Environment.GetEnvironmentVariable("MQTT_BROKER_URL") ?? "localhost";
         private static int brokerPort = int.Parse(Environment.GetEnvironmentVariable("MQTT_BROKER_PORT") ?? "1883");
         private static string topic = Environment.GetEnvironmentVariable("ASSET_TOPIC") ?? "assets/location";
-        private static int messageInterval = int.Parse(Environment.GetEnvironmentVariable("MESSAGE_INTERVAL") ?? "1000");
+        private static int messageIntervalMiliseconds = int.Parse(Environment.GetEnvironmentVariable("MESSAGE_INTERVAL") ?? "1000");
         private static string jsonFilePath = "../../assets.json";
         private static double movementSpeed = 1.0;
         
@@ -81,7 +81,7 @@ namespace AssetDataSimulator
 
                     await PublishUpdatesToBroker(mqttClient, isConnected, simulatedDataList);
 
-                    await Task.Delay(messageInterval);
+                    await Task.Delay(messageIntervalMiliseconds);
                 }
                 catch (Exception ex)
                 {
@@ -134,7 +134,7 @@ namespace AssetDataSimulator
             Console.WriteLine($"Broker URL: {brokerUrl}");
             Console.WriteLine($"Broker Port: {brokerPort}");
             Console.WriteLine($"Topic: {topic}");
-            Console.WriteLine($"Message Interval: {messageInterval} ms");
+            Console.WriteLine($"Message Interval: {messageIntervalMiliseconds} ms");
             Console.WriteLine("##########################################");
         }
 
