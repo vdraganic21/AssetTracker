@@ -1,0 +1,34 @@
+.side-panel-container{ 
+    display: flex;
+    position: absolute;
+    flex-direction: row;
+    justify-content: flex-start;
+    flex-grow: 1; 
+    z-index: 10;
+    background: var(--syn-color-neutral-0);
+    height: 100%;
+}
+
+.side-panel-bar {
+    width: 80px; 
+    display: flex;
+    padding-top: var(--syn-spacing-x-large);
+    flex-direction: column;
+    align-content: center;
+}
+
+.side-panel-content{
+    width: 320px; 
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+}
+
+.side-panel-border {
+    border-style: solid;
+    border-width: var(--syn-border-width-small);
+    border-color: var(--syn-color-neutral-700);
+    border-top: 0px;
+    border-bottom: 0px;
+    border-left: 0px;
+}
