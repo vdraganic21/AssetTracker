@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:indoor_localization/config/app_colors.dart';
 import 'package:indoor_localization/entities/asset.dart';
 
 class AssetListItem extends StatelessWidget {
@@ -12,7 +13,7 @@ class AssetListItem extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       margin: const EdgeInsets.symmetric(vertical: 4.0),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey, width: 1.0),
+        border: Border.all(color: AppColors.neutral400, width: 1.0),
         borderRadius: BorderRadius.circular(5.0),
       ),
       child: Column(
@@ -25,7 +26,8 @@ class AssetListItem extends StatelessWidget {
               asset.name,
               style: const TextStyle(
                 fontSize: 16.0,
-                fontWeight: FontWeight.bold,
+                color: AppColors.neutral1000,
+                fontWeight: FontWeight.normal,
               ),
             ),
           ),
@@ -35,7 +37,7 @@ class AssetListItem extends StatelessWidget {
               asset.floorMap,
               style: const TextStyle(
                 fontSize: 16.0,
-                color: Colors.blue,
+                color: AppColors.primary500,
               ),
             ),
           ),
