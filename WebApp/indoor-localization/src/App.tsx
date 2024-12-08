@@ -3,7 +3,7 @@ import "./App.css";
 import Header from "./components/Header";
 import Dashboard from "./components/dashboard/Dashboard";
 import Reports from "./components/Reports";
-import FacilitiesManager from "./components/FacilitiesManager";
+import FacilitiesManager from "./components/facilities-manager/FacilitiesManager";
 import AssetsManager from "./components/AssetsManager";
 
 function App() {

@@ -7,7 +7,7 @@ import {
   SynSelect,
 } from "@synergy-design-system/react";
 import Footer from "./Footer";
-import "./AssetsManager.css";
+import "./Manager.css";
 
 const assets = [
   {
