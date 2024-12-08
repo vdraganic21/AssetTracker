@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Indoor Localization',
       theme: ThemeData(
-        primaryColor: AppColors.primaryColor,
+        primaryColor: AppColors.primary500,
       ),
       home: DashboardPage(), // Set LandingPage as the home
     );

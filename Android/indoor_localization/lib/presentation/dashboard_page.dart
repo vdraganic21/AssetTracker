@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import '../config/app_colors.dart';
 import 'facilities_page.dart';
-import 'assets_page.dart';
+import 'assets_page/assets_page.dart';
 import 'reports_page.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -35,17 +35,17 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.primaryColor,
+        backgroundColor: AppColors.primary500,
         elevation: 0,
         title: Column(
           children: [
             Text(
               'Indoor Localization',
-              style: TextStyle(color: AppColors.textColor, fontSize: 20),
+              style: TextStyle(color: AppColors.neutral1000, fontSize: 20),
             ),
             Text(
               'SICK | Mobilisis',
-              style: TextStyle(color: AppColors.subtitleTextColor, fontSize: 16),
+              style: TextStyle(color: AppColors.neutral200, fontSize: 16),
             ),
           ],
         ),
@@ -53,14 +53,14 @@ class _DashboardPageState extends State<DashboardPage> {
       ),
       body: _pages[_selectedIndex], // Display the content of the selected page
       bottomNavigationBar: Container(
-        color: AppColors.primaryColor,
+        color: AppColors.primary500,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
           child: GNav(
-            backgroundColor: AppColors.primaryColor,
-            color: AppColors.textColor,
-            activeColor: AppColors.textColor,
-            tabBackgroundColor: AppColors.primaryDarker,
+            backgroundColor: AppColors.primary500,
+            color: AppColors.neutral1000,
+            activeColor: AppColors.neutral1000,
+            tabBackgroundColor: AppColors.primary300,
             padding: EdgeInsets.all(16),
             gap: 8,
             selectedIndex: _selectedIndex,

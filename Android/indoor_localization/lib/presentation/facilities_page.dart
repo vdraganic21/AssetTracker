@@ -46,8 +46,8 @@ class _FacilitiesPageState extends State<FacilitiesPage> {
                     icon: const Icon(Icons.filter_list),
                     label: const Text('Filter'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryColor,
-                      foregroundColor: AppColors.textColor,
+                      backgroundColor: AppColors.primary500,
+                      foregroundColor: AppColors.neutral0,
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -55,7 +55,7 @@ class _FacilitiesPageState extends State<FacilitiesPage> {
                     child: ElevatedButton(
                       onPressed: _toggleSortOrder, // Toggle sort order on click
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryColor,
+                        backgroundColor: AppColors.primary500,
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                       ),
                       child: Row(
