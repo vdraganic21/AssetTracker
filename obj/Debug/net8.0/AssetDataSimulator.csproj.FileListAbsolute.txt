@@ -19,3 +19,12 @@ C:\Users\lukab\AssetDataSimulator\obj\Debug\net8.0\refint\AssetDataSimulator.dll
 C:\Users\lukab\AssetDataSimulator\obj\Debug\net8.0\AssetDataSimulator.pdb
 C:\Users\lukab\AssetDataSimulator\obj\Debug\net8.0\AssetDataSimulator.genruntimeconfig.cache
 C:\Users\lukab\AssetDataSimulator\obj\Debug\net8.0\ref\AssetDataSimulator.dll
+C:\Users\lukab\Source\Repos\vdraganic21\IndoorLocalization\obj\Debug\net8.0\AssetDataSimulator.csproj.AssemblyReference.cache
+C:\Users\lukab\Source\Repos\vdraganic21\IndoorLocalization\obj\Debug\net8.0\AssetDataSimulator.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\lukab\Source\Repos\vdraganic21\IndoorLocalization\obj\Debug\net8.0\AssetDataSimulator.AssemblyInfoInputs.cache
+C:\Users\lukab\Source\Repos\vdraganic21\IndoorLocalization\obj\Debug\net8.0\AssetDataSimulator.AssemblyInfo.cs
+C:\Users\lukab\Source\Repos\vdraganic21\IndoorLocalization\obj\Debug\net8.0\AssetDataSimulator.csproj.CoreCompileInputs.cache
+C:\Users\lukab\Source\Repos\vdraganic21\IndoorLocalization\obj\Debug\net8.0\AssetDataSimulator.sourcelink.json
+C:\Users\lukab\Source\Repos\vdraganic21\IndoorLocalization\obj\Debug\net8.0\AssetDataSimulator.dll
+C:\Users\lukab\Source\Repos\vdraganic21\IndoorLocalization\obj\Debug\net8.0\refint\AssetDataSimulator.dll
+C:\Users\lukab\Source\Repos\vdraganic21\IndoorLocalization\obj\Debug\net8.0\AssetDataSimulator.pdb

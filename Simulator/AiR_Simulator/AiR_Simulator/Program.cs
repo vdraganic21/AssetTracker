@@ -6,26 +6,29 @@ using MQTTnet;
 using MQTTnet.Client;
 using Microsoft.Extensions.Configuration;
 using System.IO;
-using MQTTnet.Server;
+using System.Collections.Generic;
+using AiR_Simulator.DataAccess;
+using AiR_Simulator.Entities;
 
 namespace AssetDataSimulator
 {
     class Program
     {
+        private static string brokerUrl = Environment.GetEnvironmentVariable("MQTT_BROKER_URL") ?? "localhost";
+        private static int brokerPort = int.Parse(Environment.GetEnvironmentVariable("MQTT_BROKER_PORT") ?? "1883");
+        private static string topic = Environment.GetEnvironmentVariable("ASSET_TOPIC") ?? "assets/location";
+        private static int messageIntervalMiliseconds = int.Parse(Environment.GetEnvironmentVariable("MESSAGE_INTERVAL") ?? "1000");
+        private static string jsonFilePath = "../../assets.json";
+        private static double movementSpeed = 1.0;
+        
         static async Task Main(string[] args)
         {
-            LoadEnv(); 
+            LoadEnv();
 
-            string brokerUrl = Environment.GetEnvironmentVariable("MQTT_BROKER_URL") ?? "localhost";
-            int brokerPort = int.Parse(Environment.GetEnvironmentVariable("MQTT_BROKER_PORT") ?? "1883");
-            string topic = Environment.GetEnvironmentVariable("ASSET_TOPIC") ?? "assets/location";
-            int messageInterval = int.Parse(Environment.GetEnvironmentVariable("MESSAGE_INTERVAL") ?? "1000");
+            OutputStartMessages();
 
-            Console.WriteLine($"Broker URL: {brokerUrl}");
-            Console.WriteLine($"Broker Port: {brokerPort}");
-            Console.WriteLine($"Topic: {topic}");
-            Console.WriteLine($"Message Interval: {messageInterval} ms");
-            Console.WriteLine("##########################################");
+            Console.WriteLine("Press any key to start...");
+            Console.ReadKey();
 
             var mqttFactory = new MqttFactory();
             var mqttClient = mqttFactory.CreateMqttClient();
@@ -58,27 +61,45 @@ namespace AssetDataSimulator
                 Console.WriteLine($"Failed to connect: {ex.Message}");
             }
 
-            var rand = new Random();
+            var assets = AssetJsonLoader.Load(jsonFilePath);
+
+            if (assets == null || assets.Count == 0)
+            {
+                Console.WriteLine("No assets were initialized from the JSON file.");
+                return;
+            }
+
+            var simulator = new AssetSimulator(assets);
 
             while (true)
             {
-                var assetData = new
+                try
                 {
-                    asset_id = rand.Next(1, 101),
-                    x = rand.Next(0, 500),
-                    y = rand.Next(0, 500),
-                    status = "active",
-                    timestamp = DateTime.UtcNow.ToString("o")
-                };
+                    var simulatedDataList = simulator.SimulateNextStep(movementSpeed);
 
-                string message = JsonSerializer.Serialize(assetData);
-                Console.WriteLine($"Simulated Data: {message}");
+                    OutputAssetsStatusTable(simulator);
 
-                if (isConnected)
+                    await PublishUpdatesToBroker(mqttClient, isConnected, simulatedDataList);
+
+                    await Task.Delay(messageIntervalMiliseconds);
+                }
+                catch (Exception ex)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"Simulation error: {ex.Message}");
+                }
+            }
+        }
+
+        private static async Task PublishUpdatesToBroker(IMqttClient mqttClient, bool isConnected, List<string> simulatedDataList)
+        {
+            if (isConnected)
+            {
+                foreach (var simulatedData in simulatedDataList)
                 {
                     var messagePayload = new MqttApplicationMessageBuilder()
                         .WithTopic(topic)
-                        .WithPayload(message)
+                        .WithPayload(simulatedData)
                         .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce)
                         .WithRetainFlag(false)
                         .Build();
@@ -86,16 +107,35 @@ namespace AssetDataSimulator
                     try
                     {
                         await mqttClient.PublishAsync(messagePayload, CancellationToken.None);
-                        Console.WriteLine($"Published to {topic}: {message}");
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine($"Published to {topic}: {simulatedData}");
                     }
                     catch (Exception pubEx)
                     {
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine($"Failed to publish message: {pubEx.Message}");
                     }
                 }
-
-                await Task.Delay(messageInterval);
             }
+        }
+
+        private static void OutputAssetsStatusTable(AssetSimulator simulator)
+        {
+            PrintAssetsHeader();
+
+            foreach (var asset in simulator.Assets)
+            {
+                PrintAssetData(asset);
+            }
+        }
+
+        private static void OutputStartMessages()
+        {
+            Console.WriteLine($"Broker URL: {brokerUrl}");
+            Console.WriteLine($"Broker Port: {brokerPort}");
+            Console.WriteLine($"Topic: {topic}");
+            Console.WriteLine($"Message Interval: {messageIntervalMiliseconds} ms");
+            Console.WriteLine("##########################################");
         }
 
         static void LoadEnv()
@@ -109,8 +149,7 @@ namespace AssetDataSimulator
             {
                 Console.WriteLine($"Environment file not found. Creating with default values.");
 
-                var defaultEnvContent = new[]
-                {
+                var defaultEnvContent = new[] {
                     "MQTT_BROKER_URL=localhost",
                     "MQTT_BROKER_PORT=1883",
                     "ASSET_TOPIC=assets/location",
@@ -130,6 +169,21 @@ namespace AssetDataSimulator
                     Environment.SetEnvironmentVariable(parts[0], parts[1]);
                 }
             }
+        }
+
+        static void PrintAssetsHeader()
+        {
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("| {0,-10} | {1,-20} |", "Asset ID", "Position (X, Y)");
+            Console.WriteLine(new string('-', 35));
+        }
+
+        static void PrintAssetData(Asset asset)
+        {
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("| {0,-10} | {1,-20} |",
+                asset.AssetId,
+                $"({asset.X:F2}, {asset.Y:F2})");
         }
     }
 }
