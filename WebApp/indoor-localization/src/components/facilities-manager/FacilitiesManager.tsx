@@ -6,7 +6,27 @@ const cards = [
   {
     imageSrc: "/floorMapDemo.png",
     imageAlt: "card image",
-    facilityName: "Warehouse",
+    facilityName: "Warehouse 1",
+  },
+  {
+    imageSrc: "/floorMapDemo.png",
+    imageAlt: "card image",
+    facilityName: "Warehouse 2",
+  },
+  {
+    imageSrc: "/floorMapDemo.png",
+    imageAlt: "card image",
+    facilityName: "Warehouse 3",
+  },
+  {
+    imageSrc: "/floorMapDemo.png",
+    imageAlt: "card image",
+    facilityName: "Warehouse 4",
+  },
+  {
+    imageSrc: "/floorMapDemo.png",
+    imageAlt: "card image",
+    facilityName: "Warehouse 5",
   },
 ];
 
@@ -21,11 +41,13 @@ function FacilitiesManager() {
       <div className="content content-border">
         <span className="syn-heading--3x-large">Facilities</span>
         <div className="card-container">
-          <FacilityCard
-            imageSrc={cards[0].imageSrc}
-            imageAlt={cards[0].imageAlt}
-            facilityName={cards[0].facilityName}
-          ></FacilityCard>
+          {cards.map((card) => (
+            <FacilityCard
+              imageSrc={card.imageSrc}
+              imageAlt={card.imageAlt}
+              facilityName={card.facilityName}
+            />
+          ))}
         </div>
       </div>
       <Footer />
