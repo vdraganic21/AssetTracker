@@ -1,0 +1,30 @@
+.card {
+  background-color: none;
+  border-radius: 16px;
+  border-color: gray;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  margin: 16px;
+  width: 320px;
+  text-align: center;
+}
+
+.card-title {
+  font-weight: bold;
+  margin-top: 26px;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.card-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: flex-start;
+}
+
+.card-image {
+  max-width: 50%;
+  height: auto;
+  border-radius: 4px;
+}

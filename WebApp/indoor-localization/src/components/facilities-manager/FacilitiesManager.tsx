@@ -1,11 +1,12 @@
+import FacilityCard from "../FacilityCard";
 import Footer from "../Footer";
 import "../Manager.css";
 
-const facilities = [
+const cards = [
   {
-    id: 1,
-    name: "Facility",
-    location: "Location",
+    imageSrc: "/floorMapDemo.png",
+    imageAlt: "card image",
+    facilityName: "Warehouse",
   },
 ];
 
@@ -20,54 +21,11 @@ function FacilitiesManager() {
       <div className="content content-border">
         <span className="syn-heading--3x-large">Facilities</span>
         <div className="card-container">
-          <div className="card">
-            <img
-              src="/floorMapDemo.png"
-              alt="card image"
-              className="card-image"
-            />
-            <div className="card-title">Facility name - Location</div>
-          </div>
-          <div className="card">
-            <img
-              src="/floorMapDemo.png"
-              alt="card image"
-              className="card-image"
-            />
-            <div className="card-title">Facility name - Location</div>
-          </div>
-          <div className="card">
-            <img
-              src="/floorMapDemo.png"
-              alt="card image"
-              className="card-image"
-            />
-            <div className="card-title">Facility name - Location</div>
-          </div>
-          <div className="card">
-            <img
-              src="/floorMapDemo.png"
-              alt="card image"
-              className="card-image"
-            />
-            <div className="card-title">Facility name - Location</div>
-          </div>
-          <div className="card">
-            <img
-              src="/floorMapDemo.png"
-              alt="card image"
-              className="card-image"
-            />
-            <div className="card-title">Facility name - Location</div>
-          </div>
-          <div className="card">
-            <img
-              src="/floorMapDemo.png"
-              alt="card image"
-              className="card-image"
-            />
-            <div className="card-title">Facility name - Location</div>
-          </div>
+          <FacilityCard
+            imageSrc={cards[0].imageSrc}
+            imageAlt={cards[0].imageAlt}
+            facilityName={cards[0].facilityName}
+          ></FacilityCard>
         </div>
       </div>
       <Footer />
