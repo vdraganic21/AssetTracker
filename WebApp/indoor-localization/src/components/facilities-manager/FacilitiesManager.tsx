@@ -1,4 +1,4 @@
-import FacilityCard from "../FacilityCard";
+import FacilityCard from "./FacilityCard";
 import Footer from "../Footer";
 import "../Manager.css";
 
