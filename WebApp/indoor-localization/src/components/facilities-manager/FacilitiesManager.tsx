@@ -5,7 +5,7 @@ const facilities = [
   {
     id: 1,
     name: "Facility",
-    location: "Location"
+    location: "Location",
   },
 ];
 
@@ -14,13 +14,63 @@ const sortOptions = [
   { name: "Name - descending", value: "nameDesc" },
 ];
 
-function FacilitiesManager(){
+function FacilitiesManager() {
   return (
     <>
       <div className="content content-border">
         <span className="syn-heading--3x-large">Facilities</span>
+        <div className="card-container">
+          <div className="card">
+            <img
+              src="/floorMapDemo.png"
+              alt="card image"
+              className="card-image"
+            />
+            <div className="card-title">Facility name - Location</div>
+          </div>
+          <div className="card">
+            <img
+              src="/floorMapDemo.png"
+              alt="card image"
+              className="card-image"
+            />
+            <div className="card-title">Facility name - Location</div>
+          </div>
+          <div className="card">
+            <img
+              src="/floorMapDemo.png"
+              alt="card image"
+              className="card-image"
+            />
+            <div className="card-title">Facility name - Location</div>
+          </div>
+          <div className="card">
+            <img
+              src="/floorMapDemo.png"
+              alt="card image"
+              className="card-image"
+            />
+            <div className="card-title">Facility name - Location</div>
+          </div>
+          <div className="card">
+            <img
+              src="/floorMapDemo.png"
+              alt="card image"
+              className="card-image"
+            />
+            <div className="card-title">Facility name - Location</div>
+          </div>
+          <div className="card">
+            <img
+              src="/floorMapDemo.png"
+              alt="card image"
+              className="card-image"
+            />
+            <div className="card-title">Facility name - Location</div>
+          </div>
+        </div>
       </div>
-      <Footer></Footer>
+      <Footer />
     </>
   );
 }
