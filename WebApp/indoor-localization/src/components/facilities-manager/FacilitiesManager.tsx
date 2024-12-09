@@ -1,6 +1,6 @@
-import FacilityCard from "./FacilityCard";
 import Footer from "../Footer";
 import "../Manager.css";
+import FacilityCardContainer from "./FacilityCardContainer";
 
 const cards = [
   {
@@ -40,15 +40,7 @@ function FacilitiesManager() {
     <>
       <div className="content content-border">
         <span className="syn-heading--3x-large">Facilities</span>
-        <div className="card-container">
-          {cards.map((card) => (
-            <FacilityCard
-              imageSrc={card.imageSrc}
-              imageAlt={card.imageAlt}
-              facilityName={card.facilityName}
-            />
-          ))}
-        </div>
+        <FacilityCardContainer cards={cards}></FacilityCardContainer>
       </div>
       <Footer />
     </>
