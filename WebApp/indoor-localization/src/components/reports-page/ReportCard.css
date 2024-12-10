@@ -1,20 +1,21 @@
 .report-card {
-  border-radius: 10px;
+  border-radius: var(--syn-border-radius-medium);
   background-color: var(--syn-color-neutral-0);
-  border: 1px solid var(--syn-color-neutral-400);
+  border: var(--syn-border-width-small) solid var(--syn-color-neutral-400);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   width: 156px;
   height: 156px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  margin-top: var(--syn-spacing-medium);
 }
 
 .report-image {
   overflow: hidden;
   display: flex;
   justify-content: center;
-  margin: 8px;
+  margin: var(--syn-spacing-x-small);
 }
 
 .report-image img {
@@ -22,9 +23,9 @@
 }
 
 .report-name {
-  padding: 5px;
+  padding: var(--syn-spacing-2x-small);
   padding-top: 0;
-  font-size: 16px;
-  color: #000;
+  font-size: var(--syn-font-size-medium);
+  color: var(--syn-color-neutral-1000);
   text-align: center;
 }

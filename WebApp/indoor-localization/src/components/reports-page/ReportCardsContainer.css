@@ -1,6 +1,6 @@
 .reports-container {
   display: grid;
   grid-template-columns: 25% 25% 25% 25%;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  margin-bottom: var(--syn-spacing-medium);
+  margin-top: var(--syn-spacing-medium);
 }
