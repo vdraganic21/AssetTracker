@@ -2,35 +2,64 @@ import Footer from "../Footer";
 import "../Manager.css";
 import ReportCardsContainer from "./ReportCardsContainer";
 
-const reports = [
+const tabularReports = [
   {
     id: 1,
     name: "Asset movement",
+    imageSrc: "/logo192.png",
+    imageAlt: "Report alt",
   },
   {
     id: 2,
     name: "Zone traffic",
+    imageSrc: "/logo192.png",
+    imageAlt: "Report alt",
   },
   {
     id: 3,
     name: "Facility report",
+    imageSrc: "/logo192.png",
+    imageAlt: "Report alt",
   },
   {
     id: 4,
     name: "Incident report",
+    imageSrc: "/logo192.png",
+    imageAlt: "Report alt",
   },
+  {
+    id: 100,
+    name: "Example report",
+    imageSrc: "/logo192.png",
+    imageAlt: "Report alt",
+  },
+  {
+    id: 100,
+    name: "Example report",
+    imageSrc: "/logo192.png",
+    imageAlt: "Report alt",
+  },
+  {
+    id: 100,
+    name: "Example report",
+    imageSrc: "/logo192.png",
+    imageAlt: "Report alt",
+  },
+];
+const graphicalReports = [
   {
     id: 5,
     name: "Heat map",
+    imageSrc: "/logo192.png",
+    imageAlt: "Report alt",
   },
   {
     id: 6,
     name: "Spaghetti map",
+    imageSrc: "/logo192.png",
+    imageAlt: "Report alt",
   },
 ];
-
-const tabularReports = reports.slice(0, 4);
-const graphicalReports = reports.slice(4);
 
 function ReportsPage() {
   return (

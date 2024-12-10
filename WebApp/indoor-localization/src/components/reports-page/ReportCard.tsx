@@ -4,13 +4,15 @@ import "./ReportCard.css";
 interface ReportProp {
   id: number;
   name: string;
+  imageSrc: string;
+  imageAlt: string;
 }
 
-function ReportCard({ id, name }: ReportProp) {
+function ReportCard({ id, name, imageSrc, imageAlt }: ReportProp) {
   return (
     <div key={id} className="report-card">
       <div className="report-image">
-        <img src="../public/logo192.png" alt="Report image" />
+        <img src={imageSrc} alt={imageAlt} />
       </div>
       <div className="report-name">{name}</div>
     </div>
