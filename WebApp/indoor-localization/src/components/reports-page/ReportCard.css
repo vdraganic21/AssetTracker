@@ -3,16 +3,27 @@
   background-color: var(--syn-color-neutral-0);
   border: 1px solid var(--syn-color-neutral-400);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 156px;
+  height: 156px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.report-image {
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  margin: 8px;
 }
 
 .report-image img {
-  width: 100%;
-  height: auto;
   object-fit: cover;
 }
 
 .report-name {
-  margin: 10px;
+  padding: 5px;
+  padding-top: 0;
   font-size: 16px;
   color: #000;
   text-align: center;
