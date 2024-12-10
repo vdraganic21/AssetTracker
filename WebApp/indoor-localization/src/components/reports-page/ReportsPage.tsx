@@ -67,10 +67,8 @@ function ReportsPage() {
       <div className="content content-border">
         <span className="syn-heading--3x-large">Tabular Reports</span>
         <ReportCardsContainer reports={tabularReports} />
-        <div>
-          <span className="syn-heading--3x-large">Graphical Reports</span>
-          <ReportCardsContainer reports={graphicalReports} />
-        </div>
+        <span className="syn-heading--3x-large">Graphical Reports</span>
+        <ReportCardsContainer reports={graphicalReports} />
       </div>
       <Footer></Footer>
     </>

@@ -8,7 +8,6 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  margin-top: var(--syn-spacing-medium);
 }
 
 .report-image {

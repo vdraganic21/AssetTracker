@@ -1,6 +1,9 @@
 .reports-container {
-  display: grid;
-  grid-template-columns: 25% 25% 25% 25%;
+  display: inline-flex;
+  flex-wrap: wrap;
   margin-bottom: var(--syn-spacing-medium);
   margin-top: var(--syn-spacing-medium);
+  row-gap: 32px;
+  column-gap: 32px;
+  align-content: space-around;
 }
