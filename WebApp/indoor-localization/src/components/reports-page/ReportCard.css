@@ -1,0 +1,28 @@
+.reports-container {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  margin-top: 10px;
+}
+
+.report-card {
+  border-radius: 10px;
+  background-color: var(--syn-color-neutral-0);
+  border: 1px solid var(--syn-color-neutral-400);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.report-image img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.report-name {
+  margin: 10px;
+  font-size: 16px;
+  color: #000;
+  text-align: center;
+}
