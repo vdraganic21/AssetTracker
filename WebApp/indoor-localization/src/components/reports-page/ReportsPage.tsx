@@ -1,7 +1,6 @@
 import Footer from "../Footer";
 import "../Manager.css";
-import "./ReportCard.css";
-import ReportCard from "./ReportCard";
+import ReportCardsContainer from "./ReportCardsContainer";
 
 const reports = [
   {
@@ -38,18 +37,10 @@ function ReportsPage() {
     <>
       <div className="content content-border">
         <span className="syn-heading--3x-large">Tabular Reports</span>
-        <div className="reports-container">
-          {tabularReports.map((report) => (
-            <ReportCard id={report.id} name={report.name} />
-          ))}
-        </div>
+        <ReportCardsContainer reports={tabularReports} />
         <div>
           <span className="syn-heading--3x-large">Graphical Reports</span>
-          <div className="reports-container">
-            {graphicalReports.map((report) => (
-              <ReportCard id={report.id} name={report.name} />
-            ))}
-          </div>
+          <ReportCardsContainer reports={graphicalReports} />
         </div>
       </div>
       <Footer></Footer>
