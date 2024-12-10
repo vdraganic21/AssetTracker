@@ -1,25 +1,32 @@
 using Microsoft.EntityFrameworkCore;
 using RESTservice_API.Data;
-using RESTservice_API.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add DbContext
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+// Register the services based on whether to use mock data or the real database
+bool useMockData = builder.Configuration.GetValue<bool>("UseMockData");
 
-// Add services to the container
+if (useMockData)
+{
+    // Register mock repositories
+    builder.Services.AddSingleton<IAssetRepository, MockAssetRepository>();
+    builder.Services.AddSingleton<IPositionHistoryRepository, MockPositionHistoryRepository>();
+}
+else
+{
+    // Register the real database context and repository
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    builder.Services.AddScoped<IAssetRepository, AssetRepository>();
+    builder.Services.AddScoped<IPositionHistoryRepository, PositionHistoryRepository>();
+}
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Add DbContext for database access
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
 var app = builder.Build();
 
-// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -29,7 +36,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthorization();
 
-// Map controller routes
 app.MapControllers();
 
 app.Run();
