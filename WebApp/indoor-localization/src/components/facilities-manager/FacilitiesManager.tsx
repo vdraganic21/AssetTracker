@@ -43,8 +43,8 @@ const cards = [
 ];
 
 const sortOptions = [
-  { name: "Name - ascending", value: "nameAsc" },
-  { name: "Name - descending", value: "nameDesc" },
+  { name: "Name - asc", value: "nameAsc" },
+  { name: "Name - desc", value: "nameDesc" },
 ];
 
 function FacilitiesManager() {
