@@ -1,26 +1,27 @@
 import { Asset } from "./Asset";
-import { Facility } from "./Facility";
-import { Point } from "./Point";
+import { Zone } from "./Zone";
 
 export class AssetZoneHistoryLog {
-    id: number;
-    asset: Asset;
-    facility: Facility;
-    position: Point;
-    dateTime: Date;
-  
-    constructor(
-      id: number,
-      asset: Asset,
-      facility: Facility,
-      position: Point,
-      dateTime: Date
-    ) {
-      this.id = id;
-      this.asset = asset;
-      this.facility = facility;
-      this.position = position;
-      this.dateTime = dateTime;
-    }
+  id: number;
+  asset: Asset;
+  zone: Zone;
+  enterDateTime: Date;
+  exitDateTime: Date;
+  retentionTime: number;
+
+  constructor(
+    id: number,
+    asset: Asset,
+    zone: Zone,
+    enterDateTime: Date,
+    exitDateTime: Date,
+    retentionTime: number
+  ) {
+    this.id = id;
+    this.asset = asset;
+    this.zone = zone;
+    this.enterDateTime = enterDateTime;
+    this.exitDateTime = exitDateTime;
+    this.retentionTime = retentionTime;
   }
-  
+}

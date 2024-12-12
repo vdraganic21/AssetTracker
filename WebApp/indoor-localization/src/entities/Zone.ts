@@ -6,14 +6,14 @@ export class Zone {
     id: number;
     name: string;
     points: Point[];
-    parentFacilityId: number[];
+    parentFacilityId: number;
     containedAssetsIds: number[];
   
     constructor(
       id: number,
       name: string,
       points: Point[],
-      parentFacilityId: number[],
+      parentFacilityId: number,
       containedAssetsIds: number[]
     ) {
       this.id = id;
