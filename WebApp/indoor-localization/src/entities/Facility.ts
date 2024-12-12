@@ -1,3 +1,6 @@
+import { AssetService } from "../services/AssetService";
+import { FacilityService } from "../services/FacilityService";
+import { ZoneService } from "../services/ZoneService";
 import { Asset } from "./Asset";
 import { Zone } from "./Zone";
 
@@ -17,19 +20,27 @@ export class Facility {
     }
   
     GetAssets(): Asset[] {
-      throw new Error("Method not implemented.");
+      this.UpdateData();
+      return this.containedAssetsIds.map(assetId => AssetService.Get(assetId)).filter(asset => asset !== null) as Asset[];
     }
-  
+    
     GetZones(): Zone[] {
-      throw new Error("Method not implemented.");
-    }
+      this.UpdateData();
+      return this.containedZonesIds.map(zoneId => ZoneService.Get(zoneId)).filter(zone => zone !== null) as Zone[];
+    }    
   
     ContainsAsset(asset: Asset): boolean {
-      throw new Error("Method not implemented.");
+      this.UpdateData();
+      return this.containedAssetsIds.includes(asset.id);
     }
   
     UpdateData(): void {
-      throw new Error("Method not implemented.");
+      const updatedData = FacilityService.Get(this.id);
+      if (!updatedData) return;
+      this.containedAssetsIds = updatedData.containedAssetsIds;
+      this.containedZonesIds = updatedData.containedZonesIds;
+      this.imageBase64 = updatedData.imageBase64;
+      this.name = updatedData.name;  
     }
   }
   
