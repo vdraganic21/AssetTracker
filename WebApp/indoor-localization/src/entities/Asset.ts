@@ -1,3 +1,5 @@
+import { AssetService } from "../services/AssetService";
+import { FacilityService } from "../services/FacilityService";
 import { Facility } from "./Facility";
 import { Point } from "./Point";
 import { Zone } from "./Zone";
@@ -29,20 +31,24 @@ export class Asset {
       this.currentZonesIds = currentZonesIds;
     }
   
-    GetCurrentFacility(): Facility {
-      throw new Error("Method not implemented.");
+    GetCurrentFacility(): Facility | null{
+      this.UpdateData();
+      return FacilityService.Get(this.id);
     }
   
     GetPosition(): Point {
-      throw new Error("Method not implemented.");
+      this.UpdateData();
+      return this.position;
     }
   
     GetLastSync(): Date {
-      throw new Error("Method not implemented.");
+      this.UpdateData();
+      return this.lastSync;
     }
   
     IsActive(): boolean {
-      throw new Error("Method not implemented.");
+      this.UpdateData();
+      return this.isActive;
     }
   
     GetCurrentZones(): Zone[] {
@@ -50,7 +56,14 @@ export class Asset {
     }
   
     UpdateData(): void {
-      throw new Error("Method not implemented.");
+      const updatedData = AssetService.Get(this.id);
+      if (!updatedData) return;
+      this.currentZonesIds = updatedData.currentZonesIds;
+      this.isActive = updatedData.isActive;
+      this.lastSync = updatedData.lastSync;
+      this.name = updatedData.name;
+      this.parentFacilityId = updatedData.parentFacilityId;
+      this.position = updatedData.position;
     }
   }
   
