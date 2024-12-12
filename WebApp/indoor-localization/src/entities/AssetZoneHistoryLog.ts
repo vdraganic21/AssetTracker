@@ -2,7 +2,7 @@ import { Asset } from "./Asset";
 import { Facility } from "./Facility";
 import { Point } from "./Point";
 
-export class AssetPositionHistoryLog {
+export class AssetZoneHistoryLog {
     id: number;
     asset: Asset;
     facility: Facility;
