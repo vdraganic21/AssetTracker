@@ -2,7 +2,6 @@ import Footer from "../Footer";
 import "../Manager.css";
 import {
   SynButton,
-  SynCheckbox,
   SynDivider,
   SynInput,
   SynOption,
