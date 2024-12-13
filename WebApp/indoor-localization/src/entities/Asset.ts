@@ -1,5 +1,6 @@
 import { AssetService } from "../services/AssetService";
 import { FacilityService } from "../services/FacilityService";
+import { ZoneService } from "../services/ZoneService";
 import { Facility } from "./Facility";
 import { Point } from "./Point";
 import { Zone } from "./Zone";
@@ -52,7 +53,10 @@ export class Asset {
     }
   
     GetCurrentZones(): Zone[] {
-      throw new Error("Method not implemented.");
+      this.UpdateData();
+      return this.currentZonesIds
+        .map(zoneId => ZoneService.Get(zoneId)) 
+        .filter(zone => zone !== null) as Zone[];
     }
   
     UpdateData(): void {
