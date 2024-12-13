@@ -1,6 +1,6 @@
-import 'package:indoor_localization/entities/Point.dart';
-import 'package:indoor_localization/entities/asset.dart';
-import 'package:indoor_localization/entities/facility.dart';
+import 'package:indoor_localization/domain/entities/Point.dart';
+import 'package:indoor_localization/domain/entities/asset.dart';
+import 'package:indoor_localization/domain/entities/facility.dart';
 
 class AssetPositionHistoryLog {
   final int id;

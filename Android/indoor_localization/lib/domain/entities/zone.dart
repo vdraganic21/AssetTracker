@@ -1,6 +1,6 @@
-import 'package:indoor_localization/services/asset_service.dart';
-import 'package:indoor_localization/services/facility_service.dart';
-import 'package:indoor_localization/services/zone_service.dart';
+import 'package:indoor_localization/domain/services/asset_service.dart';
+import 'package:indoor_localization/domain/services/facility_service.dart';
+import 'package:indoor_localization/domain/services/zone_service.dart';
 
 import 'asset.dart';
 import 'facility.dart';

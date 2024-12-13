@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:indoor_localization/entities/asset.dart';
+import 'package:indoor_localization/domain/entities/asset.dart';
 import '../../config/app_colors.dart';
 import 'asset_list_item.dart';
 

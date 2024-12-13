@@ -1,4 +1,4 @@
-import 'package:indoor_localization/entities/zone.dart';
+import 'package:indoor_localization/domain/entities/zone.dart';
 import 'Asset.dart';
 
 class AssetZoneHistoryLog {

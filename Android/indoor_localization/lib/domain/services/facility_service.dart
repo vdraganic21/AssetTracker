@@ -1,7 +1,7 @@
-import 'package:indoor_localization/entities/asset.dart';
-import 'package:indoor_localization/entities/facility.dart';
-import 'package:indoor_localization/entities/zone.dart';
-import 'package:indoor_localization/services/entity_service.dart';
+import 'package:indoor_localization/domain/entities/asset.dart';
+import 'package:indoor_localization/domain/entities/facility.dart';
+import 'package:indoor_localization/domain/entities/zone.dart';
+import 'package:indoor_localization/domain/services/entity_service.dart';
 
 class FacilityService extends EntityService {
 

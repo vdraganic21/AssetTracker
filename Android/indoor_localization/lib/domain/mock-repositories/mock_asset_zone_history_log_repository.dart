@@ -1,6 +1,6 @@
-import 'package:indoor_localization/entities/asset_zone_history_log.dart';
-import 'package:indoor_localization/entities/asset_zone_history_log_filter.dart';
-import 'package:indoor_localization/repository-interfaces/asset_zone_history_log_repository.dart';
+import 'package:indoor_localization/domain/entities/asset_zone_history_log.dart';
+import 'package:indoor_localization/domain/entities/asset_zone_history_log_filter.dart';
+import 'package:indoor_localization/domain/repository-interfaces/asset_zone_history_log_repository.dart';
 
 class MockAssetZoneHistoryLogRepository implements IAssetZoneHistoryLogRepository {
   static final List<AssetZoneHistoryLog> _logs = [];

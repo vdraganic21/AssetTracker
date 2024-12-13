@@ -1,8 +1,8 @@
-import 'package:indoor_localization/entities/Asset.dart';
-import 'package:indoor_localization/entities/zone.dart';
-import 'package:indoor_localization/services/asset_service.dart';
-import 'package:indoor_localization/services/facility_service.dart';
-import 'package:indoor_localization/services/zone_service.dart';
+import 'package:indoor_localization/domain/entities/Asset.dart';
+import 'package:indoor_localization/domain/entities/zone.dart';
+import 'package:indoor_localization/domain/services/asset_service.dart';
+import 'package:indoor_localization/domain/services/facility_service.dart';
+import 'package:indoor_localization/domain/services/zone_service.dart';
 
 class Facility {
   int id;

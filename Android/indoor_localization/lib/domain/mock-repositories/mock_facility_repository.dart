@@ -1,5 +1,5 @@
-import 'package:indoor_localization/entities/facility.dart';
-import 'package:indoor_localization/repository-interfaces/facility_repository.dart';
+import 'package:indoor_localization/domain/entities/facility.dart';
+import 'package:indoor_localization/domain/repository-interfaces/facility_repository.dart';
 
 class MockFacilityRepository implements IFacilityRepository {
   static final List<Facility> _facilities = [];

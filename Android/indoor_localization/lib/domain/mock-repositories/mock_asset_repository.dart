@@ -1,5 +1,5 @@
-import 'package:indoor_localization/entities/asset.dart';
-import 'package:indoor_localization/repository-interfaces/asset_repository.dart';
+import 'package:indoor_localization/domain/entities/asset.dart';
+import 'package:indoor_localization/domain/repository-interfaces/asset_repository.dart';
 
 class MockAssetRepository implements IAssetRepository {
   final List<Asset> _assets = [];

@@ -1,5 +1,5 @@
-import 'package:indoor_localization/entities/zone.dart';
-import 'package:indoor_localization/repository-interfaces/zone_repository.dart';
+import 'package:indoor_localization/domain/entities/zone.dart';
+import 'package:indoor_localization/domain/repository-interfaces/zone_repository.dart';
 
 class MockZoneRepository implements IZoneRepository {
   static final List<Zone> _zones = [];
