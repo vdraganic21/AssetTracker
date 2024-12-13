@@ -10,7 +10,6 @@ namespace RESTservice_API.Data
 
         public MockPositionHistoryRepository()
         {
-            // Initialize some mock data
             _positionHistories = new List<PositionHistory>
             {
                 new PositionHistory { Id = 1, AssetId = 1, X = 100, Y = 200, Timestamp = DateTime.Now },

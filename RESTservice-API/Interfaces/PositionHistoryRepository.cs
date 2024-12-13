@@ -18,8 +18,7 @@ namespace RESTservice_API.Data
 
         public IEnumerable<PositionHistory> GetAllPositionHistories()
         {
-            // Ensure that this method returns IEnumerable<PositionHistory>
-            return _context.PositionHistories.ToList();  // This should return a List<PositionHistory> which is an IEnumerable<PositionHistory>
+            return _context.PositionHistories.ToList();
         }
 
         public PositionHistory GetPositionHistoryById(int id)

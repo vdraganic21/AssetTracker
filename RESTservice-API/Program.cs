@@ -3,18 +3,15 @@ using RESTservice_API.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Register the services based on whether to use mock data or the real database
 bool useMockData = builder.Configuration.GetValue<bool>("UseMockData");
 
 if (useMockData)
 {
-    // Register mock repositories
     builder.Services.AddSingleton<IAssetRepository, MockAssetRepository>();
     builder.Services.AddSingleton<IPositionHistoryRepository, MockPositionHistoryRepository>();
 }
 else
 {
-    // Register the real database context and repository
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
     builder.Services.AddScoped<IAssetRepository, AssetRepository>();
