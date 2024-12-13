@@ -1,0 +1,42 @@
+import 'package:indoor_localization/entities/zone.dart';
+import 'package:indoor_localization/repository-interfaces/zone_repository.dart';
+
+class MockZoneRepository implements IZoneRepository {
+  static final List<Zone> _zones = [];
+
+  @override
+  Zone get(int id) {
+    return _zones.firstWhere((zone) => zone.id == id);
+  }
+
+  @override
+  List<Zone> getAll() {
+    return _zones;
+  }
+
+  @override
+  bool add(Zone zone) {
+    _zones.add(zone);
+    return true;
+  }
+
+  @override
+  bool delete(int id) {
+    final index = _zones.indexWhere((zone) => zone.id == id);
+    if (index != -1) {
+      _zones.removeAt(index);
+      return true;
+    }
+    return false;
+  }
+
+  @override
+  bool update(Zone updatedZone) {
+    final index = _zones.indexWhere((zone) => zone.id == updatedZone.id);
+    if (index != -1) {
+      _zones[index] = updatedZone;
+      return true;
+    }
+    return false;
+  }
+}

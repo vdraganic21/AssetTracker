@@ -11,65 +11,7 @@ class AssetsPage extends StatefulWidget {
 class _AssetsPageState extends State<AssetsPage> {
   bool _isAscending = true; // Track ascending/descending state
   List<Asset> assets = [
-    Asset(
-      id: 1,
-      name: 'Forklift',
-      x: 10,
-      y: 20,
-      lastSync: DateTime.now(),
-      active: true,
-      floorMap: 'Warehouse37',
-      zone: 'Danger zone',
-    ),
-    Asset(
-      id: 2,
-      name: 'Pallet',
-      x: 30,
-      y: 40,
-      lastSync: DateTime.now(),
-      active: true,
-      floorMap: 'Production line',
-      zone: '-',
-    ),
-    Asset(
-      id: 3,
-      name: 'Box',
-      x: 50,
-      y: 60,
-      lastSync: DateTime.now(),
-      active: true,
-      floorMap: 'Warehouse2',
-      zone: '-',
-    ),Asset(
-      id: 1,
-      name: 'Forklift',
-      x: 10,
-      y: 20,
-      lastSync: DateTime.now(),
-      active: true,
-      floorMap: 'Warehouse37',
-      zone: 'Danger zone',
-    ),
-    Asset(
-      id: 2,
-      name: 'Pallet',
-      x: 30,
-      y: 40,
-      lastSync: DateTime.now(),
-      active: true,
-      floorMap: 'Production line',
-      zone: '-',
-    ),
-    Asset(
-      id: 3,
-      name: 'Box',
-      x: 50,
-      y: 60,
-      lastSync: DateTime.now(),
-      active: true,
-      floorMap: 'Warehouse2',
-      zone: '-',
-    ),
+
   ];
 
   void _toggleSortOrder() {
