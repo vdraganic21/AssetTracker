@@ -2,29 +2,28 @@ using Microsoft.AspNetCore.Mvc;
 using RESTservice_API.Models;
 using RESTservice_API.Data;
 
-
 [ApiController]
 [Route("assets")]
 public class AssetsController : ControllerBase
 {
-    private readonly ApplicationDbContext _context;
+    private readonly IAssetRepository _repository;
 
-    public AssetsController(ApplicationDbContext context)
+    public AssetsController(IAssetRepository repository)
     {
-        _context = context;
+        _repository = repository;
     }
 
     [HttpGet]
     public IActionResult GetAssets()
     {
-        var assets = _context.Assets.ToList();
+        var assets = _repository.GetAllAssets();
         return Ok(assets);
     }
 
     [HttpGet("{id}")]
     public IActionResult GetAssetById(int id)
     {
-        var asset = _context.Assets.Find(id);
+        var asset = _repository.GetAssetById(id);
         if (asset == null) return NotFound();
         return Ok(asset);
     }
@@ -32,15 +31,15 @@ public class AssetsController : ControllerBase
     [HttpPost]
     public IActionResult CreateAsset([FromBody] Asset asset)
     {
-        _context.Assets.Add(asset);
-        _context.SaveChanges();
+        _repository.AddAsset(asset);
+        _repository.SaveChanges();
         return CreatedAtAction(nameof(GetAssetById), new { id = asset.Id }, asset);
     }
 
     [HttpPut("{id}")]
     public IActionResult UpdateAsset(int id, [FromBody] Asset updatedAsset)
     {
-        var asset = _context.Assets.Find(id);
+        var asset = _repository.GetAssetById(id);
         if (asset == null) return NotFound();
 
         asset.Name = updatedAsset.Name;
@@ -48,18 +47,18 @@ public class AssetsController : ControllerBase
         asset.Y = updatedAsset.Y;
         asset.Active = updatedAsset.Active;
 
-        _context.SaveChanges();
+        _repository.SaveChanges();
         return Ok(asset);
     }
 
     [HttpDelete("{id}")]
     public IActionResult DeleteAsset(int id)
     {
-        var asset = _context.Assets.Find(id);
+        var asset = _repository.GetAssetById(id);
         if (asset == null) return NotFound();
 
-        _context.Assets.Remove(asset);
-        _context.SaveChanges();
+        _repository.DeleteAsset(id);
+        _repository.SaveChanges();
         return NoContent();
     }
 }

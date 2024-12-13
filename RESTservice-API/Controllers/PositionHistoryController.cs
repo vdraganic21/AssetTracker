@@ -1,44 +1,37 @@
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using RESTservice_API.Models;
 using RESTservice_API.Data;
-
 
 [ApiController]
 [Route("assetPositionHistory")]
 public class PositionHistoryController : ControllerBase
 {
-    private readonly ApplicationDbContext _context;
+    private readonly IPositionHistoryRepository _repository;
 
-    public PositionHistoryController(ApplicationDbContext context)
+    public PositionHistoryController(IPositionHistoryRepository repository)
     {
-        _context = context;
+        _repository = repository;
     }
 
     [HttpGet]
-    public IActionResult GetPositionHistory([FromQuery] int? assetId, [FromQuery] int? floorMapId, [FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
+    public IActionResult GetPositionHistories()
     {
-        var query = _context.PositionHistories.AsQueryable();
-
-        if (assetId.HasValue) query = query.Where(p => p.AssetId == assetId.Value);
-        if (floorMapId.HasValue) query = query.Where(p => p.FloorMapId == floorMapId.Value);
-        if (startDate.HasValue && endDate.HasValue) query = query.Where(p => p.Timestamp >= startDate && p.Timestamp <= endDate);
-
-        return Ok(query.ToList());
+        var positionHistories = _repository.GetAllPositionHistories();
+        return Ok(positionHistories);
     }
-
     [HttpPost]
     public IActionResult CreatePositionHistory([FromBody] PositionHistory positionHistory)
     {
-        _context.PositionHistories.Add(positionHistory);
-        _context.SaveChanges();
-        return CreatedAtAction(nameof(GetPositionHistory), new { id = positionHistory.Id }, positionHistory);
+        _repository.AddPositionHistory(positionHistory);
+        return CreatedAtAction(nameof(GetPositionHistories), new { id = positionHistory.Id }, positionHistory);
     }
 
     [HttpGet("{id}")]
     public IActionResult GetPositionHistoryById(int id)
     {
-        var history = _context.PositionHistories.Find(id);
+        var history = _repository.GetPositionHistoryById(id);
         if (history == null) return NotFound();
         return Ok(history);
     }
@@ -46,11 +39,7 @@ public class PositionHistoryController : ControllerBase
     [HttpDelete("{id}")]
     public IActionResult DeletePositionHistory(int id)
     {
-        var history = _context.PositionHistories.Find(id);
-        if (history == null) return NotFound();
-
-        _context.PositionHistories.Remove(history);
-        _context.SaveChanges();
+        _repository.DeletePositionHistory(id);
         return NoContent();
     }
 }
