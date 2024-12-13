@@ -1,21 +1,66 @@
+import 'package:indoor_localization/domain/entities/facility.dart';
+import 'package:indoor_localization/domain/entities/point.dart';
+import 'package:indoor_localization/domain/entities/zone.dart';
+import 'package:indoor_localization/domain/services/asset_service.dart';
+import 'package:indoor_localization/domain/services/facility_service.dart';
+import 'package:indoor_localization/domain/services/zone_service.dart';
+
 class Asset {
-  final int id;
-  final String name;
-  int x;
-  int y;
+  int id;
+  String name;
+  int parentFacilityId;
+  Point position;
   DateTime lastSync;
-  bool active;
-  String floorMap; // TODO: Replace with actual FloorMap class
-  String zone; // TODO: Replace with actual Zone class
+  bool isActive;
+  List<int> currentZonesIds;
 
   Asset({
     required this.id,
     required this.name,
-    required this.x,
-    required this.y,
+    required this.parentFacilityId,
+    required this.position,
     required this.lastSync,
-    required this.active,
-    required this.floorMap,
-    required this.zone,
+    required this.isActive,
+    required this.currentZonesIds,
   });
+
+  Facility? getCurrentFacility() {
+    updateData();
+    return FacilityService.get(id);
+  }
+
+  Point getPosition() {
+    updateData();
+    return position;
+  }
+
+  DateTime getLastSync() {
+    updateData();
+    return lastSync;
+  }
+
+  bool isActiveStatus() {
+    updateData();
+    return isActive;
+  }
+
+  List<Zone> getCurrentZones() {
+    updateData();
+    return currentZonesIds
+        .map((zoneId) => ZoneService.get(zoneId))
+        .where((zone) => zone != null)
+        .cast<Zone>()
+        .toList();
+  }
+
+  void updateData() {
+    final updatedData = AssetService.get(id);
+    if (updatedData == null) return;
+    currentZonesIds = updatedData.currentZonesIds;
+    isActive = updatedData.isActive;
+    lastSync = updatedData.lastSync;
+    name = updatedData.name;
+    parentFacilityId = updatedData.parentFacilityId;
+    position = updatedData.position;
+  }
 }

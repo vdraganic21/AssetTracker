@@ -34,7 +34,7 @@ class AssetListItem extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Text(
-              asset.floorMap,
+              asset.getCurrentFacility()!.name,
               style: const TextStyle(
                 fontSize: 16.0,
                 color: AppColors.primary500,
@@ -42,7 +42,6 @@ class AssetListItem extends StatelessWidget {
             ),
           ),
         ],
-
       ),
     );
   }
