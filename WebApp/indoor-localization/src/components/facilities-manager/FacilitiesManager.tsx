@@ -76,6 +76,7 @@ function FacilitiesManager() {
             ))}
           </SynSelect>
         </div>
+        <SynDivider className="content-divider" />
         <FacilityCardContainer cards={cards}></FacilityCardContainer>
       </div>
       <Footer />
