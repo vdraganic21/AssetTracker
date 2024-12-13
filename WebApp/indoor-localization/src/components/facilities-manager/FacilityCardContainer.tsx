@@ -1,4 +1,5 @@
 import FacilityCard from "./FacilityCard";
+import "./FacilityCardContainer.css";
 
 type FacilityCardProps = {
   imageSrc: string;
@@ -12,7 +13,7 @@ type FacilityCardContainerProps = {
 
 function FacilityCardContainer({ cards }: FacilityCardContainerProps) {
   return (
-    <div className="card-container">
+    <div className="facility-card-container">
       {cards.map((card) => (
         <FacilityCard
           imageSrc={card.imageSrc}

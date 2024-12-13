@@ -8,9 +8,11 @@ type FacilityCardProps = {
 
 function FacilityCard({ imageSrc, imageAlt, facilityName }: FacilityCardProps) {
   return (
-    <div className="card">
-      <img src={imageSrc} alt={imageAlt} className="card-image" />
-      <div className="card-title">{facilityName}</div>
+    <div className="facility-card">
+      <div className="facility-card-image">
+        <img src={imageSrc} alt={imageAlt} />
+      </div>
+      <div className="facility-card-title">{facilityName}</div>
     </div>
   );
 }

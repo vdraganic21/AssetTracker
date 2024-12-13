@@ -31,10 +31,3 @@
   display: flex;
   gap: var(--syn-spacing-x-small);
 }
-
-.card-container {
-  width: 100vh;
-  flex-wrap: wrap;
-  display: flex;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
