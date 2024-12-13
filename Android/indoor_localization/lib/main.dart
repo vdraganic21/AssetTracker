@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'presentation/dashboard_page.dart';
+import 'presentation/dashboard_page/dashboard_page.dart';
 import 'config/app_colors.dart';
 
 void main() {

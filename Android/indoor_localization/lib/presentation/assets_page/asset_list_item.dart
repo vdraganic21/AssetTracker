@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:indoor_localization/config/app_colors.dart';
-import 'package:indoor_localization/entities/asset.dart';
+import 'package:indoor_localization/domain/entities/asset.dart';
 
 class AssetListItem extends StatelessWidget {
   final Asset asset;

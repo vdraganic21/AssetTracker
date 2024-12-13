@@ -1,11 +1,10 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import '../config/app_colors.dart';
-import 'facilities_page.dart';
-import 'assets_page/assets_page.dart';
-import 'reports_page.dart';
+import '../../config/app_colors.dart';
+import '../facilities_page.dart';
+import '../assets_page/assets_page.dart';
+import '../reports_page.dart';
+import 'floor_map_widget.dart'; // Import the new FloorMapWidget
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -90,14 +89,10 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 }
 
-// Dashboard content (no search bar)
+// Dashboard content (with interactive floor map)
 class DashboardContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        'Dashboard Content',
-      ),
-    );
+    return FloorMapWidget();
   }
 }
