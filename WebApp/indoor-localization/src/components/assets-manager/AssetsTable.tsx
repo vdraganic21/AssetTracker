@@ -1,7 +1,15 @@
 import { SynCheckbox } from "@synergy-design-system/react";
 import { Asset } from "../../entities/Asset";
+import "./AssetsTable.css";
 
 function AssetsTable({ assets }: { assets: Asset[] }) {
+  if (assets.length == 0)
+    return (
+      <div>
+        <p className="no-assets-message">No assets found.</p>
+      </div>
+    );
+
   return (
     <table className="syn-table--default">
       <thead>

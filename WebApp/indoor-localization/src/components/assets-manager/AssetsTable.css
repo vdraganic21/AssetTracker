@@ -1,0 +1,5 @@
+.no-assets-message{
+    font-size: var(--syn-font-size-x-medium);
+    text-align: center;
+    color: var(--syn-color-neutral-700);
+}
