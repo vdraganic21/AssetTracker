@@ -6,11 +6,11 @@ import 'package:indoor_localization/domain/services/facility_service.dart';
 import 'package:indoor_localization/domain/services/zone_service.dart';
 
 class Report {
-  int id;
+  int type;
   String name;
 
   Report({
-    required this.id,
+    required this.type,
     required this.name,
   });
 
