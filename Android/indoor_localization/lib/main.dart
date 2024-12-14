@@ -10,8 +10,6 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key:key);
-
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -19,8 +17,10 @@ class MyApp extends StatelessWidget {
       title: 'Indoor Localization',
       theme: ThemeData(
         primaryColor: AppColors.primary500,
+        scaffoldBackgroundColor: Colors.white,
+        fontFamily: 'OpenSans',
       ),
-      home: DashboardPage(), // Set LandingPage as the home
+      home: DashboardPage(),
     );
   }
 }
