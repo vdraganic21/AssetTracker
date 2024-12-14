@@ -34,7 +34,6 @@ public class ApiCrudTests : IAsyncLifetime
 
     public ApiCrudTests()
     {
-        // Set up HttpClient to target your API base URL
         _client = new HttpClient(new HttpClientHandler
         {
             ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
@@ -44,7 +43,6 @@ public class ApiCrudTests : IAsyncLifetime
         };
     }
 
-    // Async setup and cleanup if needed
     public Task InitializeAsync() => Task.CompletedTask;
 
     public Task DisposeAsync()
@@ -71,9 +69,8 @@ public class ApiCrudTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.Created, postResponse.StatusCode);
 
         var createdAsset = await postResponse.Content.ReadFromJsonAsync<Asset>();
-        Assert.NotNull(createdAsset); // Ensure the response is not null
+        Assert.NotNull(createdAsset); 
 
-        // Log the created asset for debugging
         Console.WriteLine($"Created Asset Name: {createdAsset.Name}");
 
         int assetId = createdAsset.Id;
@@ -101,7 +98,6 @@ public class ApiCrudTests : IAsyncLifetime
         var putResponse = await _client.PutAsJsonAsync($"/assets/{assetId}", updatedAsset);
         Assert.Equal(HttpStatusCode.OK, putResponse.StatusCode);
 
-        // Verify the updated asset
         var getUpdatedResponse = await _client.GetAsync($"/assets/{assetId}");
         Assert.Equal(HttpStatusCode.OK, getUpdatedResponse.StatusCode);
 
@@ -113,7 +109,6 @@ public class ApiCrudTests : IAsyncLifetime
         var deleteResponse = await _client.DeleteAsync($"/assets/{assetId}");
         Assert.Equal(HttpStatusCode.NoContent, deleteResponse.StatusCode);
 
-        // Verify the asset was deleted
         var getAfterDeleteResponse = await _client.GetAsync($"/assets/{assetId}");
         Assert.Equal(HttpStatusCode.NotFound, getAfterDeleteResponse.StatusCode);
     }
@@ -137,9 +132,8 @@ public class ApiCrudTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.Created, postResponse.StatusCode);
 
         var createdPosition = await postResponse.Content.ReadFromJsonAsync<AssetPositionHistory>();
-        Assert.NotNull(createdPosition); // Ensure the response is not null
+        Assert.NotNull(createdPosition); 
 
-        // Log the created position for debugging
         Console.WriteLine($"Created Position: {createdPosition.X}, {createdPosition.Y}");
 
         int positionId = createdPosition.Id;
@@ -157,7 +151,6 @@ public class ApiCrudTests : IAsyncLifetime
         var deleteResponse = await _client.DeleteAsync($"/assetPositionHistory/{positionId}");
         Assert.Equal(HttpStatusCode.NoContent, deleteResponse.StatusCode);
 
-        // Verify the entry was deleted
         var getAfterDeleteResponse = await _client.GetAsync($"/assetPositionHistory/{positionId}");
         Assert.Equal(HttpStatusCode.NotFound, getAfterDeleteResponse.StatusCode);
     }
