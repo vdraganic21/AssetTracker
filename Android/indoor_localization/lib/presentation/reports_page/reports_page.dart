@@ -1,56 +1,147 @@
 import 'package:flutter/material.dart';
-import 'package:google_nav_bar/google_nav_bar.dart';
-import '../../config/app_colors.dart';
-import '../facilities_page.dart';
-import '../assets_page/assets_page.dart';
-import '../dashboard_page/dashboard_page.dart';
+import './report.dart';
 
 class ReportsPage extends StatelessWidget {
-  const ReportsPage({super.key});
+  final List<Report> reports = [
+    Report(id: 1,name: "Asset movement"),
+    Report(id: 1,name: "Zone traffic"),
+    Report(id: 1,name: "Facility report"),
+    Report(id: 1,name: "Incident report"),
+    Report(id: 2,name: "Heat map"),
+    Report(id: 2,name: "Spaghetti map"),
+  ];
+
+  ReportsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              'Tabular',
-              style: TextStyle(fontSize: 20),
-            ),
-          ),
-          Expanded(
-            child: Container(
-              color: Colors.grey[200],
-              child: Center(
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (reports.any((report) => report.id == 1)) ...[
+              Padding(
+                padding: const EdgeInsets.all(16.0),
                 child: Text(
-                  'reports',
-                  style: TextStyle(fontSize: 16),
+                  'Tabular',
+                  style: TextStyle(fontSize: 20),
                 ),
               ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              'Graphical',
-              style: TextStyle(fontSize: 20),
-            ),
-          ),
-          Expanded(
-            child: Container(
-              color: Colors.grey[300],
-              child: Center(
-                child: Text(
-                  'reports',
-                  style: TextStyle(fontSize: 16),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: GridView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 16.0,
+                    mainAxisSpacing: 16.0,
+                  ),
+                  itemCount: reports.where((report) => report.id == 1).length,
+                  itemBuilder: (context, index) {
+                    final report = reports.where((report) => report.id == 1).toList()[index];
+                    return Card(
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Column(
+                        children: [
+                          Expanded(
+                            flex: 8,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(8.0),
+                                  topRight: Radius.circular(8.0),
+                                ),
+                                image: DecorationImage(
+                                  image: AssetImage('assets/floor_map.png'),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Center(
+                              child: Text(
+                                report.name,
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
               ),
-            ),
-          ),
-        ],
+            ],
+            if (reports.any((report) => report.id == 2)) ...[
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  'Graphical',
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: GridView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 16.0,
+                    mainAxisSpacing: 16.0,
+                  ),
+                  itemCount: reports.where((report) => report.id == 2).length,
+                  itemBuilder: (context, index) {
+                    final report = reports.where((report) => report.id == 2).toList()[index];
+                    return Card(
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Column(
+                        children: [
+                          Expanded(
+                            flex: 8,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(8.0),
+                                  topRight: Radius.circular(8.0),
+                                ),
+                                image: DecorationImage(
+                                  image: AssetImage('assets/floor_map.png'),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Center(
+                              child: Text(
+                                report.name,
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }
