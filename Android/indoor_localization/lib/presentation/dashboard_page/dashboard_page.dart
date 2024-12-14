@@ -3,7 +3,7 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import '../../config/app_colors.dart';
 import '../facilities_page.dart';
 import '../assets_page/assets_page.dart';
-import '../reports_page.dart';
+import '../reports_page/reports_page.dart';
 import 'floor_map_widget.dart'; // Import the new FloorMapWidget
 
 class DashboardPage extends StatefulWidget {
