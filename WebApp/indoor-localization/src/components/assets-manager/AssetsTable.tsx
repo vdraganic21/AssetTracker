@@ -26,8 +26,8 @@ function AssetsTable({ assets }: { assets: Asset[] }) {
         {assets.map((asset) => (
           <tr className="row-bottom-border">
             <td>{asset.name}</td>
-            <td>{asset.GetCurrentFacility()?.name}</td>
-            <td>{asset.GetCurrentZones()[0].name}</td>
+            <td>{asset.GetCurrentFacility()?.name ?? "-"}</td>
+            <td>{asset.GetCurrentZones()[0]?.name ?? "-"}</td>
             <td>
               <SynCheckbox />
             </td>
