@@ -38,6 +38,11 @@ function AssetsManager() {
     applyFilterAndSort(term, filterIndex);
   };
 
+  const handleAddButtonClick = (e: any) => {
+    //TODO implement asset add page loading
+    console.log("Add button clicked");
+  };
+
   const handleFilterChange = (event: SynChangeEvent) => {
     const selectedValue = (event.target as HTMLInputElement).value;
 
@@ -111,7 +116,11 @@ function AssetsManager() {
           <span className="syn-heading--3x-large">Assets</span>
           <div className="button-group">
             <SynButton variant="outline">Delete</SynButton>
-            <SynButton variant="filled" className="syn-border-radius-medium">
+            <SynButton
+              variant="filled"
+              className="syn-border-radius-medium"
+              onClick={handleAddButtonClick}
+            >
               Add
             </SynButton>
           </div>
