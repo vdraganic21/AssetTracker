@@ -38,9 +38,13 @@ function AssetsManager() {
     applyFilterAndSort(term, filterIndex);
   };
 
-  const handleAddButtonClick = (e: any) => {
+  const handleAddButtonClick = () => {
     //TODO implement asset add page loading
     console.log("Add button clicked");
+  };
+
+  const handleDeleteButtonClick = () => {
+    console.log("Delete button clicked");
   };
 
   const handleFilterChange = (event: SynChangeEvent) => {
@@ -115,7 +119,9 @@ function AssetsManager() {
         <div className="header-row">
           <span className="syn-heading--3x-large">Assets</span>
           <div className="button-group">
-            <SynButton variant="outline">Delete</SynButton>
+            <SynButton variant="outline" onClick={handleDeleteButtonClick}>
+              Delete
+            </SynButton>
             <SynButton
               variant="filled"
               className="syn-border-radius-medium"
