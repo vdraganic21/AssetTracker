@@ -42,4 +42,11 @@ public class PositionHistoryController : ControllerBase
         _repository.DeletePositionHistory(id);
         return NoContent();
     }
+
+    [HttpDelete("reset")]
+    public IActionResult Reset()
+    {
+        _repository.Reset();
+        return Ok();
+    }
 }

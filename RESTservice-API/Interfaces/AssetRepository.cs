@@ -41,6 +41,11 @@ public class AssetRepository : IAssetRepository
 
     public void SaveChanges()
     {
-        _context.SaveChanges(); // Save changes to the database
+        _context.SaveChanges();
+    }
+
+    public void Reset()
+    {
+        // Not implemented
     }
 }

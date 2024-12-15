@@ -42,5 +42,10 @@ namespace RESTservice_API.Data
                 _context.SaveChanges();
             }
         }
+
+        public void Reset()
+        {
+            // Not implemented
+        }
     }
 }

@@ -61,4 +61,11 @@ public class AssetsController : ControllerBase
         _repository.SaveChanges();
         return NoContent();
     }
+
+    [HttpDelete("reset")]
+    public IActionResult Reset()
+    {
+        _repository.Reset();
+        return Ok();
+    }
 }
