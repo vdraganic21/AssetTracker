@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import './report.dart';
+import '../../config/app_colors.dart';
 
 class ReportsPage extends StatelessWidget {
   final List<Report> reports = [
@@ -42,10 +43,14 @@ class ReportsPage extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final report = reports.where((report) => report.type == 1).toList()[index];
                     return Card(
-                      color: Colors.white,
+                      color: AppColors.neutral0,
                       elevation: 2,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
+                        side: BorderSide(
+                          color: AppColors.neutral500,
+                          width: 1.0,
+                        ),
                       ),
                       child: Column(
                         children: [
@@ -103,10 +108,14 @@ class ReportsPage extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final report = reports.where((report) => report.type == 2).toList()[index];
                     return Card(
-                      color: Colors.white,
+                      color: AppColors.neutral0,
                       elevation: 2,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
+                        side: BorderSide(
+                          color: AppColors.neutral500,
+                          width: 1.0,
+                        ),
                       ),
                       child: Column(
                         children: [
