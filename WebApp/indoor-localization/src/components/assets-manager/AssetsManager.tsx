@@ -9,8 +9,11 @@ import Footer from "../Footer";
 import "../Manager.css";
 import { AssetService } from "../../services/AssetService";
 import AssetsTable from "./AssetsTable";
-import { useState } from "react";
-import { SynInputEvent } from "@synergy-design-system/react/components/checkbox.js";
+import { useEffect, useState } from "react";
+import {
+  SynChangeEvent,
+  SynInputEvent,
+} from "@synergy-design-system/react/components/checkbox.js";
 
 const assets = AssetService.GetAll();
 
@@ -26,18 +29,80 @@ const sortOptions = [
 function AssetsManager() {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortedAssets, setSortedAssets] = useState(assets);
+  const [filterIndex, setFilterIndex] = useState(0);
 
   const handleSearch = (event: SynInputEvent) => {
     const term = (event.target as HTMLInputElement).value;
     setSearchTerm(term);
 
-    console.log(term);
+    applyFilterAndSort(term, filterIndex);
+  };
 
-    const filteredAssets = assets.filter((asset) =>
-      asset.name.toLowerCase().includes(term)
+  const handleFilterChange = (event: SynChangeEvent) => {
+    const selectedValue = (event.target as HTMLInputElement).value;
+
+    const selectedIndex = sortOptions.findIndex(
+      (option) => option.value === selectedValue
     );
+    setFilterIndex(selectedIndex);
+
+    applyFilterAndSort(searchTerm, selectedIndex);
+  };
+
+  const applyFilterAndSort = (term: string, sortIndex: number) => {
+    let filteredAssets = assets.filter((asset) =>
+      asset.name.toLowerCase().includes(term.toLowerCase())
+    );
+
+    switch (sortOptions[sortIndex]?.value) {
+      case "nameAsc":
+        filteredAssets.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case "nameDesc":
+        filteredAssets.sort((a, b) => b.name.localeCompare(a.name));
+        break;
+      case "facilityAsc":
+        filteredAssets.sort(
+          (a, b) =>
+            a
+              .GetCurrentFacility()
+              ?.name?.localeCompare(b.GetCurrentFacility()?.name || "") || 0
+        );
+        break;
+      case "facilityDesc":
+        filteredAssets.sort(
+          (a, b) =>
+            b
+              .GetCurrentFacility()
+              ?.name?.localeCompare(a.GetCurrentFacility()?.name || "") || 0
+        );
+        break;
+      case "zoneAsc":
+        filteredAssets.sort(
+          (a, b) =>
+            a
+              .GetCurrentFacility()
+              ?.name?.localeCompare(b.GetCurrentFacility()?.name || "") || 0
+        );
+        break;
+      case "zoneDesc":
+        filteredAssets.sort(
+          (a, b) =>
+            b
+              .GetCurrentFacility()
+              ?.name?.localeCompare(a.GetCurrentFacility()?.name || "") || 0
+        );
+        break;
+      default:
+        break;
+    }
+
     setSortedAssets(filteredAssets);
   };
+
+  useEffect(() => {
+    applyFilterAndSort(searchTerm, filterIndex);
+  }, []);
 
   return (
     <>
@@ -60,11 +125,16 @@ function AssetsManager() {
             onSynInput={handleSearch}
           />
           <p>Sort by:</p>
-          <SynSelect value={sortOptions[0]?.value} className="sort-select">
+          <SynSelect
+            value={sortOptions[filterIndex]?.value}
+            onSynChange={handleFilterChange}
+            className="sort-select"
+          >
             {sortOptions.map((sortOption, index) => (
               <SynOption
+                key={index}
                 tabIndex={index}
-                selected={0 == index}
+                selected={index == filterIndex}
                 value={sortOption.value}
               >
                 {sortOption.name}

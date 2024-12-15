@@ -23,8 +23,8 @@ function AssetsTable({ assets }: { assets: Asset[] }) {
         </tr>
       </thead>
       <tbody>
-        {assets.map((asset) => (
-          <tr className="row-bottom-border">
+        {assets.map((asset, index) => (
+          <tr className="row-bottom-border" key={index}>
             <td>{asset.name}</td>
             <td>{asset.GetCurrentFacility()?.name ?? "-"}</td>
             <td>{asset.GetCurrentZones()[0]?.name ?? "-"}</td>
