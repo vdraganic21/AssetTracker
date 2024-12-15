@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import '../config/app_colors.dart';
+import '../../config/app_colors.dart';
+import 'facilities_card.dart';
 
 class FacilitiesPage extends StatefulWidget {
+  const FacilitiesPage({super.key});
+
   @override
   _FacilitiesPageState createState() => _FacilitiesPageState();
 }
@@ -14,6 +17,21 @@ class _FacilitiesPageState extends State<FacilitiesPage> {
       _isAscending = !_isAscending; // Toggle sorting order
     });
   }
+// mock data
+  final List<Map<String, String>> facilities = [
+    {
+      'title': 'Warehouse12 - Sesvete Ludbreške',
+      'imageUrl': 'assets/floor_map.png',
+    },
+    {
+      'title': 'Factory - Ivanec',
+      'imageUrl': 'assets/floor_map.png',
+    },
+    {
+      'title': 'Warehouse78 - Banfica',
+      'imageUrl': 'assets/floor_map.png',
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -83,12 +101,16 @@ class _FacilitiesPageState extends State<FacilitiesPage> {
             ],
           ),
         ),
-        const Expanded(
-          child: Center(
-            child: Text(
-              'Facilities Content',
-              style: TextStyle(fontSize: 20),
-            ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: facilities.length,
+            itemBuilder: (context, index) {
+              final facility = facilities[index];
+              return FacilityCard(
+                title: facility['title']!,
+                imageUrl: facility['imageUrl']!,
+              );
+            },
           ),
         ),
       ],
