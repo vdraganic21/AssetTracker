@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
 import 'presentation/dashboard_page/dashboard_page.dart';
 import 'config/app_colors.dart';
@@ -10,8 +8,6 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key:key);
-
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -19,8 +15,10 @@ class MyApp extends StatelessWidget {
       title: 'Indoor Localization',
       theme: ThemeData(
         primaryColor: AppColors.primary500,
+        scaffoldBackgroundColor: AppColors.neutral0,
+        fontFamily: 'OpenSans',
       ),
-      home: DashboardPage(), // Set LandingPage as the home
+      home: DashboardPage(),
     );
   }
 }
