@@ -3,6 +3,13 @@ import { Asset } from "../../../entities/Asset";
 import "./AssetsSidePanelList.css";
 
 function AssetsSidePaneList({ assets }: { assets: Asset[] }) {
+  if (assets.length == 0)
+    return (
+      <div>
+        <p className="no-assets-message">No assets found.</p>
+      </div>
+    );
+
   return (
     <>
       <SynDivider />
