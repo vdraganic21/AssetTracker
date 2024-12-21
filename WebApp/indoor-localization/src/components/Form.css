@@ -6,6 +6,10 @@
     width: 120px;
 }
 
+.form-input-width{
+    width: 350px;
+}
+
 .form-button-container {
     display: flex;
     gap: var(--syn-spacing-medium);

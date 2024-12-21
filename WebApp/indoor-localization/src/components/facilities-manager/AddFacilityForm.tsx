@@ -13,7 +13,11 @@ function AddFacilityForm() {
       <div className="content content-border">
         <span className="syn-heading--3x-large">Add facility</span>
         <SynDivider className="content-divider" />
-        <SynInput name="name" label="Name"></SynInput>
+        <SynInput
+          name="name"
+          label="Name"
+          className="form-input-width"
+        ></SynInput>
         <SynFile label="Floor map image" className="form-top-margin"></SynFile>
         <div className="form-button-container">
           <SynButton className="form-button">Cancel</SynButton>
