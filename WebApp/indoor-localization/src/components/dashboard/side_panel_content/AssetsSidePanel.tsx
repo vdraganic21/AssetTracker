@@ -1,7 +1,8 @@
-import { SynDivider, SynInput } from "@synergy-design-system/react";
+import { SynInput } from "@synergy-design-system/react";
 import { Asset } from "../../../entities/Asset";
 import { Point } from "../../../entities/Point";
 import "./AssetsSidePanel.css";
+import AssetsSidePaneList from "./AssetsSidePanelList";
 
 function AssetsSidePanel() {
   //const assets = AssetService.GetAll();
@@ -16,15 +17,7 @@ function AssetsSidePanel() {
   return (
     <div>
       <SynInput className="side-panel-asset-search" placeholder="Search" />
-      <SynDivider />
-      {assets.map((asset, index) => (
-        <>
-          <p className="side-panel-asset-list" key={index}>
-            {asset.name}
-          </p>
-          <SynDivider />
-        </>
-      ))}
+      <AssetsSidePaneList assets={assets} />
     </div>
   );
 }

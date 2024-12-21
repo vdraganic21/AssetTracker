@@ -1,8 +1,3 @@
 .side-panel-asset-search{
     margin: var(--syn-spacing-medium);
 }
-
-.side-panel-asset-list{
-    padding: var(--syn-spacing-medium);
-    padding-left: var(--syn-spacing-x-large);
-}
