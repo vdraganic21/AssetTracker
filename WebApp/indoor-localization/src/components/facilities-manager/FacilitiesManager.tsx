@@ -8,6 +8,7 @@ import {
   SynSelect,
 } from "@synergy-design-system/react";
 import FacilityCardContainer from "./FacilityCardContainer";
+import { useNavigate } from "react-router-dom";
 
 const cards = [
   {
@@ -48,6 +49,12 @@ const sortOptions = [
 ];
 
 function FacilitiesManager() {
+  const navigate = useNavigate();
+
+  const handleAddButtonClick = () => {
+    navigate("/facilities/add");
+  };
+
   return (
     <>
       <div className="content content-border">
@@ -55,7 +62,11 @@ function FacilitiesManager() {
           <span className="syn-heading--3x-large">Facilities</span>
           <div className="button-group">
             <SynButton variant="outline">Delete</SynButton>
-            <SynButton variant="filled" className="syn-border-radius-medium">
+            <SynButton
+              variant="filled"
+              className="syn-border-radius-medium"
+              onClick={handleAddButtonClick}
+            >
               Add
             </SynButton>
           </div>
