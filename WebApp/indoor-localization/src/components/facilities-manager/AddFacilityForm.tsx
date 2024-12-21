@@ -1,5 +1,14 @@
+import Footer from "../Footer";
+
 function AddFacilityForm() {
-  return <></>;
+  return (
+    <>
+      <div className="content content-border">
+        <span className="syn-heading--3x-large">Add facility</span>
+      </div>
+      <Footer />
+    </>
+  );
 }
 
 export default AddFacilityForm;
