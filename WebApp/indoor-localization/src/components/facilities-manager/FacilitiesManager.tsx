@@ -9,39 +9,9 @@ import {
 } from "@synergy-design-system/react";
 import FacilityCardContainer from "./FacilityCardContainer";
 import { useNavigate } from "react-router-dom";
+import { FacilityService } from "../../services/FacilityService";
 
-const cards = [
-  {
-    imageSrc: "/floorMapDemo.png",
-    imageAlt: "card image",
-    facilityName: "Warehouse 1",
-  },
-  {
-    imageSrc: "/floorMapDemo.png",
-    imageAlt: "card image",
-    facilityName: "Warehouse 2",
-  },
-  {
-    imageSrc: "/floorMapDemo.png",
-    imageAlt: "card image",
-    facilityName: "Warehouse 3",
-  },
-  {
-    imageSrc: "/floorMapDemo.png",
-    imageAlt: "card image",
-    facilityName: "Warehouse 4",
-  },
-  {
-    imageSrc: "/floorMapDemo.png",
-    imageAlt: "card image",
-    facilityName: "Warehouse 5",
-  },
-  {
-    imageSrc: "/floorMapDemo.png",
-    imageAlt: "card image",
-    facilityName: "Warehouse 5",
-  },
-];
+const facilities = FacilityService.GetAll();
 
 const sortOptions = [
   { name: "Name - asc", value: "nameAsc" },
@@ -88,7 +58,7 @@ function FacilitiesManager() {
           </SynSelect>
         </div>
         <SynDivider className="content-divider" />
-        <FacilityCardContainer cards={cards}></FacilityCardContainer>
+        <FacilityCardContainer facilities={facilities}></FacilityCardContainer>
       </div>
       <Footer />
     </>

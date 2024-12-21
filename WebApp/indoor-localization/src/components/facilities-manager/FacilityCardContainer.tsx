@@ -1,24 +1,15 @@
+import { Facility } from "../../entities/Facility";
 import FacilityCard from "./FacilityCard";
 import "./FacilityCardContainer.css";
 
-type FacilityCardProps = {
-  imageSrc: string;
-  imageAlt: string;
-  facilityName: string;
-};
-
-type FacilityCardContainerProps = {
-  cards: FacilityCardProps[];
-};
-
-function FacilityCardContainer({ cards }: FacilityCardContainerProps) {
+function FacilityCardContainer({ facilities }: { facilities: Facility[] }) {
   return (
     <div className="facility-card-container">
-      {cards.map((card) => (
+      {facilities.map((facility) => (
         <FacilityCard
-          imageSrc={card.imageSrc}
-          imageAlt={card.imageAlt}
-          facilityName={card.facilityName}
+          imageSrc={facility.imageBase64}
+          imageAlt={facility.name}
+          facilityName={facility.name}
         />
       ))}
     </div>
