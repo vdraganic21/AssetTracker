@@ -1,3 +1,16 @@
 .form-top-margin{
     margin-top: var(--syn-spacing-large);
 }
+
+.form-button{
+    width: 120px;
+}
+
+.form-button-container {
+    display: flex;
+    gap: var(--syn-spacing-medium);
+    flex-direction: row;
+    flex: 1;
+    align-items: flex-end;
+    justify-content: flex-end;
+}
