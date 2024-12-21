@@ -30,13 +30,13 @@ function DashboardSidePanel() {
   };
 
   const panelItems = [
-    { name: "Assets", imageSrc: "/logo192.png", content: AssetsSidePanel() },
+    { name: "Assets", imageSrc: "/logo192.png", content: AssetsSidePanel },
     {
       name: "Facilities",
       imageSrc: "/logo192.png",
-      content: FacilitiesSidePanel(),
+      content: FacilitiesSidePanel,
     },
-    { name: "Zones", imageSrc: "/logo192.png", content: ZonesSidePanel() },
+    { name: "Zones", imageSrc: "/logo192.png", content: ZonesSidePanel },
   ];
 
   return (
@@ -48,7 +48,7 @@ function DashboardSidePanel() {
             imageSrc={item.imageSrc}
             name={item.name}
             selected={selectedItem === item.name}
-            onClick={() => handleItemClick(item.name, item.content)}
+            onClick={() => handleItemClick(item.name, <item.content />)}
           />
         ))}
       </div>
