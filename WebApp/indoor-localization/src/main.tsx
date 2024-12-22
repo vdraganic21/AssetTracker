@@ -11,6 +11,9 @@ import "@fontsource/open-sans/600.css";
 import "@fontsource/open-sans/600-italic.css";
 import "@fontsource/open-sans/700.css";
 import "@fontsource/open-sans/700-italic.css";
+import { MockDataInitializer } from "./data-access/mock-repositories/MockDataInitializer.ts";
+
+MockDataInitializer.initializeData(); //Initializes mock data repositories, use for testing and dev purposes
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

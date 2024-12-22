@@ -7,6 +7,7 @@ import ReportsPage from "./components/reports-page/ReportsPage";
 import AssetsManager from "./components/AssetsManager";
 import AddFacilityForm from "./components/facilities-manager/AddFacilityForm";
 
+
 function App() {
   return (
     <div className="application">

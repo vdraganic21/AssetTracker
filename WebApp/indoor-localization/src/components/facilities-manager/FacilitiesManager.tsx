@@ -58,7 +58,9 @@ function FacilitiesManager() {
           </SynSelect>
         </div>
         <SynDivider className="content-divider" />
-        <FacilityCardContainer facilities={facilities}></FacilityCardContainer>
+        <div className="scrollable-list">
+          <FacilityCardContainer facilities={facilities}></FacilityCardContainer>
+        </div>
       </div>
       <Footer />
     </>
