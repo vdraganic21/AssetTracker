@@ -158,7 +158,9 @@ function AssetsManager() {
           </SynSelect>
         </div>
         <SynDivider className="content-divider" />
-        <AssetsTable assets={sortedAssets}></AssetsTable>
+        <div className="scrollable-list">
+          <AssetsTable assets={sortedAssets} />
+        </div>
       </div>
       <Footer></Footer>
     </>
