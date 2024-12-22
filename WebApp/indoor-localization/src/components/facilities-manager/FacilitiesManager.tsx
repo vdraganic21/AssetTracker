@@ -8,39 +8,10 @@ import {
   SynSelect,
 } from "@synergy-design-system/react";
 import FacilityCardContainer from "./FacilityCardContainer";
+import { useNavigate } from "react-router-dom";
+import { FacilityService } from "../../services/FacilityService";
 
-const cards = [
-  {
-    imageSrc: "/floorMapDemo.png",
-    imageAlt: "card image",
-    facilityName: "Warehouse 1",
-  },
-  {
-    imageSrc: "/floorMapDemo.png",
-    imageAlt: "card image",
-    facilityName: "Warehouse 2",
-  },
-  {
-    imageSrc: "/floorMapDemo.png",
-    imageAlt: "card image",
-    facilityName: "Warehouse 3",
-  },
-  {
-    imageSrc: "/floorMapDemo.png",
-    imageAlt: "card image",
-    facilityName: "Warehouse 4",
-  },
-  {
-    imageSrc: "/floorMapDemo.png",
-    imageAlt: "card image",
-    facilityName: "Warehouse 5",
-  },
-  {
-    imageSrc: "/floorMapDemo.png",
-    imageAlt: "card image",
-    facilityName: "Warehouse 5",
-  },
-];
+const facilities = FacilityService.GetAll();
 
 const sortOptions = [
   { name: "Name - asc", value: "nameAsc" },
@@ -48,6 +19,12 @@ const sortOptions = [
 ];
 
 function FacilitiesManager() {
+  const navigate = useNavigate();
+
+  const handleAddButtonClick = () => {
+    navigate("/facilities/add");
+  };
+
   return (
     <>
       <div className="content content-border">
@@ -55,7 +32,11 @@ function FacilitiesManager() {
           <span className="syn-heading--3x-large">Facilities</span>
           <div className="button-group">
             <SynButton variant="outline">Delete</SynButton>
-            <SynButton variant="filled" className="syn-border-radius-medium">
+            <SynButton
+              variant="filled"
+              className="syn-border-radius-medium"
+              onClick={handleAddButtonClick}
+            >
               Add
             </SynButton>
           </div>
@@ -78,7 +59,7 @@ function FacilitiesManager() {
         </div>
         <SynDivider className="content-divider" />
         <div className="scrollable-list">
-          <FacilityCardContainer cards={cards}></FacilityCardContainer>
+          <FacilityCardContainer facilities={facilities}></FacilityCardContainer>
         </div>
       </div>
       <Footer />
