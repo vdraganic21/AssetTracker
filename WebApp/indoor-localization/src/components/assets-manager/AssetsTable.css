@@ -7,3 +7,9 @@
 .syn-table--default {
     width: 100% !important;
 }
+
+.syn-table--default thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
