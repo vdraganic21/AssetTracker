@@ -31,3 +31,9 @@
   display: flex;
   gap: var(--syn-spacing-x-small);
 }
+
+.scrollable-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
