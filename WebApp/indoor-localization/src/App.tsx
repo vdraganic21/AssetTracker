@@ -4,9 +4,8 @@ import Header from "./components/Header";
 import Dashboard from "./components/dashboard/Dashboard";
 import FacilitiesManager from "./components/facilities-manager/FacilitiesManager";
 import ReportsPage from "./components/reports-page/ReportsPage";
-import AssetsManager from "./components/AssetsManager";
+import AssetsManager from "./components/assets-manager/AssetsManager";
 import AddFacilityForm from "./components/facilities-manager/AddFacilityForm";
-
 
 function App() {
   return (
