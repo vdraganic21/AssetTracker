@@ -3,13 +3,11 @@ import {
   SynNavItem,
   SynPrioNav,
 } from "@synergy-design-system/react";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function Header() {
   const navigate = useNavigate();
-  const [currentNavIndex, setCurrentNavIndex] = useState(0);
-
+  const location = useLocation();
   const navigationItems = [
     { displayString: "Dashboard", route: "/" },
     { displayString: "Assets", route: "/assets" },
@@ -17,9 +15,8 @@ function Header() {
     { displayString: "Reports", route: "/reports" },
   ];
 
-  const handleNavClick = (index: number, route: string) => {
-    setCurrentNavIndex(index);
-    navigate(route);
+  const isPathActive = (path: string) => {
+    return location.pathname === path;
   };
 
   return (
@@ -28,9 +25,9 @@ function Header() {
         {navigationItems.map((navigationItem, index) => (
           <SynNavItem
             key={"navItem" + index}
-            current={index === currentNavIndex}
+            current={isPathActive(navigationItem.route)}
             horizontal={true}
-            onClick={() => handleNavClick(index, navigationItem.route)}
+            onClick={() => navigate(navigationItem.route)}
           >
             {navigationItem.displayString}
           </SynNavItem>
