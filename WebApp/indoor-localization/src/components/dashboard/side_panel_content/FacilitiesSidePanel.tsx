@@ -1,4 +1,4 @@
-import { SynInput } from "@synergy-design-system/react";
+import { SynDivider, SynInput } from "@synergy-design-system/react";
 import FacilityCardContainer from "../../facilities-manager/FacilityCardContainer";
 import { FacilityService } from "../../../services/FacilityService";
 import { useEffect, useState } from "react";
@@ -31,6 +31,7 @@ function FacilitiesSidePanel() {
         placeholder="Search"
         onSynInput={handleSearch}
       />
+      <SynDivider />
       <div className="scrollable-list">
         <FacilityCardContainer facilities={filteredFacilities} />
       </div>
