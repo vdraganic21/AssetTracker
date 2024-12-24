@@ -43,10 +43,6 @@ function AssetsManager() {
     console.log("Add button clicked");
   };
 
-  const handleDeleteButtonClick = () => {
-    console.log("Delete button clicked");
-  };
-
   const handleFilterChange = (event: SynChangeEvent) => {
     const selectedValue = (event.target as HTMLInputElement).value;
 
@@ -119,9 +115,6 @@ function AssetsManager() {
         <div className="header-row">
           <span className="syn-heading--3x-large">Assets</span>
           <div className="button-group">
-            <SynButton variant="outline" onClick={handleDeleteButtonClick}>
-              Delete
-            </SynButton>
             <SynButton
               variant="filled"
               className="syn-border-radius-medium"
