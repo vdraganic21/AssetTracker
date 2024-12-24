@@ -24,3 +24,15 @@
   visibility: visible;
   opacity: 1;
 }
+
+.hover-row {
+  transition: background-color 0.05s ease-in-out;
+}
+
+.hover-row:hover {
+  background-color: var(--syn-color-neutral-100);
+}
+
+.hover-row:hover td {
+  background: transparent;
+}
