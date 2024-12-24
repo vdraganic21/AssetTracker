@@ -8,6 +8,7 @@ This folder contains SQL scripts for managing the database schemas and data for 
 - `initialize_schema.sql`: Fills the database with tables.
 - `wipe_tables.sql`: Deletes all data from the tables while maintaining foreign key integrity.
 - `fill_tables_.sql`: Populates the database with sample data.
+- `full_setup_database.sql`: Creates a database and fills it with tables and data.
 
 ## Usage
 
