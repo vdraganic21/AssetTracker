@@ -24,12 +24,16 @@ function AssetsTable({ assets }: { assets: Asset[] }) {
       </thead>
       <tbody>
         {assets.map((asset, index) => (
-          <tr className="row-bottom-border" key={index}>
+          <tr className="row-bottom-border hover-row" key={index}>
             <td>{asset.name}</td>
             <td>{asset.GetCurrentFacility()?.name ?? "-"}</td>
             <td>{asset.GetCurrentZones()[0]?.name ?? "-"}</td>
-            <td>
-              <SynIcon library="fa" name="far-edit"></SynIcon>
+            <td className="icon-cell">
+              <SynIcon
+                library="fa"
+                name="far-edit"
+                className="table-icon"
+              ></SynIcon>
             </td>
           </tr>
         ))}
