@@ -6,6 +6,7 @@ import FacilitiesManager from "./components/facilities-manager/FacilitiesManager
 import ReportsPage from "./components/reports-page/ReportsPage";
 import AssetsManager from "./components/assets-manager/AssetsManager";
 import AddFacilityForm from "./components/facilities-manager/AddFacilityForm";
+import EditAssetForm from "./components/assets-manager/EditAssetForm";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/facilities" element={<FacilitiesManager />} />
         <Route path="/reports" element={<ReportsPage />} />
         <Route path="/facilities/add" element={<AddFacilityForm />} />
+        <Route path="/assets/edit/:id" element={<EditAssetForm />} />
       </Routes>
     </div>
   );
