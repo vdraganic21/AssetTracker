@@ -1,4 +1,4 @@
-import { SynCheckbox } from "@synergy-design-system/react";
+import { SynIcon } from "@synergy-design-system/react";
 import { Asset } from "../../entities/Asset";
 import "./AssetsTable.css";
 
@@ -29,7 +29,7 @@ function AssetsTable({ assets }: { assets: Asset[] }) {
             <td>{asset.GetCurrentFacility()?.name ?? "-"}</td>
             <td>{asset.GetCurrentZones()[0]?.name ?? "-"}</td>
             <td>
-              <SynCheckbox />
+              <SynIcon library="fa" name="far-edit"></SynIcon>
             </td>
           </tr>
         ))}
