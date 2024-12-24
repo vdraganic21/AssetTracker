@@ -1,8 +1,11 @@
 import { SynIcon } from "@synergy-design-system/react";
 import { Asset } from "../../entities/Asset";
 import "./AssetsTable.css";
+import { useNavigate } from "react-router-dom";
 
 function AssetsTable({ assets }: { assets: Asset[] }) {
+  const navigate = useNavigate();
+
   if (assets.length == 0)
     return (
       <div>
@@ -33,6 +36,9 @@ function AssetsTable({ assets }: { assets: Asset[] }) {
                 library="fa"
                 name="far-edit"
                 className="table-icon"
+                onClick={() => {
+                  navigate(`/assets/edit/${asset.id}`);
+                }}
               ></SynIcon>
             </td>
           </tr>
