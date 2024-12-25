@@ -12,23 +12,29 @@ using AiR_Simulator.Entities;
 
 namespace AssetDataSimulator
 {
-    class Program
+    public class ProgramSimulator
     {
         private static string brokerUrl = Environment.GetEnvironmentVariable("MQTT_BROKER_URL") ?? "localhost";
         private static int brokerPort = int.Parse(Environment.GetEnvironmentVariable("MQTT_BROKER_PORT") ?? "1883");
         private static string topic = Environment.GetEnvironmentVariable("ASSET_TOPIC") ?? "assets/location";
         private static int messageIntervalMiliseconds = int.Parse(Environment.GetEnvironmentVariable("MESSAGE_INTERVAL") ?? "1000");
-        private static string jsonFilePath = "../../assets.json";
+        private static string jsonFilePath = "../../../assets.json";
         private static double movementSpeed = 1.0;
-        
-        static async Task Main(string[] args)
+        public static AssetSimulator simulator;
+
+        public static event Action AssetsLoaded;
+
+        public static async Task Main(string[] args)
         {
             LoadEnv();
 
             OutputStartMessages();
 
             Console.WriteLine("Press any key to start...");
-            Console.ReadKey();
+            if (!Console.IsInputRedirected)
+            {
+                Console.ReadKey();
+            }
 
             var mqttFactory = new MqttFactory();
             var mqttClient = mqttFactory.CreateMqttClient();
@@ -69,7 +75,10 @@ namespace AssetDataSimulator
                 return;
             }
 
-            var simulator = new AssetSimulator(assets);
+            simulator = new AssetSimulator(assets);
+
+            // Trigger the AssetsLoaded event after simulator initialization
+            AssetsLoaded?.Invoke();
 
             while (true)
             {

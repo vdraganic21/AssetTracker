@@ -11,6 +11,9 @@ namespace AiR_Simulator.Entities
         public List<(double X, double Y)> Positions { get; }
         private int _currentPositionIndex;
 
+        public bool IsManualControl { get; private set; } = false; // Manual control flag
+        private double _manualTargetX, _manualTargetY;
+
         public Asset(int assetId, List<(double X, double Y)> positions)
         {
             AssetId = assetId;
@@ -23,38 +26,67 @@ namespace AiR_Simulator.Entities
             _currentPositionIndex = 0;
         }
 
+        public void SetManualTarget(double targetX, double targetY)
+        {
+            IsManualControl = true;
+            _manualTargetX = targetX;
+            _manualTargetY = targetY;
+        }
+
         public void MoveTowardNextPosition(double speed)
         {
-            if (Positions.Count == 0)
+            if (IsManualControl)
             {
-                Console.WriteLine($"Asset {AssetId} has no positions to move to.");
-                return;
+                // Move toward the manual target
+                double dx = _manualTargetX - X;
+                double dy = _manualTargetY - Y;
+                double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                const double arrivalThreshold = 0.1;
+
+                if (distance <= arrivalThreshold)
+                {
+                    X = _manualTargetX;
+                    Y = _manualTargetY;
+                    IsManualControl = false; // Disable manual control when the target is reached
+                    return;
+                }
+
+                double moveDistance = Math.Min(speed, distance);
+                double stepX = dx / distance * moveDistance;
+                double stepY = dy / distance * moveDistance;
+
+                X += stepX;
+                Y += stepY;
             }
-
-            var (goalX, goalY) = Positions[_currentPositionIndex];
-
-            double dx = goalX - X;
-            double dy = goalY - Y;
-            double distance = Math.Sqrt(dx * dx + dy * dy);
-
-            const double arrivalThreshold = 0.1;
-
-            if (distance <= arrivalThreshold)
+            else
             {
-                X = goalX;
-                Y = goalY;
-                Console.WriteLine($"Asset {AssetId} reached position ({goalX}, {goalY}).");
+                // Automatic movement
+                if (Positions.Count == 0) return;
 
-                _currentPositionIndex = (_currentPositionIndex + 1) % Positions.Count;
-                return;
+                var (goalX, goalY) = Positions[_currentPositionIndex];
+                double dx = goalX - X;
+                double dy = goalY - Y;
+                double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                const double arrivalThreshold = 0.1;
+
+                if (distance <= arrivalThreshold)
+                {
+                    X = goalX;
+                    Y = goalY;
+                    _currentPositionIndex = (_currentPositionIndex + 1) % Positions.Count;
+                    return;
+                }
+
+                double moveDistance = Math.Min(speed, distance);
+                double stepX = dx / distance * moveDistance;
+                double stepY = dy / distance * moveDistance;
+
+                X += stepX;
+                Y += stepY;
             }
-
-            double moveDistance = Math.Min(speed, distance);
-            double stepX = dx / distance * moveDistance;
-            double stepY = dy / distance * moveDistance;
-
-            X += stepX;
-            Y += stepY;
         }
     }
+
 }
