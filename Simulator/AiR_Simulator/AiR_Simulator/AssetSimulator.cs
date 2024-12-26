@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text.Json;
 using AiR_Simulator.Entities;
@@ -23,10 +24,10 @@ namespace AssetDataSimulator
             {
                 asset.MoveTowardNextPosition(speed);
 
-                result.Add($"{{\"asset_id\":{asset.AssetId},\"x\":{asset.X},\"y\":{asset.Y},\"status\":\"active\",\"timestamp\":\"{DateTime.UtcNow:yyyy-MM-ddTHH:mm:ss.fffZ}\"}}");
+                result.Add($"{{\"asset_id\":{asset.AssetId},\"x\":{asset.X.ToString(CultureInfo.InvariantCulture)},\"y\":{asset.Y.ToString(CultureInfo.InvariantCulture)},\"status\":\"active\",\"timestamp\":\"{DateTime.UtcNow:yyyy-MM-ddTHH:mm:ss.fffZ}\"}}");
             }
 
-            return result;
+            return result; 
         }
     }
 }
