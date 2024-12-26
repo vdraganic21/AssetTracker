@@ -7,6 +7,7 @@ namespace RESTservice_API.Data
     public class MockPositionHistoryRepository : IPositionHistoryRepository
     {
         private List<PositionHistory> _positionHistories;
+        private int _currentId = 2;
 
         public MockPositionHistoryRepository()
         {
@@ -29,6 +30,7 @@ namespace RESTservice_API.Data
 
         public void AddPositionHistory(PositionHistory positionHistory)
         {
+            positionHistory.Id = ++_currentId;
             _positionHistories.Add(positionHistory);
         }
 
