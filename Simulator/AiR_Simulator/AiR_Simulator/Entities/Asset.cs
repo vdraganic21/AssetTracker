@@ -10,8 +10,10 @@ namespace AiR_Simulator.Entities
         public double Y { get; private set; }
         public List<(double X, double Y)> Positions { get; }
         private int _currentPositionIndex;
+        public double TargetX { get; private set; }
+        public double TargetY { get; private set; }
 
-        public bool IsManualControl { get; private set; } = false; // Manual control flag
+        public bool IsManualControl { get; private set; } = false;
         private double _manualTargetX, _manualTargetY;
 
         public Asset(int assetId, List<(double X, double Y)> positions)
@@ -22,6 +24,9 @@ namespace AiR_Simulator.Entities
             {
                 X = Positions[0].X;
                 Y = Positions[0].Y;
+
+                TargetX = Positions[0].X;
+                TargetY = Positions[0].Y;
             }
             _currentPositionIndex = 0;
         }
@@ -31,13 +36,20 @@ namespace AiR_Simulator.Entities
             IsManualControl = true;
             _manualTargetX = targetX;
             _manualTargetY = targetY;
+
+            TargetX = targetX;
+            TargetY = targetY;
+        }
+
+        public bool HasTarget()
+        {
+            return !double.IsNaN(TargetX) && !double.IsNaN(TargetY);
         }
 
         public void MoveTowardNextPosition(double speed)
         {
             if (IsManualControl)
             {
-                // Move toward the manual target
                 double dx = _manualTargetX - X;
                 double dy = _manualTargetY - Y;
                 double distance = Math.Sqrt(dx * dx + dy * dy);
@@ -48,7 +60,10 @@ namespace AiR_Simulator.Entities
                 {
                     X = _manualTargetX;
                     Y = _manualTargetY;
-                    IsManualControl = false; // Disable manual control when the target is reached
+
+                    IsManualControl = false;
+
+                    UpdateAutomaticTarget();
                     return;
                 }
 
@@ -61,7 +76,6 @@ namespace AiR_Simulator.Entities
             }
             else
             {
-                // Automatic movement
                 if (Positions.Count == 0) return;
 
                 var (goalX, goalY) = Positions[_currentPositionIndex];
@@ -75,7 +89,10 @@ namespace AiR_Simulator.Entities
                 {
                     X = goalX;
                     Y = goalY;
+
+                    // Update to the next target position
                     _currentPositionIndex = (_currentPositionIndex + 1) % Positions.Count;
+                    UpdateAutomaticTarget();
                     return;
                 }
 
@@ -87,6 +104,20 @@ namespace AiR_Simulator.Entities
                 Y += stepY;
             }
         }
-    }
 
+        private void UpdateAutomaticTarget()
+        {
+            if (Positions.Count > 0)
+            {
+                var (nextTargetX, nextTargetY) = Positions[_currentPositionIndex];
+                TargetX = nextTargetX;
+                TargetY = nextTargetY;
+            }
+            else
+            {
+                TargetX = double.NaN;
+                TargetY = double.NaN;
+            }
+        }
+    }
 }

@@ -28,10 +28,8 @@ namespace SimulatorControlUI
 
         private void StartSimulator()
         {
-            // Subscribe to the AssetsLoaded event before starting the simulation
             ProgramSimulator.AssetsLoaded += OnAssetsLoaded;
 
-            // Run ProgramSimulator.Main asynchronously using Task.Run to avoid blocking the UI thread
             Task.Run(async () =>
             {
                 await ProgramSimulator.Main(new string[] { });
@@ -40,7 +38,6 @@ namespace SimulatorControlUI
 
         private void OnAssetsLoaded()
         {
-            // This method is called when assets are loaded
             if (ProgramSimulator.simulator != null && ProgramSimulator.simulator.Assets != null && ProgramSimulator.simulator.Assets.Count > 0)
             {
                 PopulateAssetList();
@@ -53,7 +50,7 @@ namespace SimulatorControlUI
 
         private void PopulateAssetList()
         {
-            var simulatorInstance = ProgramSimulator.simulator;  // Use the simulator instance from ProgramSimulator
+            var simulatorInstance = ProgramSimulator.simulator;
 
             if (simulatorInstance == null || simulatorInstance.Assets == null || simulatorInstance.Assets.Count == 0)
             {
@@ -61,14 +58,12 @@ namespace SimulatorControlUI
                 return;
             }
 
-            // Populate the combo box with assets
             AssetSelectorComboBox.Items.Clear();
             foreach (var asset in simulatorInstance.Assets)
             {
                 AssetSelectorComboBox.Items.Add($"Asset {asset.AssetId}");
             }
 
-            // Set the default selected asset if there are assets
             if (simulatorInstance.Assets.Count > 0)
             {
                 AssetSelectorComboBox.SelectedIndex = 0;
@@ -79,7 +74,7 @@ namespace SimulatorControlUI
         private void AssetSelectorComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             var selectedIndex = AssetSelectorComboBox.SelectedIndex;
-            var simulatorInstance = ProgramSimulator.simulator;  // Use the simulator instance from ProgramSimulator
+            var simulatorInstance = ProgramSimulator.simulator;
             if (selectedIndex >= 0)
             {
                 selectedAsset = simulatorInstance.Assets[selectedIndex];
@@ -93,7 +88,7 @@ namespace SimulatorControlUI
 
         private void DrawAssets(Graphics g)
         {
-            var simulatorInstance = ProgramSimulator.simulator;  // Use the simulator instance from ProgramSimulator
+            var simulatorInstance = ProgramSimulator.simulator;
 
             if (simulatorInstance == null || simulatorInstance.Assets == null)
             {
@@ -102,20 +97,39 @@ namespace SimulatorControlUI
 
             const float MapScale = 10f;
             const float AssetRadius = 5f;
+            const float TargetRadius = 3f;
 
             foreach (var asset in simulatorInstance.Assets)
             {
+                // Draw the asset as a blue circle
                 g.FillEllipse(Brushes.Blue,
                     (float)(asset.X * MapScale - AssetRadius),
                     (float)(asset.Y * MapScale - AssetRadius),
                     AssetRadius * 2,
                     AssetRadius * 2);
 
+                // Draw the asset ID
                 g.DrawString(asset.AssetId.ToString(), this.Font, Brushes.Black,
                     (float)(asset.X * MapScale),
                     (float)(asset.Y * MapScale));
+
+                if (asset.HasTarget()) 
+                {
+                    g.FillEllipse(Brushes.Red,
+                        (float)(asset.TargetX * MapScale - TargetRadius),
+                        (float)(asset.TargetY * MapScale - TargetRadius),
+                        TargetRadius * 2,
+                        TargetRadius * 2);
+
+                    // Draw the asset ID next to the red dot (target)
+                    g.DrawString(asset.AssetId.ToString(), this.Font, Brushes.Black,
+                        (float)(asset.TargetX * MapScale) + 5,
+                        (float)(asset.TargetY * MapScale) + 5);
+                }
             }
         }
+
+
 
         private void MapPictureBox_MouseClick(object sender, MouseEventArgs e)
         {
@@ -154,5 +168,27 @@ namespace SimulatorControlUI
         {
             MapPictureBox.Invalidate();
         }
+        private void LegendPanel_Paint(object sender, PaintEventArgs e)
+        {
+            Graphics g = e.Graphics;
+
+            const float LegendItemHeight = 20f;
+            const float LegendItemWidth = 20f;
+            const float TextOffset = 30f;
+            float yPosition = 10f; 
+
+            g.FillEllipse(Brushes.Blue, 10, yPosition, LegendItemWidth, LegendItemHeight);
+            g.DrawString("Current Position", this.Font, Brushes.Black, 40, yPosition);
+
+            yPosition += LegendItemHeight + 10; 
+
+            g.FillEllipse(Brushes.Red, 10, yPosition, LegendItemWidth, LegendItemHeight);
+            g.DrawString("Target Position", this.Font, Brushes.Black, 40, yPosition);
+
+            yPosition += LegendItemHeight + 10; 
+
+            g.DrawString("ID Label: Asset ID", this.Font, Brushes.Black, 10, yPosition);
+        }
+
     }
 }

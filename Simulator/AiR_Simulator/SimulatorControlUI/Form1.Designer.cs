@@ -32,6 +32,8 @@
             MapPictureBox = new PictureBox();
             AssetSelectorComboBox = new ComboBox();
             RefreshButton = new Button();
+            backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            LegendPanel = new Panel();
             ((System.ComponentModel.ISupportInitialize)MapPictureBox).BeginInit();
             SuspendLayout();
             // 
@@ -39,9 +41,9 @@
             // 
             MapPictureBox.BackgroundImage = (Image)resources.GetObject("MapPictureBox.BackgroundImage");
             MapPictureBox.BackgroundImageLayout = ImageLayout.Stretch;
-            MapPictureBox.Location = new Point(12, 59);
+            MapPictureBox.Location = new Point(12, 12);
             MapPictureBox.Name = "MapPictureBox";
-            MapPictureBox.Size = new Size(873, 548);
+            MapPictureBox.Size = new Size(687, 541);
             MapPictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
             MapPictureBox.TabIndex = 0;
             MapPictureBox.TabStop = false;
@@ -50,14 +52,15 @@
             // AssetSelectorComboBox
             // 
             AssetSelectorComboBox.FormattingEnabled = true;
-            AssetSelectorComboBox.Location = new Point(34, 12);
+            AssetSelectorComboBox.Location = new Point(717, 12);
             AssetSelectorComboBox.Name = "AssetSelectorComboBox";
             AssetSelectorComboBox.Size = new Size(151, 28);
             AssetSelectorComboBox.TabIndex = 1;
+            AssetSelectorComboBox.SelectedIndexChanged += AssetSelectorComboBox_SelectedIndexChanged;
             // 
             // RefreshButton
             // 
-            RefreshButton.Location = new Point(191, 12);
+            RefreshButton.Location = new Point(874, 12);
             RefreshButton.Name = "RefreshButton";
             RefreshButton.Size = new Size(94, 29);
             RefreshButton.TabIndex = 2;
@@ -65,11 +68,20 @@
             RefreshButton.UseVisualStyleBackColor = true;
             RefreshButton.Click += RefreshButton_Click;
             // 
+            // LegendPanel
+            // 
+            LegendPanel.Location = new Point(717, 47);
+            LegendPanel.Name = "LegendPanel";
+            LegendPanel.Size = new Size(297, 286);
+            LegendPanel.TabIndex = 3;
+            LegendPanel.Paint += LegendPanel_Paint;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(983, 661);
+            ClientSize = new Size(1026, 563);
+            Controls.Add(LegendPanel);
             Controls.Add(RefreshButton);
             Controls.Add(AssetSelectorComboBox);
             Controls.Add(MapPictureBox);
@@ -85,5 +97,7 @@
         private PictureBox MapPictureBox;
         private ComboBox AssetSelectorComboBox;
         private Button RefreshButton;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
+        private Panel LegendPanel;
     }
 }
