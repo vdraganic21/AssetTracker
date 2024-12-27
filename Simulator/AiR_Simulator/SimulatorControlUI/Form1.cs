@@ -38,36 +38,50 @@ namespace SimulatorControlUI
 
         private void OnAssetsLoaded()
         {
-            if (ProgramSimulator.simulator != null && ProgramSimulator.simulator.Assets != null && ProgramSimulator.simulator.Assets.Count > 0)
+            if (this.InvokeRequired)
             {
-                PopulateAssetList();
+                this.Invoke((MethodInvoker)OnAssetsLoaded);
             }
             else
             {
-                MessageBox.Show("Failed to load assets. Check simulator initialization.");
+                if (ProgramSimulator.simulator != null && ProgramSimulator.simulator.Assets != null && ProgramSimulator.simulator.Assets.Count > 0)
+                {
+                    PopulateAssetList();
+                }
+                else
+                {
+                    MessageBox.Show("Failed to load assets. Check simulator initialization.");
+                }
             }
         }
 
         private void PopulateAssetList()
         {
-            var simulatorInstance = ProgramSimulator.simulator;
-
-            if (simulatorInstance == null || simulatorInstance.Assets == null || simulatorInstance.Assets.Count == 0)
+            if (this.InvokeRequired)
             {
-                MessageBox.Show("Simulator or assets are not properly initialized.");
-                return;
+                this.Invoke((MethodInvoker)PopulateAssetList);
             }
-
-            AssetSelectorComboBox.Items.Clear();
-            foreach (var asset in simulatorInstance.Assets)
+            else
             {
-                AssetSelectorComboBox.Items.Add($"Asset {asset.AssetId}");
-            }
+                var simulatorInstance = ProgramSimulator.simulator;
 
-            if (simulatorInstance.Assets.Count > 0)
-            {
-                AssetSelectorComboBox.SelectedIndex = 0;
-                selectedAsset = simulatorInstance.Assets[0];
+                if (simulatorInstance == null || simulatorInstance.Assets == null || simulatorInstance.Assets.Count == 0)
+                {
+                    MessageBox.Show("Simulator or assets are not properly initialized.");
+                    return;
+                }
+
+                AssetSelectorComboBox.Items.Clear();
+                foreach (var asset in simulatorInstance.Assets)
+                {
+                    AssetSelectorComboBox.Items.Add($"Asset {asset.AssetId}");
+                }
+
+                if (simulatorInstance.Assets.Count > 0)
+                {
+                    AssetSelectorComboBox.SelectedIndex = 0;
+                    selectedAsset = simulatorInstance.Assets[0];
+                }
             }
         }
 
