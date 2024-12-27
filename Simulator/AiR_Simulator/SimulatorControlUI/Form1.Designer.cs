@@ -34,6 +34,7 @@
             RefreshButton = new Button();
             backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             LegendPanel = new Panel();
+            FloorplanSelectorComboBox = new ComboBox();
             ((System.ComponentModel.ISupportInitialize)MapPictureBox).BeginInit();
             SuspendLayout();
             // 
@@ -70,17 +71,27 @@
             // 
             // LegendPanel
             // 
-            LegendPanel.Location = new Point(717, 47);
+            LegendPanel.Location = new Point(717, 95);
             LegendPanel.Name = "LegendPanel";
             LegendPanel.Size = new Size(297, 286);
             LegendPanel.TabIndex = 3;
             LegendPanel.Paint += LegendPanel_Paint;
+            // 
+            // FloorplanSelectorComboBox
+            // 
+            FloorplanSelectorComboBox.FormattingEnabled = true;
+            FloorplanSelectorComboBox.Location = new Point(717, 46);
+            FloorplanSelectorComboBox.Name = "FloorplanSelectorComboBox";
+            FloorplanSelectorComboBox.Size = new Size(151, 28);
+            FloorplanSelectorComboBox.TabIndex = 4;
+            FloorplanSelectorComboBox.SelectedIndexChanged += FloorplanSelectorComboBox_SelectedIndexChanged;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1026, 563);
+            Controls.Add(FloorplanSelectorComboBox);
             Controls.Add(LegendPanel);
             Controls.Add(RefreshButton);
             Controls.Add(AssetSelectorComboBox);
@@ -99,5 +110,6 @@
         private Button RefreshButton;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private Panel LegendPanel;
+        private ComboBox FloorplanSelectorComboBox;
     }
 }

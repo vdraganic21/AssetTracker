@@ -1,4 +1,5 @@
 ﻿using AiR_Simulator.Entities;
+using AssetDataSimulator;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,39 +9,72 @@ namespace AiR_Simulator.DataAccess
 {
     public static class AssetJsonLoader
     {
-        public static List<Asset> Load(string jsonFilePath)
+        public static void Load(string jsonFilePath, ref List<Asset> assets, ref List<Floorplan> floorplans)
         {
-            if (!File.Exists(jsonFilePath)) return null;
+            if (!File.Exists(jsonFilePath))
+            {
+                Console.WriteLine("JSON file not found.");
+                return;
+            }
 
             try
             {
                 var jsonData = File.ReadAllText(jsonFilePath);
-                var assetDataList = JsonSerializer.Deserialize<List<AssetJsonObject>>(jsonData);
+                var floorplansData = JsonSerializer.Deserialize<List<FloorplanJsonObject>>(jsonData);
 
-                var assets = new List<Asset>();
-
-                if (assetDataList == null || assetDataList.Count == 0)
+                if (floorplansData == null || floorplansData.Count == 0)
                 {
-                    return assets;
+                    Console.WriteLine("No floorplans found in the JSON file.");
+                    return;
                 }
 
-                foreach (var assetData in assetDataList)
+                assets.Clear();
+                floorplans.Clear();
+
+                foreach (var floorplanData in floorplansData)
                 {
-                    var positions = new List<(double X, double Y)>();
-                    foreach (var position in assetData.Positions)
+                    var floorplan = new Floorplan(floorplanData.FloorplanName);
+
+                    var assetList = new List<Asset>();
+                    foreach (var assetData in floorplanData.Assets)
                     {
-                        positions.Add((position.X, position.Y));
+                        var positions = new List<(double X, double Y)>();
+                        foreach (var position in assetData.Positions)
+                        {
+                            positions.Add((position.X, position.Y));
+                        }
+
+                        var asset = new Asset(assetData.AssetId, positions);
+                        assetList.Add(asset);
+                        assets.Add(asset);
                     }
 
-                    assets.Add(new Asset(assetData.AssetId, positions));
+                    floorplan.Assets = assetList;
+                    floorplans.Add(floorplan);
                 }
-
-                return assets;
             }
             catch (Exception ex)
             {
-                return null;
+                Console.WriteLine($"Error loading JSON file: {ex.Message}");
             }
+        }
+
+        private class FloorplanJsonObject
+        {
+            public string FloorplanName { get; set; }
+            public List<AssetJsonObject> Assets { get; set; }
+        }
+
+        private class AssetJsonObject
+        {
+            public int AssetId { get; set; }
+            public List<PositionJsonObject> Positions { get; set; }
+        }
+
+        private class PositionJsonObject
+        {
+            public double X { get; set; }
+            public double Y { get; set; }
         }
     }
 }

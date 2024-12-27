@@ -17,17 +17,17 @@ namespace AssetDataSimulator
         private static string brokerUrl = Environment.GetEnvironmentVariable("MQTT_BROKER_URL") ?? "localhost";
         private static int brokerPort = int.Parse(Environment.GetEnvironmentVariable("MQTT_BROKER_PORT") ?? "1883");
         private static string topic = Environment.GetEnvironmentVariable("ASSET_TOPIC") ?? "assets/location";
-        private static int messageIntervalMiliseconds = int.Parse(Environment.GetEnvironmentVariable("MESSAGE_INTERVAL") ?? "1000");
+        private static int messageIntervalMilliseconds = int.Parse(Environment.GetEnvironmentVariable("MESSAGE_INTERVAL") ?? "1000");
         private static string jsonFilePath = FindFileRecursively("assets.json");
         private static double movementSpeed = 1.0;
         public static AssetSimulator simulator;
+        private static Dictionary<string, List<Asset>> floorplans;
 
         public static event Action AssetsLoaded;
 
         public static async Task Main(string[] args)
         {
             LoadEnv();
-
             OutputStartMessages();
 
             Console.WriteLine("Press any key to start...");
@@ -67,18 +67,29 @@ namespace AssetDataSimulator
                 Console.WriteLine($"Failed to connect: {ex.Message}");
             }
 
-            var assets = AssetJsonLoader.Load(jsonFilePath);
+            List<Asset> assets = new List<Asset>();
+            List<Floorplan> floorplanList = new List<Floorplan>();
 
-            if (assets == null || assets.Count == 0)
+            AssetJsonLoader.Load(jsonFilePath, ref assets, ref floorplanList);
+
+            if (floorplanList == null || floorplanList.Count == 0)
             {
-                Console.WriteLine("No assets were initialized from the JSON file.");
+                Console.WriteLine("No floorplans or assets were initialized from the JSON file.");
                 return;
             }
 
-            simulator = new AssetSimulator(assets);
+            floorplans = new Dictionary<string, List<Asset>>();
 
-            // Trigger the AssetsLoaded event after simulator initialization
+            foreach (var floorplan in floorplanList)
+            {
+                floorplans.Add(floorplan.Name, floorplan.Assets);
+            }
+
+            simulator = new AssetSimulator(assets, floorplanList);
+
             AssetsLoaded?.Invoke();
+
+            Console.WriteLine("Simulating all available floorplans...");
 
             while (true)
             {
@@ -90,7 +101,7 @@ namespace AssetDataSimulator
 
                     await PublishUpdatesToBroker(mqttClient, isConnected, simulatedDataList);
 
-                    await Task.Delay(messageIntervalMiliseconds);
+                    await Task.Delay(messageIntervalMilliseconds);
                 }
                 catch (Exception ex)
                 {
@@ -99,6 +110,7 @@ namespace AssetDataSimulator
                 }
             }
         }
+
 
         private static async Task PublishUpdatesToBroker(IMqttClient mqttClient, bool isConnected, List<string> simulatedDataList)
         {
@@ -143,7 +155,7 @@ namespace AssetDataSimulator
             Console.WriteLine($"Broker URL: {brokerUrl}");
             Console.WriteLine($"Broker Port: {brokerPort}");
             Console.WriteLine($"Topic: {topic}");
-            Console.WriteLine($"Message Interval: {messageIntervalMiliseconds} ms");
+            Console.WriteLine($"Message Interval: {messageIntervalMilliseconds} ms");
             Console.WriteLine("##########################################");
         }
 
@@ -212,6 +224,5 @@ namespace AssetDataSimulator
 
             throw new FileNotFoundException($"File '{fileName}' not found in the current directory or any parent directories.");
         }
-
     }
 }

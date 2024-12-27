@@ -10,6 +10,7 @@ namespace SimulatorControlUI
     public partial class Form1 : Form
     {
         private Asset selectedAsset;
+        private Floorplan selectedFloorplan;
         private System.Windows.Forms.Timer refreshTimer;
 
         public Form1()
@@ -46,7 +47,7 @@ namespace SimulatorControlUI
             {
                 if (ProgramSimulator.simulator != null && ProgramSimulator.simulator.Assets != null && ProgramSimulator.simulator.Assets.Count > 0)
                 {
-                    PopulateAssetList();
+                    PopulateFloorplanList();
                 }
                 else
                 {
@@ -55,11 +56,42 @@ namespace SimulatorControlUI
             }
         }
 
-        private void PopulateAssetList()
+        private void PopulateFloorplanList()
         {
             if (this.InvokeRequired)
             {
-                this.Invoke((MethodInvoker)PopulateAssetList);
+                this.Invoke((MethodInvoker)PopulateFloorplanList);
+            }
+            else
+            {
+                var simulatorInstance = ProgramSimulator.simulator;
+
+                if (simulatorInstance == null || simulatorInstance.Floorplans == null || simulatorInstance.Floorplans.Count == 0)
+                {
+                    MessageBox.Show("No floorplans available.");
+                    return;
+                }
+
+                FloorplanSelectorComboBox.Items.Clear();
+
+                foreach (var floorplan in simulatorInstance.Floorplans)
+                {
+                    FloorplanSelectorComboBox.Items.Add(floorplan.Name);
+                }
+
+                if (simulatorInstance.Floorplans.Count > 0)
+                {
+                    FloorplanSelectorComboBox.SelectedIndex = 0;
+                    selectedFloorplan = simulatorInstance.Floorplans[0];
+                }
+            }
+        }
+
+        private void PopulateAssetListForSelectedFloorplan()
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)PopulateAssetListForSelectedFloorplan);
             }
             else
             {
@@ -72,15 +104,16 @@ namespace SimulatorControlUI
                 }
 
                 AssetSelectorComboBox.Items.Clear();
-                foreach (var asset in simulatorInstance.Assets)
+
+                foreach (var asset in selectedFloorplan.Assets)
                 {
                     AssetSelectorComboBox.Items.Add($"Asset {asset.AssetId}");
                 }
 
-                if (simulatorInstance.Assets.Count > 0)
+                if (selectedFloorplan.Assets.Count > 0)
                 {
                     AssetSelectorComboBox.SelectedIndex = 0;
-                    selectedAsset = simulatorInstance.Assets[0];
+                    selectedAsset = selectedFloorplan.Assets[0];
                 }
             }
         }
@@ -97,10 +130,15 @@ namespace SimulatorControlUI
 
         private void MapPictureBox_Paint(object sender, PaintEventArgs e)
         {
-            DrawAssets(e.Graphics);
+            if (selectedFloorplan == null)
+            {
+                return;
+            }
+
+            DrawAssets(e.Graphics, selectedFloorplan.Assets);
         }
 
-        private void DrawAssets(Graphics g)
+        private void DrawAssets(Graphics g, List<Asset> assets)
         {
             var simulatorInstance = ProgramSimulator.simulator;
 
@@ -113,7 +151,7 @@ namespace SimulatorControlUI
             const float AssetRadius = 5f;
             const float TargetRadius = 3f;
 
-            foreach (var asset in simulatorInstance.Assets)
+            foreach (var asset in assets)
             {
                 // Draw the asset as a blue circle
                 g.FillEllipse(Brushes.Blue,
@@ -127,7 +165,7 @@ namespace SimulatorControlUI
                     (float)(asset.X * MapScale),
                     (float)(asset.Y * MapScale));
 
-                if (asset.HasTarget()) 
+                if (asset.HasTarget())
                 {
                     g.FillEllipse(Brushes.Red,
                         (float)(asset.TargetX * MapScale - TargetRadius),
@@ -184,20 +222,108 @@ namespace SimulatorControlUI
             const float LegendItemHeight = 20f;
             const float LegendItemWidth = 20f;
             const float TextOffset = 30f;
-            float yPosition = 10f; 
+            float yPosition = 10f;
 
             g.FillEllipse(Brushes.Blue, 10, yPosition, LegendItemWidth, LegendItemHeight);
             g.DrawString("Current Position", this.Font, Brushes.Black, 40, yPosition);
 
-            yPosition += LegendItemHeight + 10; 
+            yPosition += LegendItemHeight + 10;
 
             g.FillEllipse(Brushes.Red, 10, yPosition, LegendItemWidth, LegendItemHeight);
             g.DrawString("Target Position", this.Font, Brushes.Black, 40, yPosition);
 
-            yPosition += LegendItemHeight + 10; 
+            yPosition += LegendItemHeight + 10;
 
             g.DrawString("ID Label: Asset ID", this.Font, Brushes.Black, 10, yPosition);
         }
+
+        private void FloorplanSelectorComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string selectedFloorplanName = FloorplanSelectorComboBox.SelectedItem as string;
+
+            if (string.IsNullOrEmpty(selectedFloorplanName)) return;
+
+            var simulatorInstance = ProgramSimulator.simulator;
+
+            if (simulatorInstance != null)
+            {
+                selectedFloorplan = simulatorInstance.Floorplans
+                    .FirstOrDefault(floorplan => floorplan.Name == selectedFloorplanName);
+
+                if (selectedFloorplan != null)
+                {
+                    SetFloorplanBackground(selectedFloorplanName);
+
+                    PopulateAssetListForSelectedFloorplan();
+
+                    MapPictureBox.Invalidate();
+                }
+                else
+                {
+                    MessageBox.Show($"Floorplan '{selectedFloorplanName}' not found.");
+                }
+            }
+        }
+
+
+
+        private static string FindFolderRecursively(string folderName)
+        {
+            string currentDirectory = Directory.GetCurrentDirectory();
+
+            while (currentDirectory != null)
+            {
+                string folderPath = Path.Combine(currentDirectory, folderName);
+                if (Directory.Exists(folderPath))
+                {
+                    return folderPath;
+                }
+
+                currentDirectory = Directory.GetParent(currentDirectory)?.FullName;
+            }
+
+            throw new DirectoryNotFoundException($"Folder '{folderName}' not found in the current directory or any parent directories.");
+        }
+
+        private Image LoadFloorplanImage(string floorplanName)
+        {
+            try
+            {
+                string floorplansFolder = FindFolderRecursively("Floorplans");
+
+                string imagePath = Path.Combine(floorplansFolder, $"{floorplanName}.png");
+
+                if (File.Exists(imagePath))
+                {
+                    return Image.FromFile(imagePath);
+                }
+                else
+                {
+                    MessageBox.Show($"Image '{floorplanName}.png' not found in the 'Floorplans' folder.");
+                }
+            }
+            catch (DirectoryNotFoundException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+            return null;
+        }
+
+        private void SetFloorplanBackground(string floorplanName)
+        {
+            var floorplanImage = LoadFloorplanImage(floorplanName);
+            if (floorplanImage != null)
+            {
+                MapPictureBox.BackgroundImage = floorplanImage;
+                MapPictureBox.BackgroundImageLayout = ImageLayout.Stretch;
+            }
+            else
+            {
+                MessageBox.Show($"No image found for floorplan '{floorplanName}'.");
+            }
+        }
+
 
     }
 }

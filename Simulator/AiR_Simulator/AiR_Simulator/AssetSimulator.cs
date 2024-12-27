@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Text.Json;
 using AiR_Simulator.Entities;
 
 namespace AssetDataSimulator
@@ -10,10 +8,12 @@ namespace AssetDataSimulator
     public class AssetSimulator
     {
         public List<Asset> Assets { get; }
+        public List<Floorplan> Floorplans { get; }
 
-        public AssetSimulator(List<Asset> assets)
+        public AssetSimulator(List<Asset> assets, List<Floorplan> floorplans)
         {
             Assets = assets;
+            Floorplans = floorplans;
         }
 
         public List<string> SimulateNextStep(double speed)
@@ -27,7 +27,7 @@ namespace AssetDataSimulator
                 result.Add($"{{\"asset_id\":{asset.AssetId},\"x\":{asset.X.ToString(CultureInfo.InvariantCulture)},\"y\":{asset.Y.ToString(CultureInfo.InvariantCulture)},\"status\":\"active\",\"timestamp\":\"{DateTime.UtcNow:yyyy-MM-ddTHH:mm:ss.fffZ}\"}}");
             }
 
-            return result; 
+            return result;
         }
     }
 }
