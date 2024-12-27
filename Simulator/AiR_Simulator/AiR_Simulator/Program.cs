@@ -18,7 +18,7 @@ namespace AssetDataSimulator
         private static int brokerPort = int.Parse(Environment.GetEnvironmentVariable("MQTT_BROKER_PORT") ?? "1883");
         private static string topic = Environment.GetEnvironmentVariable("ASSET_TOPIC") ?? "assets/location";
         private static int messageIntervalMiliseconds = int.Parse(Environment.GetEnvironmentVariable("MESSAGE_INTERVAL") ?? "1000");
-        private static string jsonFilePath = "../../../assets.json";
+        private static string jsonFilePath = FindFileRecursively("assets.json");
         private static double movementSpeed = 1.0;
         public static AssetSimulator simulator;
 
@@ -194,5 +194,24 @@ namespace AssetDataSimulator
                 asset.AssetId,
                 $"({asset.X:F2}, {asset.Y:F2})");
         }
+
+        private static string FindFileRecursively(string fileName)
+        {
+            string currentDirectory = Directory.GetCurrentDirectory();
+
+            while (currentDirectory != null)
+            {
+                string filePath = Path.Combine(currentDirectory, fileName);
+                if (File.Exists(filePath))
+                {
+                    return filePath;
+                }
+
+                currentDirectory = Directory.GetParent(currentDirectory)?.FullName;
+            }
+
+            throw new FileNotFoundException($"File '{fileName}' not found in the current directory or any parent directories.");
+        }
+
     }
 }

@@ -151,30 +151,25 @@ namespace SimulatorControlUI
             {
                 const float MapScale = 10f;
 
-                // Convert click position to simulator coordinates
                 double targetX = e.X / MapScale;
                 double targetY = e.Y / MapScale;
 
-                // Set manual control for the selected asset
                 selectedAsset.SetManualTarget(targetX, targetY);
 
-                // Refresh map
                 MapPictureBox.Invalidate();
             }
         }
 
         private void StartAutoRefresh()
         {
-            // Initialize the timer
             refreshTimer = new System.Windows.Forms.Timer();
-            refreshTimer.Interval = 100; // Set interval in milliseconds (100ms = 10 refreshes per second)
-            refreshTimer.Tick += RefreshTimer_Tick; // Subscribe to the Tick event
-            refreshTimer.Start(); // Start the timer
+            refreshTimer.Interval = 100;
+            refreshTimer.Tick += RefreshTimer_Tick;
+            refreshTimer.Start();
         }
 
         private void RefreshTimer_Tick(object sender, EventArgs e)
         {
-            // Trigger a repaint of the map
             MapPictureBox.Invalidate();
         }
 
