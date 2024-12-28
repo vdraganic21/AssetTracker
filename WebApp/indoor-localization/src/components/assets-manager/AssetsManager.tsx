@@ -14,6 +14,7 @@ import {
   SynChangeEvent,
   SynInputEvent,
 } from "@synergy-design-system/react/components/checkbox.js";
+import { useNavigate } from "react-router-dom";
 
 const assets = AssetService.GetAll();
 
@@ -27,6 +28,7 @@ const sortOptions = [
 ];
 
 function AssetsManager() {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [sortedAssets, setSortedAssets] = useState(assets);
   const [filterIndex, setFilterIndex] = useState(0);
@@ -39,8 +41,7 @@ function AssetsManager() {
   };
 
   const handleAddButtonClick = () => {
-    //TODO implement asset add page loading
-    console.log("Add button clicked");
+    navigate("/assets/add");
   };
 
   const handleFilterChange = (event: SynChangeEvent) => {

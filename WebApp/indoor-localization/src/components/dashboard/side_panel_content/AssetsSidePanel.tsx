@@ -27,15 +27,17 @@ function AssetsSidePanel() {
   }, [searchTerm]);
 
   return (
-    <div>
+    <>
       <SynInput
         className="side-panel-asset-search"
         placeholder="Search"
         value={searchTerm}
         onSynInput={handleSearch}
       />
-      <AssetsSidePaneList assets={filteredAssets} />
-    </div>
+      <div className="scrollable-list">
+        <AssetsSidePaneList assets={filteredAssets} />
+      </div>
+    </>
   );
 }
 

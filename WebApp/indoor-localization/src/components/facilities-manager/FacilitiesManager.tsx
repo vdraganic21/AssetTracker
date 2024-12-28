@@ -10,6 +10,11 @@ import {
 import FacilityCardContainer from "./FacilityCardContainer";
 import { useNavigate } from "react-router-dom";
 import { FacilityService } from "../../services/FacilityService";
+import { useEffect, useState } from "react";
+import {
+  SynChangeEvent,
+  SynInputEvent,
+} from "@synergy-design-system/react/components/checkbox.js";
 
 const facilities = FacilityService.GetAll();
 
@@ -21,9 +26,58 @@ const sortOptions = [
 function FacilitiesManager() {
   const navigate = useNavigate();
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortedFacilities, setSortedFacilities] = useState(facilities);
+  const [filterIndex, setFilterIndex] = useState(0);
+
+  const handleSearch = (event: SynInputEvent) => {
+    const term = (event.target as HTMLInputElement).value;
+    setSearchTerm(term);
+
+    applyFilterAndSort(term, filterIndex);
+  };
+
   const handleAddButtonClick = () => {
     navigate("/facilities/add");
   };
+
+  const handleDeleteButtonClick = () => {
+    console.log("Delete button clicked");
+  };
+
+  const handleFilterChange = (event: SynChangeEvent) => {
+    const selectedValue = (event.target as HTMLInputElement).value;
+
+    const selectedIndex = sortOptions.findIndex(
+      (option) => option.value === selectedValue
+    );
+    setFilterIndex(selectedIndex);
+
+    applyFilterAndSort(searchTerm, selectedIndex);
+  };
+
+  const applyFilterAndSort = (term: string, sortIndex: number) => {
+    let filteredFacilities = facilities.filter((facility) =>
+      facility.name.toLowerCase().includes(term.toLowerCase())
+    );
+
+    switch (sortOptions[sortIndex]?.value) {
+      case "nameAsc":
+        filteredFacilities.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case "nameDesc":
+        filteredFacilities.sort((a, b) => b.name.localeCompare(a.name));
+        break;
+      default:
+        break;
+    }
+
+    setSortedFacilities(filteredFacilities);
+  };
+
+  useEffect(() => {
+    applyFilterAndSort(searchTerm, filterIndex);
+  }, []);
 
   return (
     <>
@@ -31,7 +85,9 @@ function FacilitiesManager() {
         <div className="header-row">
           <span className="syn-heading--3x-large">Facilities</span>
           <div className="button-group">
-            <SynButton variant="outline">Delete</SynButton>
+            <SynButton variant="outline" onClick={handleDeleteButtonClick}>
+              Delete
+            </SynButton>
             <SynButton
               variant="filled"
               className="syn-border-radius-medium"
@@ -43,13 +99,22 @@ function FacilitiesManager() {
         </div>
         <SynDivider className="content-divider" />
         <div className="search-row">
-          <SynInput className="search-input" placeholder="Search" />
+          <SynInput
+            className="search-input"
+            placeholder="Search"
+            onSynInput={handleSearch}
+          />
           <p>Sort by:</p>
-          <SynSelect value={sortOptions[0]?.value} className="sort-select">
+          <SynSelect
+            value={sortOptions[filterIndex]?.value}
+            className="sort-select"
+            onSynChange={handleFilterChange}
+          >
             {sortOptions.map((sortOption, index) => (
               <SynOption
+                key={index}
                 tabIndex={index}
-                selected={0 == index}
+                selected={index === filterIndex}
                 value={sortOption.value}
               >
                 {sortOption.name}
@@ -59,7 +124,9 @@ function FacilitiesManager() {
         </div>
         <SynDivider className="content-divider" />
         <div className="scrollable-list">
-          <FacilityCardContainer facilities={facilities}></FacilityCardContainer>
+          <FacilityCardContainer
+            facilities={sortedFacilities}
+          ></FacilityCardContainer>
         </div>
       </div>
       <Footer />
