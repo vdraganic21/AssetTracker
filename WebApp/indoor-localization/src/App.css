@@ -41,6 +41,16 @@
   margin-bottom: var(--syn-spacing-medium);
 }
 
+syn-icon{
+  font-size: 20px;
+  color: var(--syn-color-neutral-800);
+}
+
+syn-icon:hover{
+  color: var(--syn-color-primary-600);
+  cursor: pointer;
+}
+
 .scrollable-list {
   flex: 1;
   min-height: 0;

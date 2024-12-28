@@ -12,6 +12,18 @@ import "@fontsource/open-sans/600-italic.css";
 import "@fontsource/open-sans/700.css";
 import "@fontsource/open-sans/700-italic.css";
 import { MockDataInitializer } from "./data-access/mock-repositories/MockDataInitializer.ts";
+import { registerIconLibrary } from "@synergy-design-system/components";
+
+registerIconLibrary("fa", {
+  resolver: (name) => {
+    const filename = name.replace(/^fa[rbs]-/, "");
+    let folder = "regular";
+    if (name.substring(0, 4) === "fas-") folder = "solid";
+    if (name.substring(0, 4) === "fab-") folder = "brands";
+    return `https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/svgs/${folder}/${filename}.svg`;
+  },
+  mutator: (svg) => svg.setAttribute("fill", "currentColor"),
+});
 
 MockDataInitializer.initializeData(); //Initializes mock data repositories, use for testing and dev purposes
 

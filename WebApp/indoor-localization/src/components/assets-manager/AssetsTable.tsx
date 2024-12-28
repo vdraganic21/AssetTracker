@@ -1,8 +1,11 @@
-import { SynCheckbox } from "@synergy-design-system/react";
+import { SynIcon } from "@synergy-design-system/react";
 import { Asset } from "../../entities/Asset";
 import "./AssetsTable.css";
+import { useNavigate } from "react-router-dom";
 
 function AssetsTable({ assets }: { assets: Asset[] }) {
+  const navigate = useNavigate();
+
   if (assets.length == 0)
     return (
       <div>
@@ -24,12 +27,19 @@ function AssetsTable({ assets }: { assets: Asset[] }) {
       </thead>
       <tbody>
         {assets.map((asset, index) => (
-          <tr className="row-bottom-border" key={index}>
+          <tr className="row-bottom-border hover-row" key={index}>
             <td>{asset.name}</td>
             <td>{asset.GetCurrentFacility()?.name ?? "-"}</td>
             <td>{asset.GetCurrentZones()[0]?.name ?? "-"}</td>
-            <td>
-              <SynCheckbox />
+            <td className="icon-cell">
+              <SynIcon
+                library="fa"
+                name="far-edit"
+                className="table-icon"
+                onClick={() => {
+                  navigate(`/assets/edit/${asset.id}`);
+                }}
+              ></SynIcon>
             </td>
           </tr>
         ))}
