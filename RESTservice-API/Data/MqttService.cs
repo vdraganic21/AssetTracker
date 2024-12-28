@@ -12,12 +12,13 @@ namespace RESTservice_API.Data
         private readonly IPositionHistoryRepository _positionHistoryRepository;
         private readonly string _topic = "assets/location";
         private readonly bool _useMockData;
-
-        public MqttService(IConfiguration configuration, IPositionHistoryRepository positionHistoryRepository)
+        private readonly IAssetRepository _assetRepository;
+        public MqttService(IConfiguration configuration, IPositionHistoryRepository positionHistoryRepository, IAssetRepository assetRepository)
         {
             _mqttClient = new MqttFactory().CreateMqttClient();
             _httpClient = new HttpClient();
             _positionHistoryRepository = positionHistoryRepository;
+            _assetRepository = assetRepository;
 
             _useMockData = bool.Parse(configuration["UseMockData"] ?? "true");
 
@@ -63,6 +64,25 @@ namespace RESTservice_API.Data
             });
         }
 
+        private int getFloormapId(string floormap)
+        {
+            int i = floormap.Length - 1;
+            while (i >= 0 && char.IsDigit(floormap[i]))
+            {
+                i--;
+            }
+
+            string numericPart = floormap.Substring(i + 1);
+
+            if (int.TryParse(numericPart, out int floormapId))
+            {
+                return floormapId;
+            }
+
+            throw new ArgumentException($"The provided string '{floormap}' does not contain a valid integer at the end.");
+        }
+
+
         private async Task HandleMessageAsync(MqttApplicationMessageReceivedEventArgs e)
         {
             try
@@ -77,7 +97,7 @@ namespace RESTservice_API.Data
                     X = message.x,
                     Y = message.y,
                     Timestamp = message.timestamp,
-                    FloorMapId = 1
+                    FloorMapId = getFloormapId(message.floorplan)
                 };
 
                 Console.WriteLine($"Deserialized PositionHistory: AssetId={positionHistory.AssetId}, X={positionHistory.X}, Y={positionHistory.Y}");
@@ -86,6 +106,19 @@ namespace RESTservice_API.Data
                 {
                     _positionHistoryRepository.AddPositionHistory(positionHistory);
                     Console.WriteLine("PositionHistory added to mock data.");
+
+                    var asset = new Asset
+                    {
+                        Id = message.asset_id,
+                        Name = $"Asset {message.asset_id}",
+                        X = message.x,
+                        Y = message.y,
+                        Active = message.status == "active",
+                        FloorMapId = getFloormapId(message.floorplan)
+                    };
+
+                    _assetRepository.UpdateAsset(asset);
+                    Console.WriteLine("Asset updated in mock repository.");
                 }
                 else
                 {
@@ -105,15 +138,16 @@ namespace RESTservice_API.Data
                 Console.WriteLine($"Error handling MQTT message: {ex.Message}");
             }
         }
-    }
 
-    public class MqttMessage
-    {
-        public int asset_id { get; set; }
-        public double x { get; set; }
-        public double y { get; set; }
-        public string status { get; set; }
-        public DateTime timestamp { get; set; }
-    }
+        public class MqttMessage
+        {
+            public int asset_id { get; set; }
+            public double x { get; set; }
+            public double y { get; set; }
+            public string floorplan { get; set; }
+            public string status { get; set; }
+            public DateTime timestamp { get; set; }
+        }
 
+    }
 }

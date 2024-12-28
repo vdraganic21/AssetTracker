@@ -3,7 +3,7 @@ using RESTservice_API.Models;
 
 public class MockAssetRepository : IAssetRepository
 {
-    private List<Asset> _assets;
+    private readonly List<Asset> _assets;
 
     public MockAssetRepository()
     {
@@ -26,6 +26,11 @@ public class MockAssetRepository : IAssetRepository
 
     public void AddAsset(Asset asset)
     {
+        if (_assets.Any(a => a.Id == asset.Id))
+        {
+            throw new InvalidOperationException($"Asset with ID {asset.Id} already exists.");
+        }
+
         _assets.Add(asset);
     }
 
@@ -38,6 +43,11 @@ public class MockAssetRepository : IAssetRepository
             existingAsset.X = asset.X;
             existingAsset.Y = asset.Y;
             existingAsset.Active = asset.Active;
+            existingAsset.FloorMapId = asset.FloorMapId;
+        }
+        else
+        {
+            _assets.Add(asset);
         }
     }
 
