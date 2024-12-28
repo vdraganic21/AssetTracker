@@ -12,35 +12,85 @@ public class AssetRepository : IAssetRepository
 
     public IEnumerable<Asset> GetAllAssets()
     {
-        return _context.Assets.ToList();
+        try
+        {
+            return _context.Assets.ToList();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error retrieving all assets: {ex.Message}");
+            throw new InvalidOperationException("An error occurred while retrieving assets.");
+        }
     }
 
     public Asset GetAssetById(int id)
     {
-        return _context.Assets.Find(id);
+        try
+        {
+            var asset = _context.Assets.Find(id);
+            if (asset == null)
+                throw new KeyNotFoundException($"Asset with ID {id} not found.");
+            return asset;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error retrieving asset by ID: {ex.Message}");
+            throw new InvalidOperationException("An error occurred while retrieving the asset.");
+        }
     }
 
     public void AddAsset(Asset asset)
     {
-        _context.Assets.Add(asset);
+        try
+        {
+            _context.Assets.Add(asset);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error adding asset: {ex.Message}");
+            throw new InvalidOperationException("An error occurred while adding the asset.");
+        }
     }
 
     public void UpdateAsset(Asset asset)
     {
-        _context.Assets.Update(asset);
+        try
+        {
+            _context.Assets.Update(asset);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error updating asset: {ex.Message}");
+            throw new InvalidOperationException("An error occurred while updating the asset.");
+        }
     }
 
     public void DeleteAsset(int id)
     {
-        var asset = _context.Assets.Find(id);
-        if (asset != null)
+        try
         {
+            var asset = _context.Assets.Find(id);
+            if (asset == null)
+                throw new KeyNotFoundException($"Asset with ID {id} not found.");
             _context.Assets.Remove(asset);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error deleting asset: {ex.Message}");
+            throw new InvalidOperationException("An error occurred while deleting the asset.");
         }
     }
 
     public void SaveChanges()
     {
-        _context.SaveChanges(); // Save changes to the database
+        try
+        {
+            _context.SaveChanges();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving changes: {ex.Message}");
+            throw new InvalidOperationException("An error occurred while saving changes.");
+        }
     }
 }

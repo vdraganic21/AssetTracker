@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using MQTTnet;
 using MQTTnet.Client;
@@ -89,7 +90,18 @@ namespace RESTservice_API.Data
             {
                 var message = JsonSerializer.Deserialize<MqttMessage>(e.ApplicationMessage.Payload);
                 if (message == null) return;
-                Console.WriteLine($"MQTT Message Received: {message}");
+
+                var validationResults = new List<ValidationResult>();
+                var validationContext = new ValidationContext(message);
+
+                if (!Validator.TryValidateObject(message, validationContext, validationResults, true))
+                {
+                    foreach (var validationResult in validationResults)
+                    {
+                        Console.WriteLine($"Validation failed: {validationResult.ErrorMessage}");
+                    }
+                    return;
+                }
 
                 var positionHistory = new PositionHistory
                 {
@@ -141,11 +153,24 @@ namespace RESTservice_API.Data
 
         public class MqttMessage
         {
+            [Required]
             public int asset_id { get; set; }
+
+            [Range(-100000, 100000)]
             public double x { get; set; }
+
+            [Range(-100000, 100000)]
             public double y { get; set; }
+
+            [Required]
+            [StringLength(100)]
             public string floorplan { get; set; }
+
+            [Required]
+            [RegularExpression("active|inactive", ErrorMessage = "Status must be either 'active' or 'inactive'.")]
             public string status { get; set; }
+
+            [Required]
             public DateTime timestamp { get; set; }
         }
 
