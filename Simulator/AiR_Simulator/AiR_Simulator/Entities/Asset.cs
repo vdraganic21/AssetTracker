@@ -5,13 +5,14 @@ namespace AiR_Simulator.Entities
 {
     public class Asset
     {
-        public int AssetId { get; }
+        public int AssetId { get; set; }
         public double X { get; private set; }
         public double Y { get; private set; }
-        public List<(double X, double Y)> Positions { get; }
+        public List<(double X, double Y)> Positions { get; set; }
         private int _currentPositionIndex;
         public double TargetX { get; private set; }
         public double TargetY { get; private set; }
+        public int FloorplanId { get; set; }
 
         public bool IsManualControl { get; private set; } = false;
         private double _manualTargetX, _manualTargetY;

@@ -31,11 +31,16 @@ namespace AiR_Simulator.DataAccess
                 assets.Clear();
                 floorplans.Clear();
 
+                int floorplanIdCounter = 1;
+
                 foreach (var floorplanData in floorplansData)
                 {
-                    var floorplan = new Floorplan(floorplanData.FloorplanName);
+                    var floorplan = new Floorplan(floorplanData.FloorplanName)
+                    {
+                        FloorplanId = floorplanIdCounter++,
+                        Assets = new List<Asset>()
+                    };
 
-                    var assetList = new List<Asset>();
                     foreach (var assetData in floorplanData.Assets)
                     {
                         var positions = new List<(double X, double Y)>();
@@ -44,12 +49,15 @@ namespace AiR_Simulator.DataAccess
                             positions.Add((position.X, position.Y));
                         }
 
-                        var asset = new Asset(assetData.AssetId, positions);
-                        assetList.Add(asset);
+                        var asset = new Asset(assetData.AssetId, positions)
+                        {
+                            FloorplanId = floorplan.FloorplanId
+                        };
+
+                        floorplan.Assets.Add(asset);
                         assets.Add(asset);
                     }
 
-                    floorplan.Assets = assetList;
                     floorplans.Add(floorplan);
                 }
             }

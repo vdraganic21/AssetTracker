@@ -24,10 +24,18 @@ namespace AssetDataSimulator
             {
                 asset.MoveTowardNextPosition(speed);
 
-                result.Add($"{{\"asset_id\":{asset.AssetId},\"x\":{asset.X.ToString(CultureInfo.InvariantCulture)},\"y\":{asset.Y.ToString(CultureInfo.InvariantCulture)},\"status\":\"active\",\"timestamp\":\"{DateTime.UtcNow:yyyy-MM-ddTHH:mm:ss.fffZ}\"}}");
+                var floorplanName = GetFloorplanForAsset(asset);
+
+                result.Add($"{{\"asset_id\":{asset.AssetId},\"x\":{asset.X.ToString(CultureInfo.InvariantCulture)},\"y\":{asset.Y.ToString(CultureInfo.InvariantCulture)},\"floorplan\":\"{floorplanName}\",\"status\":\"active\",\"timestamp\":\"{DateTime.UtcNow:yyyy-MM-ddTHH:mm:ss.fffZ}\"}}");
             }
 
             return result;
+        }
+
+        private string GetFloorplanForAsset(Asset asset)
+        {
+            var floorplan = Floorplans.Find(fp => fp.FloorplanId == asset.FloorplanId);
+            return floorplan?.Name ?? "Unknown";
         }
     }
 }
