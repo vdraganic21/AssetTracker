@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:indoor_localization/domain/entities/asset.dart';
 import '../../config/app_colors.dart';
 import 'asset_list_item.dart';
+import '../../domain/mock-repositories/mock_data_initializer.dart';
+import '../../domain/services/asset_service.dart';
 
 class AssetsPage extends StatefulWidget {
   @override
@@ -9,14 +11,19 @@ class AssetsPage extends StatefulWidget {
 }
 
 class _AssetsPageState extends State<AssetsPage> {
-  bool _isAscending = true; // Track ascending/descending state
-  List<Asset> assets = [
+  bool _isAscending = true;
+  List<Asset> assets = [];
 
-  ];
+  @override
+  void initState() {
+    super.initState();
+    MockDataInitializer.initializeData();
+    assets = AssetService.getAll();
+  }
 
   void _toggleSortOrder() {
     setState(() {
-      _isAscending = !_isAscending; // Toggle sorting order
+      _isAscending = !_isAscending;
     });
   }
 
