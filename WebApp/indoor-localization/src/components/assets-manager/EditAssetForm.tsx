@@ -1,4 +1,9 @@
-import { SynButton, SynDivider, SynInput } from "@synergy-design-system/react";
+import {
+	SynButton,
+	SynDivider,
+	SynIcon,
+	SynInput,
+} from "@synergy-design-system/react";
 import Footer from "../Footer";
 import "../Form.css";
 import { useEffect, useState } from "react";
@@ -7,71 +12,81 @@ import { SynInputEvent } from "@synergy-design-system/react/components/checkbox.
 import { AssetService } from "../../services/AssetService";
 
 function EditAssetForm() {
-  const navigate = useNavigate();
-  const { id } = useParams();
-  const assetId = parseInt(id ?? "0", 10);
-  let asset = AssetService.Get(assetId);
+	const navigate = useNavigate();
+	const { id } = useParams();
+	const assetId = parseInt(id ?? "0", 10);
+	let asset = AssetService.Get(assetId);
 
-  useEffect(() => {
-    if (asset == null) navigate("/assets");
-  });
+	useEffect(() => {
+		if (asset == null) navigate("/assets");
+	});
 
-  const [assetName, setAssetName] = useState(asset!.name);
-  const [isFormValid, setIsFormValid] = useState(false);
+	const [assetName, setAssetName] = useState(asset!.name);
+	const [isFormValid, setIsFormValid] = useState(false);
 
-  const handleCancel = () => {
-    navigate("/assets");
-  };
+	const handleCancel = () => {
+		navigate("/assets");
+	};
 
-  const handleNameChange = (e: SynInputEvent) => {
-    const assetName = (e.target as HTMLInputElement).value;
-    setAssetName(assetName);
-    validateForm(assetName);
-  };
+	const handleNameChange = (e: SynInputEvent) => {
+		const assetName = (e.target as HTMLInputElement).value;
+		setAssetName(assetName);
+		validateForm(assetName);
+	};
 
-  const validateForm = (name: string) => {
-    setIsFormValid(!!name.trim());
-  };
+	const validateForm = (name: string) => {
+		setIsFormValid(!!name.trim());
+	};
 
-  const handleEdit = () => {
-    asset!.name = assetName;
-    const newAsset = asset;
+	const handleEdit = () => {
+		asset!.name = assetName;
+		const newAsset = asset;
 
-    if (newAsset) {
-      const isUpdated = AssetService.Update(newAsset);
-      if (isUpdated) navigate("/assets");
-    }
-  };
+		if (newAsset) {
+			const isUpdated = AssetService.Update(newAsset);
+			if (isUpdated) navigate("/assets");
+		}
+	};
 
-  return (
-    <>
-      <div className="content content-border">
-        <span className="syn-heading--3x-large">Edit asset</span>
-        <SynDivider className="content-divider" />
-        <SynInput
-          name="name"
-          label="Name"
-          className="form-input-width"
-          value={assetName}
-          onSynInput={handleNameChange}
-        ></SynInput>
-        <div className="form-button-container">
-          <SynButton className="form-button" onClick={handleCancel}>
-            Cancel
-          </SynButton>
-          <SynButton
-            variant="filled"
-            className="form-button"
-            disabled={!isFormValid}
-            onClick={handleEdit}
-          >
-            Edit
-          </SynButton>
-        </div>
-      </div>
-      <Footer />
-    </>
-  );
+	return (
+		<>
+			<div className="content content-border">
+				<div className="header-row">
+					<span className="syn-heading--3x-large">Edit asset</span>
+					<div className="button-group">
+						<SynIcon
+							library="fa"
+							name="fas-trash"
+							className="danger-icon"
+							onClick={() => {}}
+						></SynIcon>
+					</div>
+				</div>
+				<SynDivider className="content-divider" />
+				<SynInput
+					name="name"
+					label="Name"
+					className="form-input-width"
+					value={assetName}
+					onSynInput={handleNameChange}
+				></SynInput>
+				<div className="form-button-container">
+					<SynButton className="form-button" onClick={handleCancel}>
+						Cancel
+					</SynButton>
+					<SynButton
+						variant="filled"
+						className="form-button"
+						disabled={!isFormValid}
+						onClick={handleEdit}
+					>
+						Edit
+					</SynButton>
+				</div>
+			</div>
+			<Footer />
+		</>
+	);
 }
 
 export default EditAssetForm;
