@@ -2,41 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:indoor_localization/domain/entities/asset.dart';
 import '../../config/app_colors.dart';
 import 'asset_list_item.dart';
-import '../../domain/mock-repositories/mock_data_initializer.dart';
-import '../../domain/services/asset_service.dart';
 
-class AssetsPage extends StatefulWidget {
-  @override
-  _AssetsPageState createState() => _AssetsPageState();
-}
 
-class _AssetsPageState extends State<AssetsPage> {
-  bool _isAscending = true;
-  List<Asset> assets = [];
+class AssetsPage extends StatelessWidget {
+  final List<Asset> assets;
 
-  @override
-  void initState() {
-    super.initState();
-    MockDataInitializer.initializeData();
-    assets = AssetService.getAll();
-  }
-
-  void _toggleSortOrder() {
-    setState(() {
-      _isAscending = !_isAscending;
-    });
-  }
+  const AssetsPage({Key? key, required this.assets}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(16,16,16,8),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Search Bar
               TextField(
                 decoration: InputDecoration(
                   contentPadding: const EdgeInsets.symmetric(vertical: 12),
@@ -48,7 +29,6 @@ class _AssetsPageState extends State<AssetsPage> {
                 ),
               ),
               const SizedBox(height: 8),
-              // Filter and Sorting Widgets
               Row(
                 children: [
                   ElevatedButton.icon(
@@ -65,7 +45,9 @@ class _AssetsPageState extends State<AssetsPage> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: _toggleSortOrder, // Toggle sort order on click
+                      onPressed: () {
+                        // Sorting logic here
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary500,
                         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -77,11 +59,9 @@ class _AssetsPageState extends State<AssetsPage> {
                             style: TextStyle(color: Colors.white),
                           ),
                           const SizedBox(width: 8),
-                          Text(
-                            _isAscending
-                                ? 'Name-ascending'
-                                : 'Name-descending', // Display current sorting
-                            style: const TextStyle(
+                          const Text(
+                            'Name-ascending',
+                            style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                             ),
@@ -99,18 +79,14 @@ class _AssetsPageState extends State<AssetsPage> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: ListView.builder(
-              itemCount: assets.length + 1,
+              itemCount: assets.length,
               itemBuilder: (context, index) {
-                if (index < assets.length) {
-                  return AssetListItem(asset: assets[index]);
-                } else {
-                  return const SizedBox(height: 8);
-                }
+                Asset asset = assets[index];
+                return AssetListItem(asset: asset);
               },
             ),
           ),
         ),
-
       ],
     );
   }

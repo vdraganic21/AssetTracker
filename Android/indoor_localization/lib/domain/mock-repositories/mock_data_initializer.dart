@@ -7,7 +7,10 @@ import 'package:indoor_localization/domain/services/facility_service.dart';
 import 'package:indoor_localization/domain/services/zone_service.dart';
 
 class MockDataInitializer {
+  static bool _isDataInitialized = false;
+
   static void initializeData() {
+    if (_isDataInitialized) return;
     const String floorMapDemo = "/logo192.png";
 
     FacilityService.add(
@@ -15,21 +18,21 @@ class MockDataInitializer {
         id: 1,
         name: "Warehouse 1",
         imageBase64: floorMapDemo,
-      ),
+      )
     );
     FacilityService.add(
       Facility(
         id: 2,
         name: "Warehouse 35",
         imageBase64: floorMapDemo,
-      ),
+      )
     );
     FacilityService.add(
       Facility(
         id: 3,
         name: "Production Line",
         imageBase64: floorMapDemo,
-      ),
+      )
     );
 
     ZoneService.add(
@@ -39,25 +42,25 @@ class MockDataInitializer {
         points: [],
         parentFacilityId: 1,
         containedAssetsIds: [],
-      ),
+      )
     );
     ZoneService.add(
       Zone(
-        id: 1,
+        id: 2,
         name: "Zone 2",
         points: [],
         parentFacilityId: 2,
         containedAssetsIds: [],
-      ),
+      )
     );
     ZoneService.add(
       Zone(
-        id: 1,
+        id: 3,
         name: "Zone 3",
         points: [],
         parentFacilityId: 3,
         containedAssetsIds: [],
-      ),
+      )
     );
 
     AssetService.add(
@@ -69,40 +72,42 @@ class MockDataInitializer {
         lastSync: DateTime.now(),
         isActive: true,
         currentZonesIds: [],
-      ),
+      )
     );
     AssetService.add(
       Asset(
-        id: 1,
+        id: 2,
         name: "Crate 47",
         parentFacilityId: 1,
         position: Point(x: 10, y: 10),
         lastSync: DateTime.now(),
         isActive: true,
         currentZonesIds: [],
-      ),
+      )
     );
     AssetService.add(
       Asset(
-        id: 1,
+        id: 3,
         name: "Robot Dog",
         parentFacilityId: 1,
         position: Point(x: 10, y: 10),
         lastSync: DateTime.now(),
         isActive: true,
         currentZonesIds: [],
-      ),
+      )
     );
     AssetService.add(
-      Asset(
-        id: 1,
-        name: "Pallet 2x5",
-        parentFacilityId: 1,
-        position: Point(x: 10, y: 10),
-        lastSync: DateTime.now(),
-        isActive: true,
-        currentZonesIds: [],
-      ),
+        Asset(
+          id: 4,
+          name: "Crane",
+          parentFacilityId: 1,
+          position: Point(x: 10, y: 10),
+          lastSync: DateTime.now(),
+          isActive: true,
+          currentZonesIds: [],
+        )
     );
+
+    _isDataInitialized = true;
   }
 }
