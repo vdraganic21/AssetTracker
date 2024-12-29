@@ -1,20 +1,15 @@
 import "./FacilityCard.css";
+import { Facility } from "../../entities/Facility";
 
-type FacilityCardProps = {
-  imageSrc: string;
-  imageAlt: string;
-  facilityName: string;
-};
-
-function FacilityCard({ imageSrc, imageAlt, facilityName }: FacilityCardProps) {
-  return (
-    <div className="facility-card">
-      <div className="facility-card-image">
-        <img src={imageSrc} alt={imageAlt} />
-      </div>
-      <div className="facility-card-title">{facilityName}</div>
-    </div>
-  );
+function FacilityCard({ facility }: { facility: Facility }) {
+	return (
+		<div className="facility-card">
+			<div className="facility-card-image">
+				<img src={facility.imageBase64} alt={facility.name + "floor map"} />
+			</div>
+			<div className="facility-card-title">{facility.name}</div>
+		</div>
+	);
 }
 
 export default FacilityCard;

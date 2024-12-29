@@ -3,17 +3,13 @@ import FacilityCard from "./FacilityCard";
 import "./FacilityCardContainer.css";
 
 function FacilityCardContainer({ facilities }: { facilities: Facility[] }) {
-  return (
-    <div className="facility-card-container">
-      {facilities.map((facility) => (
-        <FacilityCard
-          imageSrc={facility.imageBase64}
-          imageAlt={facility.name}
-          facilityName={facility.name}
-        />
-      ))}
-    </div>
-  );
+	return (
+		<div className="facility-card-container">
+			{facilities.map((facility) => (
+				<FacilityCard facility={facility} />
+			))}
+		</div>
+	);
 }
 
 export default FacilityCardContainer;
