@@ -19,8 +19,8 @@ function EditAssetForm() {
 	const [isPopupOpen, setPopupOpen] = useState(false);
 
 	const handlePopUpConfirm = () => {
-		console.log("Confirmed!");
-		setPopupOpen(false);
+		AssetService.Delete(assetId);
+		navigate("/assets");
 	};
 
 	const handlePopUpCancel = () => {
