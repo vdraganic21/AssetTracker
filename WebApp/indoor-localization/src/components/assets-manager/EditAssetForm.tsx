@@ -10,11 +10,22 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { SynInputEvent } from "@synergy-design-system/react/components/checkbox.js";
 import { AssetService } from "../../services/AssetService";
+import PopUpConfirmation from "../PopUpConfirmation";
 
 function EditAssetForm() {
 	const navigate = useNavigate();
 	const { id } = useParams();
 	const assetId = parseInt(id ?? "0", 10);
+	const [isPopupOpen, setPopupOpen] = useState(false);
+
+	const handlePopUpConfirm = () => {
+		console.log("Confirmed!");
+		setPopupOpen(false);
+	};
+
+	const handlePopUpCancel = () => {
+		setPopupOpen(false);
+	};
 	let asset = AssetService.Get(assetId);
 
 	useEffect(() => {
@@ -58,7 +69,9 @@ function EditAssetForm() {
 							library="fa"
 							name="fas-trash"
 							className="danger-icon"
-							onClick={() => {}}
+							onClick={() => {
+								setPopupOpen(true);
+							}}
 						></SynIcon>
 					</div>
 				</div>
@@ -84,6 +97,17 @@ function EditAssetForm() {
 					</SynButton>
 				</div>
 			</div>
+			{isPopupOpen && (
+				<PopUpConfirmation
+					title={`Are you sure you want to remove '${asset?.name}'?`}
+					onConfirm={handlePopUpConfirm}
+					onCancel={handlePopUpCancel}
+					confirmText="Remove"
+					cancelText="Cancel"
+				>
+					<p>This action cannot be undone.</p>
+				</PopUpConfirmation>
+			)}
 			<Footer />
 		</>
 	);
