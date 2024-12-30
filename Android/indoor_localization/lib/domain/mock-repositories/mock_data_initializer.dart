@@ -71,18 +71,18 @@ class MockDataInitializer {
         position: Point(x: 10, y: 10),
         lastSync: DateTime.now(),
         isActive: true,
-        currentZonesIds: [],
+        currentZonesIds: [1],
       )
     );
     AssetService.add(
       Asset(
         id: 2,
         name: "Crate 47",
-        parentFacilityId: 1,
+        parentFacilityId: 2,
         position: Point(x: 10, y: 10),
         lastSync: DateTime.now(),
         isActive: true,
-        currentZonesIds: [],
+        currentZonesIds: [1],
       )
     );
     AssetService.add(
@@ -93,18 +93,18 @@ class MockDataInitializer {
         position: Point(x: 10, y: 10),
         lastSync: DateTime.now(),
         isActive: true,
-        currentZonesIds: [],
+        currentZonesIds: [1],
       )
     );
     AssetService.add(
         Asset(
           id: 4,
-          name: "Crane",
+          name: "Pallet 2x5",
           parentFacilityId: 1,
           position: Point(x: 10, y: 10),
           lastSync: DateTime.now(),
           isActive: true,
-          currentZonesIds: [],
+          currentZonesIds: [3],
         )
     );
 
