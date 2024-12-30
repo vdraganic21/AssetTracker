@@ -8,22 +8,24 @@ import AssetsManager from "./components/assets-manager/AssetsManager";
 import AddFacilityForm from "./components/facilities-manager/AddFacilityForm";
 import EditAssetForm from "./components/assets-manager/EditAssetForm";
 import AddAssetForm from "./components/assets-manager/AddAssetForm";
+import NotFoundPage from "./components/NotFoundPage";
 
 function App() {
-  return (
-    <div className="application">
-      <Header />
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/assets" element={<AssetsManager />} />
-        <Route path="/facilities" element={<FacilitiesManager />} />
-        <Route path="/reports" element={<ReportsPage />} />
-        <Route path="/facilities/add" element={<AddFacilityForm />} />
-        <Route path="/assets/edit/:id" element={<EditAssetForm />} />
-        <Route path="/assets/add" element={<AddAssetForm />} />
-      </Routes>
-    </div>
-  );
+	return (
+		<div className="application">
+			<Header />
+			<Routes>
+				<Route path="/" element={<Dashboard />} />
+				<Route path="/assets" element={<AssetsManager />} />
+				<Route path="/facilities" element={<FacilitiesManager />} />
+				<Route path="/reports" element={<ReportsPage />} />
+				<Route path="/facilities/add" element={<AddFacilityForm />} />
+				<Route path="/assets/edit/:id" element={<EditAssetForm />} />
+				<Route path="/assets/add" element={<AddAssetForm />} />
+				<Route path="*" element={<NotFoundPage />} />
+			</Routes>
+		</div>
+	);
 }
 
 export default App;
