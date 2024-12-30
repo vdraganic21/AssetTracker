@@ -22,20 +22,25 @@ function FloorMapDisplay() {
   return (
     <div className="floor-map-display">
       <canvas ref={canvasRef}></canvas>
-      <div className="bottom-right-buttons">
-        <SynButton>
-          <SynIcon
-            library="fa"
-            name="fas-rotate-right"
-            className="button-icon"
-          />
-        </SynButton>
-        <SynButton>
-          <SynIcon library="fa" name="fas-plus" className="button-icon" />
-        </SynButton>
-        <SynButton>
-          <SynIcon library="fa" name="fas-minus" className="button-icon" />
-        </SynButton>
+      <div className="bottom-right-container">
+        <div className="facility-column">
+          <p className="facility-name">Facility name</p>
+        </div>
+        <div className="buttons-column">
+          <SynButton>
+            <SynIcon
+              library="fa"
+              name="fas-rotate-right"
+              className="button-icon"
+            />
+          </SynButton>
+          <SynButton>
+            <SynIcon library="fa" name="fas-plus" className="button-icon" />
+          </SynButton>
+          <SynButton>
+            <SynIcon library="fa" name="fas-minus" className="button-icon" />
+          </SynButton>
+        </div>
       </div>
     </div>
   );
