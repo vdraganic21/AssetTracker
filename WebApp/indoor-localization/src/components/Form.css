@@ -18,3 +18,20 @@
     align-items: flex-end;
     justify-content: flex-end;
 }
+
+.image-container {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    vertical-align: middle;
+    max-width: 300px;
+    max-height: 300px;
+  }
+  
+  .image-preview {
+    max-width: 300px;
+    max-height: 200px;
+    object-fit: contain;
+    margin-top: 16px;
+    margin-bottom: 16px;
+  }

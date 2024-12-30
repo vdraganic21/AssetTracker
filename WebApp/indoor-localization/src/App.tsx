@@ -8,6 +8,7 @@ import AssetsManager from "./components/assets-manager/AssetsManager";
 import AddFacilityForm from "./components/facilities-manager/AddFacilityForm";
 import EditAssetForm from "./components/assets-manager/EditAssetForm";
 import AddAssetForm from "./components/assets-manager/AddAssetForm";
+import EditFacilityForm from "./components/facilities-manager/EditFacilityForm";
 import NotFoundPage from "./components/NotFoundPage";
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
 				<Route path="/facilities/add" element={<AddFacilityForm />} />
 				<Route path="/assets/edit/:id" element={<EditAssetForm />} />
 				<Route path="/assets/add" element={<AddAssetForm />} />
+				<Route path="/facilities/edit/:id" element={<EditFacilityForm />} />
 				<Route path="*" element={<NotFoundPage />} />
 			</Routes>
 		</div>

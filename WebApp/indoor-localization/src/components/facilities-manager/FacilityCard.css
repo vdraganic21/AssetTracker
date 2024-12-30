@@ -9,6 +9,7 @@
   text-align: center;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .facility-card-title {
@@ -28,4 +29,14 @@
 
 .facility-card-image img {
   object-fit: cover;
+}
+
+.facility-edit-icon{
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  cursor: pointer;
+  transition: color 0.1s ease-in-out;
+  background-color: var(--syn-color-neutral-0);
+  padding: var(--syn-spacing-4x-small);
 }

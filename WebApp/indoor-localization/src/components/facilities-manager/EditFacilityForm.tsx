@@ -6,22 +6,30 @@ import {
 } from "@synergy-design-system/react";
 import Footer from "../Footer";
 import "../Form.css";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
-	SynChangeEvent,
 	SynInputEvent,
+	SynChangeEvent,
 } from "@synergy-design-system/react/components/checkbox.js";
 import { FacilityService } from "../../services/FacilityService";
-import { Facility } from "../../entities/Facility";
 
-function AddFacilityForm() {
+function EditFacilityForm() {
 	const navigate = useNavigate();
+	const { id } = useParams();
+	const facilityId = parseInt(id ?? "0", 10);
+	const facility = FacilityService.Get(facilityId);
 
-	const [facilityName, setFacilityName] = useState("");
+	useEffect(() => {
+		if (facility == null) navigate("/facilities");
+	}, [facility, navigate]);
+
+	const [facilityName, setFacilityName] = useState(facility?.name ?? "");
 	const [file, setFile] = useState<File | null>(null);
 	const [fileError, setFileError] = useState("");
-	const [previewSrc, setPreviewSrc] = useState<string | null>(null);
+	const [previewSrc, setPreviewSrc] = useState<string | null>(
+		facility?.imageBase64 ?? null
+	);
 	const [isFormValid, setIsFormValid] = useState(false);
 
 	const handleCancel = () => {
@@ -60,26 +68,37 @@ function AddFacilityForm() {
 	};
 
 	const validateForm = (name: string, file: File | null) => {
-		setIsFormValid(!!name.trim() && file !== null && !fileError);
+		setIsFormValid(
+			!!name.trim() &&
+				(previewSrc == facility?.imageBase64 || (file !== null && !fileError))
+		);
 	};
 
-	const handleAdd = () => {
-		if (!file) return;
+	const handleEdit = () => {
+		if (!facility) return;
 
-		const reader = new FileReader();
-		reader.onload = () => {
-			const base64ImageString = reader.result as string;
-			const newFacility = new Facility(0, facilityName, base64ImageString);
-			const isAdded = FacilityService.Add(newFacility);
-			if (isAdded) navigate("/facilities");
-		};
-		reader.readAsDataURL(file);
+		if (facilityName.trim() !== "") facility.name = facilityName;
+
+		if (file) {
+			const reader = new FileReader();
+			reader.onload = () => {
+				const base64ImageString = reader.result as string;
+				facility.imageBase64 = base64ImageString;
+			};
+			reader.readAsDataURL(file);
+		}
+
+		let isUpdated = FacilityService.Update(facility);
+
+		if (isUpdated) {
+			navigate("/facilities");
+		}
 	};
 
 	return (
 		<>
 			<div className="content content-border">
-				<span className="syn-heading--3x-large">Add facility</span>
+				<span className="syn-heading--3x-large">Edit facility</span>
 				<SynDivider className="content-divider" />
 				<SynInput
 					name="name"
@@ -87,12 +106,12 @@ function AddFacilityForm() {
 					className="form-input-width"
 					value={facilityName}
 					onSynInput={handleNameChange}
-				></SynInput>
+				/>
 				<SynFile
 					label="Floor map image"
 					className="form-top-margin"
 					onSynChange={handleFileChange}
-				></SynFile>
+				/>
 				{fileError && <p style={{ color: "red" }}>{fileError}</p>}
 				{previewSrc && (
 					<img
@@ -109,9 +128,9 @@ function AddFacilityForm() {
 						variant="filled"
 						className="form-button"
 						disabled={!isFormValid}
-						onClick={handleAdd}
+						onClick={handleEdit}
 					>
-						Add
+						Edit
 					</SynButton>
 				</div>
 			</div>
@@ -120,4 +139,4 @@ function AddFacilityForm() {
 	);
 }
 
-export default AddFacilityForm;
+export default EditFacilityForm;
