@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import DashboardDisplayManager from "./../../managers/DashboardDisplayManager.tsx"; // Import the manager
 import "./FloorMapDisplay.css";
+import { SynButton, SynIcon } from "@synergy-design-system/react";
 
 function FloorMapDisplay() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -21,6 +22,21 @@ function FloorMapDisplay() {
   return (
     <div className="floor-map-display">
       <canvas ref={canvasRef}></canvas>
+      <div className="bottom-right-buttons">
+        <SynButton>
+          <SynIcon
+            library="fa"
+            name="fas-rotate-right"
+            className="button-icon"
+          />
+        </SynButton>
+        <SynButton>
+          <SynIcon library="fa" name="fas-plus" className="button-icon" />
+        </SynButton>
+        <SynButton>
+          <SynIcon library="fa" name="fas-minus" className="button-icon" />
+        </SynButton>
+      </div>
     </div>
   );
 }
