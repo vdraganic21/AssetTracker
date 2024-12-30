@@ -41,10 +41,6 @@ function FacilitiesManager() {
     navigate("/facilities/add");
   };
 
-  const handleDeleteButtonClick = () => {
-    console.log("Delete button clicked");
-  };
-
   const handleFilterChange = (event: SynChangeEvent) => {
     const selectedValue = (event.target as HTMLInputElement).value;
 
