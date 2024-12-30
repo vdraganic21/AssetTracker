@@ -85,9 +85,6 @@ function FacilitiesManager() {
         <div className="header-row">
           <span className="syn-heading--3x-large">Facilities</span>
           <div className="button-group">
-            <SynButton variant="outline" onClick={handleDeleteButtonClick}>
-              Delete
-            </SynButton>
             <SynButton
               variant="filled"
               className="syn-border-radius-medium"
