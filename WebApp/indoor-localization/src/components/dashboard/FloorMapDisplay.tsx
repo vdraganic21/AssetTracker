@@ -45,9 +45,8 @@ function FloorMapDisplay() {
 
 	const updateZoom = (increment: number) => {
 		setZoomLevel((prevZoom) => {
-			const newZoom = prevZoom + increment;
-			const clampedZoom = Math.min(Math.max(newZoom, 50), 150);
-			return clampedZoom;
+			const newZoom = Math.min(Math.max(prevZoom + increment, 50), 150);
+			return newZoom;
 		});
 	};
 
