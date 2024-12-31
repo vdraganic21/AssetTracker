@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using RESTservice_API.Data;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors(options =>
@@ -20,6 +19,7 @@ if (useMockData)
 {
     builder.Services.AddSingleton<IAssetRepository, MockAssetRepository>();
     builder.Services.AddSingleton<IPositionHistoryRepository, MockPositionHistoryRepository>();
+    builder.Services.AddSingleton<IFloorMapRepository, MockFloorMapRepository>(); // Add MockFloorMapRepository
     builder.Services.AddSingleton<MqttService>();
 }
 else
@@ -28,6 +28,7 @@ else
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
     builder.Services.AddScoped<IAssetRepository, AssetRepository>();
     builder.Services.AddScoped<IPositionHistoryRepository, PositionHistoryRepository>();
+    builder.Services.AddScoped<IFloorMapRepository, FloorMapRepository>(); // Add FloorMapRepository
 }
 
 builder.Services.AddControllers();
