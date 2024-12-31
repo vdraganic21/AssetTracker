@@ -7,6 +7,13 @@
   display: flex;
 }
 
+.konva-stage-container {
+  flex: 1;
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
 .bottom-right-container {
   position: absolute;
   bottom: 20px;
@@ -16,26 +23,6 @@
   flex-direction: row;
   align-items: center;
   gap: 10px;
-}
-
-.bottom-right-container syn-button {
-  background-color: var(--syn-color-neutral-0);
-}
-
-.buttons-column {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-
-.bottom-column syn-button {
-  background-color: var(--syn-color-neutral-0);
-}
-
-.button-icon {
-  color: var(--syn-color-primary-500, #0ca2eb);
-  font-size: 24px;
 }
 
 .facility-column {
@@ -48,7 +35,14 @@
   font-size: var(--syn-font-size-medium);
 }
 
-.konva-stage-container {
-  flex: 1;
+.buttons-column {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.button-icon {
+  color: var(--syn-color-primary-500, #0ca2eb);
+  font-size: 24px;
 }

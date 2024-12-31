@@ -1,28 +1,32 @@
 import Konva from "konva";
 import "./FloorMapDisplay.css";
 import { SynButton, SynIcon } from "@synergy-design-system/react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Stage, Layer, Image } from "react-konva";
 import useImage from "use-image";
 
 function FloorMapDisplay() {
 	const stageRef = useRef<Konva.Stage>(null);
-	const containerRef = useRef(null);
+	const containerRef = useRef<HTMLDivElement>(null);
 
-	const FloorMapImage = () => {
-		const [image] = useImage("/floorMapDemo.png");
-		return <Image image={image} />;
+	const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
+	const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
+	const [image] = useImage("/floorMapDemo.png");
+
+	useEffect(() => {
+		if (image) {
+			setImageSize({ width: image.width, height: image.height });
+		}
+	}, [image]);
+
+	const resizeStage = () => {
+		if (containerRef.current) {
+			const { clientWidth, clientHeight } = containerRef.current;
+			setStageSize({ width: clientWidth, height: clientHeight });
+		}
 	};
 
 	useEffect(() => {
-		const resizeStage = () => {
-			if (stageRef.current && containerRef.current) {
-				const { offsetWidth, offsetHeight } = containerRef.current;
-				stageRef.current.width(offsetWidth);
-				stageRef.current.height(offsetHeight);
-			}
-		};
-
 		window.addEventListener("resize", resizeStage);
 		resizeStage();
 
@@ -31,10 +35,36 @@ function FloorMapDisplay() {
 		};
 	}, []);
 
+	const FloorMapImage = () => <Image image={image} />;
+
 	return (
 		<div className="floor-map-display">
 			<div className="konva-stage-container" ref={containerRef}>
-				<Stage ref={stageRef}>
+				<Stage
+					ref={stageRef}
+					width={stageSize.width}
+					height={stageSize.height}
+					draggable
+					dragBoundFunc={(pos) => {
+						if (!imageSize.width || !imageSize.height) {
+							return pos;
+						}
+
+						const { width: containerWidth, height: containerHeight } =
+							stageSize;
+
+						const xMin = Math.min(0, containerWidth - imageSize.width * 1.5);
+						const xMax = Math.max(0, imageSize.width * 0.5);
+
+						const yMin = Math.min(0, containerHeight - imageSize.height * 1.5);
+						const yMax = Math.max(0, imageSize.height * 0.5);
+
+						return {
+							x: Math.max(Math.min(pos.x, xMax), xMin),
+							y: Math.max(Math.min(pos.y, yMax), yMin),
+						};
+					}}
+				>
 					<Layer>
 						<FloorMapImage />
 					</Layer>
