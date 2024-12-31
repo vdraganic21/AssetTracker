@@ -11,13 +11,21 @@ function FloorMapDisplay() {
 
 	const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
 	const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
+	const [zoomLevel, setZoomLevel] = useState(100);
 	const [image] = useImage("/floorMapDemo.png");
+	const [imageScale, setImageScale] = useState(1);
 
 	useEffect(() => {
-		if (image) {
+		if (image && stageSize.width && stageSize.height) {
 			setImageSize({ width: image.width, height: image.height });
+
+			const initialScale = Math.min(
+				(stageSize.width - 64) / image.width,
+				(stageSize.height - 64) / image.height
+			);
+			setImageScale(initialScale);
 		}
-	}, [image]);
+	}, [image, stageSize]);
 
 	const resizeStage = () => {
 		if (containerRef.current) {
@@ -35,14 +43,32 @@ function FloorMapDisplay() {
 		};
 	}, []);
 
-	const FloorMapImage = () => {
-		const scale = Math.min(
-			(stageSize.width - 64) / imageSize.width, // Subtracting 32px on both sides
-			(stageSize.height - 64) / imageSize.height
-		);
+	const updateZoom = (increment: number) => {
+		setZoomLevel((prevZoom) => {
+			const newZoom = prevZoom + increment;
+			const clampedZoom = Math.min(Math.max(newZoom, 50), 150);
+			return clampedZoom;
+		});
+	};
 
-		const x = (stageSize.width - imageSize.width * scale) / 2;
-		const y = (stageSize.height - imageSize.height * scale) / 2;
+	const handleWheel = (e: React.WheelEvent) => {
+		e.preventDefault();
+		const zoomIncrement = e.deltaY < 0 ? 10 : -10;
+		updateZoom(zoomIncrement);
+	};
+
+	const resetZoom = () => {
+		setZoomLevel(100);
+		if (stageRef.current) {
+			stageRef.current.position({ x: 0, y: 0 });
+		}
+	};
+
+	const FloorMapImage = () => {
+		const scale = (zoomLevel / 100) * imageScale;
+
+		const x = (stageSize.width - imageSize.width * imageScale) / 2;
+		const y = (stageSize.height - imageSize.height * imageScale) / 2;
 
 		return <Image image={image} scaleX={scale} scaleY={scale} x={x} y={y} />;
 	};
@@ -54,11 +80,7 @@ function FloorMapDisplay() {
 
 		const { width: containerWidth, height: containerHeight } = stageSize;
 
-		const scale = Math.min(
-			(containerWidth - 64) / imageSize.width,
-			(containerHeight - 64) / imageSize.height
-		);
-
+		const scale = (zoomLevel / 100) * imageScale;
 		const scaledImageWidth = imageSize.width * scale;
 		const scaledImageHeight = imageSize.height * scale;
 
@@ -73,7 +95,7 @@ function FloorMapDisplay() {
 
 		const yMin = Math.min(
 			0,
-			(containerHeight - scaledImageHeight) / 2 - scaledImageHeight * 0.75
+			-(containerHeight - scaledImageHeight) / 2 - scaledImageHeight * 0.75
 		);
 		const yMax = Math.max(
 			0,
@@ -86,9 +108,16 @@ function FloorMapDisplay() {
 		};
 	};
 
+	const handleZoomIn = () => updateZoom(10);
+	const handleZoomOut = () => updateZoom(-10);
+
 	return (
 		<div className="floor-map-display">
-			<div className="konva-stage-container" ref={containerRef}>
+			<div
+				className="konva-stage-container"
+				ref={containerRef}
+				onWheel={handleWheel}
+			>
 				<Stage
 					ref={stageRef}
 					width={stageSize.width}
@@ -101,22 +130,24 @@ function FloorMapDisplay() {
 					</Layer>
 				</Stage>
 			</div>
+
 			<div className="bottom-right-container">
 				<div className="facility-column">
 					<p className="facility-name">Facility name</p>
 				</div>
 				<div className="buttons-column">
-					<SynButton>
+					<SynButton onClick={resetZoom}>
 						<SynIcon
 							library="fa"
 							name="fas-rotate-right"
 							className="button-icon"
 						/>
 					</SynButton>
-					<SynButton>
+					<SynButton onClick={handleZoomIn}>
 						<SynIcon library="fa" name="fas-plus" className="button-icon" />
 					</SynButton>
-					<SynButton>
+					<p>{zoomLevel}%</p>
+					<SynButton onClick={handleZoomOut}>
 						<SynIcon library="fa" name="fas-minus" className="button-icon" />
 					</SynButton>
 				</div>
