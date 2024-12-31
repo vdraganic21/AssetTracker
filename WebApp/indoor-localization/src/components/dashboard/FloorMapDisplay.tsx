@@ -1,31 +1,19 @@
-import { useEffect, useRef } from "react";
-import DashboardDisplayManager from "./../../managers/DashboardDisplayManager.tsx"; // Import the manager
 import "./FloorMapDisplay.css";
 import { SynButton, SynIcon } from "@synergy-design-system/react";
-import { Stage, Layer, Rect, Circle } from "react-konva";
+import { Stage, Layer, Image } from "react-konva";
+import useImage from "use-image";
 
 function FloorMapDisplay() {
-	const canvasRef = useRef<HTMLCanvasElement>(null);
-	const displayManagerRef = useRef<DashboardDisplayManager | null>(null);
-
-	useEffect(() => {
-		const canvas = canvasRef.current;
-		if (canvas) {
-			const manager = new DashboardDisplayManager(canvas);
-			displayManagerRef.current = manager;
-
-			return () => {
-				manager.destroy();
-			};
-		}
-	}, []);
+	const FloorMapImage = () => {
+		const [image] = useImage("/floorMapDemo.png");
+		return <Image image={image} />;
+	};
 
 	return (
 		<div className="floor-map-display">
 			<Stage width={window.innerWidth} height={window.innerHeight}>
-				<Layer>
-					<Rect width={50} height={50} fill="red" />
-					<Circle x={200} y={200} stroke="black" radius={50} />
+				<Layer draggable={true}>
+					<FloorMapImage />
 				</Layer>
 			</Stage>
 			<div className="bottom-right-container">
