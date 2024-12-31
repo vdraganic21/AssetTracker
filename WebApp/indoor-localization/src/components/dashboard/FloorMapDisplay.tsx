@@ -35,7 +35,56 @@ function FloorMapDisplay() {
 		};
 	}, []);
 
-	const FloorMapImage = () => <Image image={image} />;
+	const FloorMapImage = () => {
+		const scale = Math.min(
+			(stageSize.width - 64) / imageSize.width, // Subtracting 32px on both sides
+			(stageSize.height - 64) / imageSize.height
+		);
+
+		const x = (stageSize.width - imageSize.width * scale) / 2;
+		const y = (stageSize.height - imageSize.height * scale) / 2;
+
+		return <Image image={image} scaleX={scale} scaleY={scale} x={x} y={y} />;
+	};
+
+	const stageBoundaryFunc = (pos: { x: number; y: number }) => {
+		if (!imageSize.width || !imageSize.height) {
+			return pos;
+		}
+
+		const { width: containerWidth, height: containerHeight } = stageSize;
+
+		const scale = Math.min(
+			(containerWidth - 64) / imageSize.width,
+			(containerHeight - 64) / imageSize.height
+		);
+
+		const scaledImageWidth = imageSize.width * scale;
+		const scaledImageHeight = imageSize.height * scale;
+
+		const xMin = Math.min(
+			0,
+			-((containerWidth - scaledImageWidth) / 2) - scaledImageWidth * 0.75
+		);
+		const xMax = Math.max(
+			0,
+			(containerWidth - scaledImageWidth) / 2 + scaledImageWidth * 0.75
+		);
+
+		const yMin = Math.min(
+			0,
+			(containerHeight - scaledImageHeight) / 2 - scaledImageHeight * 0.75
+		);
+		const yMax = Math.max(
+			0,
+			(containerHeight - scaledImageHeight) / 2 + scaledImageHeight * 0.75
+		);
+
+		return {
+			x: Math.max(Math.min(pos.x, xMax), xMin),
+			y: Math.max(Math.min(pos.y, yMax), yMin),
+		};
+	};
 
 	return (
 		<div className="floor-map-display">
@@ -45,25 +94,7 @@ function FloorMapDisplay() {
 					width={stageSize.width}
 					height={stageSize.height}
 					draggable
-					dragBoundFunc={(pos) => {
-						if (!imageSize.width || !imageSize.height) {
-							return pos;
-						}
-
-						const { width: containerWidth, height: containerHeight } =
-							stageSize;
-
-						const xMin = Math.min(0, containerWidth - imageSize.width * 1.5);
-						const xMax = Math.max(0, imageSize.width * 0.5);
-
-						const yMin = Math.min(0, containerHeight - imageSize.height * 1.5);
-						const yMax = Math.max(0, imageSize.height * 0.5);
-
-						return {
-							x: Math.max(Math.min(pos.x, xMax), xMin),
-							y: Math.max(Math.min(pos.y, yMax), yMin),
-						};
-					}}
+					dragBoundFunc={stageBoundaryFunc}
 				>
 					<Layer>
 						<FloorMapImage />
