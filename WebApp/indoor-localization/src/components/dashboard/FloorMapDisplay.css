@@ -47,3 +47,8 @@
 .facility-name {
   font-size: var(--syn-font-size-medium);
 }
+
+.konva-stage-container {
+  flex: 1;
+  display: flex;
+}
