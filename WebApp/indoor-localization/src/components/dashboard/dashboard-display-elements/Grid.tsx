@@ -5,16 +5,16 @@ interface GridProps {
 	y: number;
 	imageWidth: number;
 	imageHeight: number;
+	gridSize?: number;
 }
 
-function Grid({ x, y, imageWidth, imageHeight }: GridProps) {
-	const cellSize = 50;
+function Grid({ x, y, imageWidth, imageHeight, gridSize = 50 }: GridProps) {
 	const gridLines = [];
 	const axisNumbers = [];
 
-	const horizontalLinesCount = Math.ceil(imageHeight / cellSize);
+	const horizontalLinesCount = Math.ceil(imageHeight / gridSize);
 	for (let i = 0; i <= horizontalLinesCount; i++) {
-		const yOffset = y - i * cellSize;
+		const yOffset = y - i * gridSize;
 		if (yOffset < 0) break;
 
 		gridLines.push(
@@ -23,7 +23,7 @@ function Grid({ x, y, imageWidth, imageHeight }: GridProps) {
 				points={[
 					x,
 					yOffset,
-					x + Math.ceil(imageWidth / cellSize) * cellSize,
+					x + Math.ceil(imageWidth / gridSize) * gridSize,
 					yOffset,
 				]}
 				stroke="rgba(0, 0, 0, 0.2)"
@@ -37,7 +37,7 @@ function Grid({ x, y, imageWidth, imageHeight }: GridProps) {
 					key={`y-num-${i}`}
 					x={x - 30}
 					y={yOffset - 10}
-					text={`${i * 50}`}
+					text={`${i * gridSize}`}
 					fontSize={12}
 					fill="black"
 				/>
@@ -45,9 +45,9 @@ function Grid({ x, y, imageWidth, imageHeight }: GridProps) {
 		}
 	}
 
-	const verticalLinesCount = Math.ceil(imageWidth / cellSize);
+	const verticalLinesCount = Math.ceil(imageWidth / gridSize);
 	for (let i = 0; i <= verticalLinesCount; i++) {
-		const xOffset = x + i * cellSize;
+		const xOffset = x + i * gridSize;
 		if (xOffset < 0) break;
 
 		gridLines.push(
@@ -57,7 +57,7 @@ function Grid({ x, y, imageWidth, imageHeight }: GridProps) {
 					xOffset,
 					y,
 					xOffset,
-					y - Math.ceil(imageHeight / cellSize) * cellSize,
+					y - Math.ceil(imageHeight / gridSize) * gridSize,
 				]}
 				stroke="rgba(0, 0, 0, 0.2)"
 				strokeWidth={1}
@@ -70,7 +70,7 @@ function Grid({ x, y, imageWidth, imageHeight }: GridProps) {
 					key={`x-num-${i}`}
 					x={xOffset - 10}
 					y={y + 5}
-					text={`${i * 50}`}
+					text={`${i * gridSize}`}
 					fontSize={12}
 					fill="black"
 				/>
