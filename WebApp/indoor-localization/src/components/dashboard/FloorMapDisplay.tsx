@@ -15,6 +15,7 @@ function FloorMapDisplay() {
 	const [zoomLevel, setZoomLevel] = useState(100);
 	const [image] = useImage("/floorMapDemo.png");
 	const [imageScale, setImageScale] = useState(1);
+	const [isGridVisible, setIsGridVisible] = useState(false);
 	const scale = imageScale * (zoomLevel / 100);
 
 	useEffect(() => {
@@ -126,15 +127,17 @@ function FloorMapDisplay() {
 				>
 					<Layer scale={{ x: scale, y: scale }}>
 						<FloorMapImage />
-						<Grid
-							x={(stageSize.width - imageSize.width * imageScale) / 2}
-							y={
-								(stageSize.height - imageSize.height * imageScale) / 2 +
-								imageSize.height
-							}
-							imageHeight={imageSize.height}
-							imageWidth={imageSize.width}
-						/>
+						{isGridVisible && (
+							<Grid
+								x={(stageSize.width - imageSize.width * imageScale) / 2}
+								y={
+									(stageSize.height - imageSize.height * imageScale) / 2 +
+									imageSize.height
+								}
+								imageHeight={imageSize.height}
+								imageWidth={imageSize.width}
+							/>
+						)}
 					</Layer>
 				</Stage>
 			</div>
@@ -144,6 +147,13 @@ function FloorMapDisplay() {
 					<p className="facility-name">Facility name</p>
 				</div>
 				<div className="buttons-column">
+					<SynButton onClick={() => setIsGridVisible(!isGridVisible)}>
+						<SynIcon
+							library="fa"
+							name={isGridVisible ? "fas-border-none" : "fas-border-all"}
+							className="button-icon"
+						/>
+					</SynButton>
 					<SynButton onClick={resetZoom}>
 						<SynIcon
 							library="fa"
