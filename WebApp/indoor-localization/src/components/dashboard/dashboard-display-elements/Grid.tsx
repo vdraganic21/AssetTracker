@@ -21,30 +21,73 @@ function Grid({
 	axisColor = "rgba(0, 0, 0, 0.5)",
 	textColor = "black",
 }: GridProps) {
-	const gridLines = [];
-	const axisNumbers = [];
+	const createHorizontalLines = () => {
+		const lines = [];
+		for (let i = 0; i <= Math.ceil(imageHeight / gridSize); i++) {
+			const yOffset = y - i * gridSize;
+			if (yOffset < 0) break;
 
-	const horizontalLinesCount = Math.ceil(imageHeight / gridSize);
-	for (let i = 0; i <= horizontalLinesCount; i++) {
-		const yOffset = y - i * gridSize;
-		if (yOffset < 0) break;
+			lines.push(
+				<Line
+					key={`h-${i}`}
+					points={[
+						x,
+						yOffset,
+						x + Math.ceil(imageWidth / gridSize) * gridSize,
+						yOffset,
+					]}
+					stroke={gridColor}
+					strokeWidth={1}
+				/>
+			);
+		}
+		return lines;
+	};
 
-		gridLines.push(
-			<Line
-				key={`h-${i}`}
-				points={[
-					x,
-					yOffset,
-					x + Math.ceil(imageWidth / gridSize) * gridSize,
-					yOffset,
-				]}
-				stroke={gridColor}
-				strokeWidth={1}
-			/>
-		);
+	const createVerticalLines = () => {
+		const lines = [];
+		for (let i = 0; i <= Math.ceil(imageWidth / gridSize); i++) {
+			const xOffset = x + i * gridSize;
+			if (xOffset < 0) break;
 
-		if (i !== 0) {
-			axisNumbers.push(
+			lines.push(
+				<Line
+					key={`v-${i}`}
+					points={[
+						xOffset,
+						y,
+						xOffset,
+						y - Math.ceil(imageHeight / gridSize) * gridSize,
+					]}
+					stroke={gridColor}
+					strokeWidth={1}
+				/>
+			);
+		}
+		return lines;
+	};
+
+	const createAxisLines = () => [
+		<Line
+			key="x-axis"
+			points={[x, y, x + Math.ceil(imageWidth / gridSize) * gridSize, y]}
+			stroke={axisColor}
+			strokeWidth={5}
+		/>,
+		<Line
+			key="y-axis"
+			points={[x, y - Math.ceil(imageHeight / gridSize) * gridSize, x, y]}
+			stroke={axisColor}
+			strokeWidth={5}
+		/>,
+	];
+
+	const createAxisNumbers = () => {
+		const numbers = [];
+		for (let i = 1; i <= Math.ceil(imageHeight / gridSize); i++) {
+			const yOffset = y - i * gridSize;
+			if (yOffset < 0) break;
+			numbers.push(
 				<Text
 					key={`y-num-${i}`}
 					x={x - 30}
@@ -55,29 +98,10 @@ function Grid({
 				/>
 			);
 		}
-	}
-
-	const verticalLinesCount = Math.ceil(imageWidth / gridSize);
-	for (let i = 0; i <= verticalLinesCount; i++) {
-		const xOffset = x + i * gridSize;
-		if (xOffset < 0) break;
-
-		gridLines.push(
-			<Line
-				key={`v-${i}`}
-				points={[
-					xOffset,
-					y,
-					xOffset,
-					y - Math.ceil(imageHeight / gridSize) * gridSize,
-				]}
-				stroke={gridColor}
-				strokeWidth={1}
-			/>
-		);
-
-		if (i !== 0) {
-			axisNumbers.push(
+		for (let i = 1; i <= Math.ceil(imageWidth / gridSize); i++) {
+			const xOffset = x + i * gridSize;
+			if (xOffset < 0) break;
+			numbers.push(
 				<Text
 					key={`x-num-${i}`}
 					x={xOffset - 10}
@@ -88,38 +112,25 @@ function Grid({
 				/>
 			);
 		}
-	}
-
-	gridLines.push(
-		<Line
-			key="x-axis"
-			points={[x, y, x + imageWidth, y]}
-			stroke={axisColor}
-			strokeWidth={5}
-		/>,
-		<Line
-			key="y-axis"
-			points={[x, 0, x, y]}
-			stroke={axisColor}
-			strokeWidth={5}
-		/>
-	);
-
-	axisNumbers.push(
-		<Text
-			key="origin"
-			x={x - 15}
-			y={y + 5}
-			text="0"
-			fontSize={12}
-			fill={textColor}
-		/>
-	);
+		numbers.push(
+			<Text
+				key="origin"
+				x={x - 15}
+				y={y + 5}
+				text="0"
+				fontSize={12}
+				fill={textColor}
+			/>
+		);
+		return numbers;
+	};
 
 	return (
 		<>
-			{gridLines}
-			{axisNumbers}
+			{createHorizontalLines()}
+			{createVerticalLines()}
+			{createAxisLines()}
+			{createAxisNumbers()}
 		</>
 	);
 }
