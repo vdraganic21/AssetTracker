@@ -6,9 +6,21 @@ interface GridProps {
 	imageWidth: number;
 	imageHeight: number;
 	gridSize?: number;
+	gridColor?: string;
+	axisColor?: string;
+	textColor?: string;
 }
 
-function Grid({ x, y, imageWidth, imageHeight, gridSize = 50 }: GridProps) {
+function Grid({
+	x,
+	y,
+	imageWidth,
+	imageHeight,
+	gridSize = 50,
+	gridColor = "rgba(0, 0, 0, 0.2)",
+	axisColor = "rgba(0, 0, 0, 0.5)",
+	textColor = "black",
+}: GridProps) {
 	const gridLines = [];
 	const axisNumbers = [];
 
@@ -26,7 +38,7 @@ function Grid({ x, y, imageWidth, imageHeight, gridSize = 50 }: GridProps) {
 					x + Math.ceil(imageWidth / gridSize) * gridSize,
 					yOffset,
 				]}
-				stroke="rgba(0, 0, 0, 0.2)"
+				stroke={gridColor}
 				strokeWidth={1}
 			/>
 		);
@@ -39,7 +51,7 @@ function Grid({ x, y, imageWidth, imageHeight, gridSize = 50 }: GridProps) {
 					y={yOffset - 10}
 					text={`${i * gridSize}`}
 					fontSize={12}
-					fill="black"
+					fill={textColor}
 				/>
 			);
 		}
@@ -59,7 +71,7 @@ function Grid({ x, y, imageWidth, imageHeight, gridSize = 50 }: GridProps) {
 					xOffset,
 					y - Math.ceil(imageHeight / gridSize) * gridSize,
 				]}
-				stroke="rgba(0, 0, 0, 0.2)"
+				stroke={gridColor}
 				strokeWidth={1}
 			/>
 		);
@@ -72,7 +84,7 @@ function Grid({ x, y, imageWidth, imageHeight, gridSize = 50 }: GridProps) {
 					y={y + 5}
 					text={`${i * gridSize}`}
 					fontSize={12}
-					fill="black"
+					fill={textColor}
 				/>
 			);
 		}
@@ -82,13 +94,13 @@ function Grid({ x, y, imageWidth, imageHeight, gridSize = 50 }: GridProps) {
 		<Line
 			key="x-axis"
 			points={[x, y, x + imageWidth, y]}
-			stroke="rgba(0, 0, 0, 0.5)"
+			stroke={axisColor}
 			strokeWidth={5}
 		/>,
 		<Line
 			key="y-axis"
 			points={[x, 0, x, y]}
-			stroke="rgba(0, 0, 0, 0.5)"
+			stroke={axisColor}
 			strokeWidth={5}
 		/>
 	);
@@ -100,7 +112,7 @@ function Grid({ x, y, imageWidth, imageHeight, gridSize = 50 }: GridProps) {
 			y={y + 5}
 			text="0"
 			fontSize={12}
-			fill="black"
+			fill={textColor}
 		/>
 	);
 
