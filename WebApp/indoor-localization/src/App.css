@@ -58,3 +58,7 @@ syn-icon:hover{
   scrollbar-width: thin;
   scrollbar-color: var(--syn-color-neutral-400) var(--syn-color-neutral-100);
 }
+
+.unselectable {
+  user-select: none;
+}

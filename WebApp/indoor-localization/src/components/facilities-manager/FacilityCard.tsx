@@ -8,10 +8,10 @@ function FacilityCard({ facility }: { facility: Facility }) {
 
 	return (
 		<div className="facility-card">
-			<div className="facility-card-image">
+			<div className="facility-card-image unselectable">
 				<img src={facility.imageBase64} alt={facility.name + "floor map"} />
 			</div>
-			<div className="facility-card-title">{facility.name}</div>
+			<div className="facility-card-title unselectable">{facility.name}</div>
 			<SynIcon
 				library="fa"
 				name="far-edit"

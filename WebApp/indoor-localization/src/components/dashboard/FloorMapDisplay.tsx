@@ -144,7 +144,7 @@ function FloorMapDisplay() {
 
 			<div className="bottom-right-container">
 				<div className="facility-column">
-					<p className="facility-name">Facility name</p>
+					<p className="facility-name unselectable">Facility name</p>
 				</div>
 				<div className="buttons-column">
 					<SynButton onClick={() => setIsGridVisible(!isGridVisible)}>
@@ -164,7 +164,7 @@ function FloorMapDisplay() {
 					<SynButton onClick={handleZoomIn}>
 						<SynIcon library="fa" name="fas-plus" className="button-icon" />
 					</SynButton>
-					<p>{zoomLevel}%</p>
+					<p className="unselectable">{zoomLevel}%</p>
 					<SynButton onClick={handleZoomOut}>
 						<SynIcon library="fa" name="fas-minus" className="button-icon" />
 					</SynButton>
