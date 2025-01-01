@@ -4,6 +4,7 @@ import { SynButton, SynIcon } from "@synergy-design-system/react";
 import { useEffect, useRef, useState } from "react";
 import { Stage, Layer, Image } from "react-konva";
 import useImage from "use-image";
+import Grid from "./dashboard-display-elements/Grid";
 
 function FloorMapDisplay() {
 	const stageRef = useRef<Konva.Stage>(null);
@@ -14,16 +15,17 @@ function FloorMapDisplay() {
 	const [zoomLevel, setZoomLevel] = useState(100);
 	const [image] = useImage("/floorMapDemo.png");
 	const [imageScale, setImageScale] = useState(1);
+	const scale = imageScale * (zoomLevel / 100);
 
 	useEffect(() => {
 		if (image && stageSize.width && stageSize.height) {
 			setImageSize({ width: image.width, height: image.height });
 
-			const initialScale = Math.min(
+			const initialImageScale = Math.min(
 				(stageSize.width - 64) / image.width,
 				(stageSize.height - 64) / image.height
 			);
-			setImageScale(initialScale);
+			setImageScale(initialImageScale);
 		}
 	}, [image, stageSize]);
 
@@ -64,12 +66,10 @@ function FloorMapDisplay() {
 	};
 
 	const FloorMapImage = () => {
-		const scale = (zoomLevel / 100) * imageScale;
-
 		const x = (stageSize.width - imageSize.width * imageScale) / 2;
 		const y = (stageSize.height - imageSize.height * imageScale) / 2;
 
-		return <Image image={image} scaleX={scale} scaleY={scale} x={x} y={y} />;
+		return <Image image={image} x={x} y={y} />;
 	};
 
 	const stageBoundaryFunc = (pos: { x: number; y: number }) => {
@@ -79,26 +79,26 @@ function FloorMapDisplay() {
 
 		const { width: containerWidth, height: containerHeight } = stageSize;
 
-		const scale = (zoomLevel / 100) * imageScale;
-		const scaledImageWidth = imageSize.width * scale;
-		const scaledImageHeight = imageSize.height * scale;
-
 		const xMin = Math.min(
 			0,
-			-((containerWidth - scaledImageWidth) / 2) - scaledImageWidth * 0.75
+			-((containerWidth - imageSize.width * scale) / 2) -
+				imageSize.width * scale * 0.75
 		);
 		const xMax = Math.max(
 			0,
-			(containerWidth - scaledImageWidth) / 2 + scaledImageWidth * 0.75
+			(containerWidth - imageSize.width * scale) / 2 +
+				imageSize.width * scale * 0.75
 		);
 
 		const yMin = Math.min(
 			0,
-			-(containerHeight - scaledImageHeight) / 2 - scaledImageHeight * 0.75
+			-(containerHeight - imageSize.height * scale) / 2 -
+				imageSize.height * scale * 0.75
 		);
 		const yMax = Math.max(
 			0,
-			(containerHeight - scaledImageHeight) / 2 + scaledImageHeight * 0.75
+			(containerHeight - imageSize.height * scale) / 2 +
+				imageSize.height * scale * 0.75
 		);
 
 		return {
@@ -124,8 +124,17 @@ function FloorMapDisplay() {
 					draggable
 					dragBoundFunc={stageBoundaryFunc}
 				>
-					<Layer>
+					<Layer scale={{ x: scale, y: scale }}>
 						<FloorMapImage />
+						<Grid
+							x={(stageSize.width - imageSize.width * imageScale) / 2}
+							y={
+								(stageSize.height - imageSize.height * imageScale) / 2 +
+								imageSize.height
+							}
+							imageHeight={imageSize.height}
+							imageWidth={imageSize.width}
+						/>
 					</Layer>
 				</Stage>
 			</div>
