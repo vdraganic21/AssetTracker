@@ -9,7 +9,7 @@ using System;
 
 namespace SimulatorControlUI
 {
-    public partial class Form1 : Form
+    public partial class FormSimulator : Form
     {
         private Asset selectedAsset;
         private Floorplan selectedFloorplan;
@@ -19,7 +19,7 @@ namespace SimulatorControlUI
         private const float AssetRadius = 5f;
         private const float TargetRadius = 3f;
 
-        public Form1()
+        public FormSimulator()
         {
             InitializeComponent();
             StartSimulator();
