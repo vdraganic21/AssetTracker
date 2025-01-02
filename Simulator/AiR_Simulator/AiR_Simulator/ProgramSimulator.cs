@@ -55,23 +55,35 @@ namespace AssetDataSimulator
 
             try
             {
-                // First try to load from REST API
-                var restLoader = new RestApiAssetLoader(apiBaseUrl);
                 List<Asset> assets = new List<Asset>();
                 List<Floorplan> floorplanList = new List<Floorplan>();
+                bool usingFallback = false;
 
+                // First try to load from REST API
+                var restLoader = new RestApiAssetLoader(apiBaseUrl);
                 try
                 {
                     Console.WriteLine($"Attempting to load data from REST API at {apiBaseUrl}...");
                     (assets, floorplanList) = await restLoader.LoadDataAsync();
+                    Console.WriteLine("Successfully loaded data from REST API.");
                 }
                 catch (Exception apiEx)
                 {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine($"Failed to load from REST API: {apiEx.Message}");
-                    Console.WriteLine("Falling back to JSON file...");
+                    Console.WriteLine("Falling back to local JSON file...");
+                    Console.ForegroundColor = ConsoleColor.White;
                     
-                    // Fallback to JSON file
-                    (assets, floorplanList) = await LoadDataFromJsonFile();
+                    try
+                    {
+                        (assets, floorplanList) = await LoadDataFromJsonFile();
+                        usingFallback = true;
+                        Console.WriteLine("Successfully loaded data from local JSON file.");
+                    }
+                    catch (Exception jsonEx)
+                    {
+                        throw new Exception($"Failed to load data from both REST API and local JSON file.\nREST error: {apiEx.Message}\nJSON error: {jsonEx.Message}");
+                    }
                 }
 
                 if (assets == null || assets.Count == 0)
@@ -79,7 +91,7 @@ namespace AssetDataSimulator
                     throw new Exception("No assets were loaded from any source.");
                 }
 
-                Console.WriteLine($"Successfully loaded {assets.Count} assets.");
+                Console.WriteLine($"Successfully loaded {assets.Count} assets using {(usingFallback ? "local JSON file" : "REST API")}.");
 
                 // Initialize floorplans dictionary
                 floorplans = new Dictionary<string, List<Asset>>();
@@ -88,7 +100,8 @@ namespace AssetDataSimulator
                     floorplans.Add(floorplan.Name, floorplan.Assets);
                 }
 
-                simulator = new AssetSimulator(assets, floorplanList, restLoader);
+                // If using fallback, pass null for restLoader to prevent API calls
+                simulator = new AssetSimulator(assets, floorplanList, usingFallback ? null : restLoader);
                 AssetsLoaded?.Invoke();
 
                 Console.WriteLine("Simulating all available floorplans...");
@@ -268,21 +281,28 @@ namespace AssetDataSimulator
 
         private static string FindJsonFilePath()
         {
+            // First try to find in current directory
             string jsonPath = "assets.json";
-            string fullPath = Path.GetFullPath(jsonPath);
-            Console.WriteLine($"Looking for assets.json at: {fullPath}");
-            return jsonPath;
+            if (File.Exists(jsonPath))
+                return jsonPath;
+
+            // Then try to find in SimulatorControlUI directory
+            string simulatorControlPath = Path.Combine("..", "SimulatorControlUI", "assets.json");
+            if (File.Exists(simulatorControlPath))
+                return simulatorControlPath;
+
+            // Finally try to find it recursively up the directory tree
+            return FindFileRecursively("assets.json");
         }
 
         public static async Task<(List<Asset>, List<Floorplan>)> LoadDataFromJsonFile()
         {
-            string jsonPath = "assets.json";
-            string fullPath = Path.GetFullPath(jsonPath);
-            Console.WriteLine($"Looking for assets.json at: {fullPath}");
+            string fullPath = FindJsonFilePath();
+            Console.WriteLine($"Loading assets from: {fullPath}");
 
             if (!File.Exists(fullPath))
             {
-                throw new FileNotFoundException($"File '{jsonPath}' not found in the current directory or any parent directories.");
+                throw new FileNotFoundException($"assets.json not found. Looked in: {fullPath}");
             }
 
             var options = new JsonSerializerOptions
@@ -293,18 +313,37 @@ namespace AssetDataSimulator
             string jsonContent = File.ReadAllText(fullPath);
             var assetDataList = JsonSerializer.Deserialize<List<LocalAssetJsonObject>>(jsonContent, options);
             
+            if (assetDataList == null || assetDataList.Count == 0)
+            {
+                throw new Exception("No assets found in the JSON file.");
+            }
+
+            Console.WriteLine($"Found {assetDataList.Count} assets in JSON file.");
+            
             var assets = new List<Asset>();
             foreach (var assetData in assetDataList)
             {
+                if (assetData.Positions == null || assetData.Positions.Count == 0)
+                {
+                    Console.WriteLine($"Warning: Asset {assetData.AssetId} has no positions defined, skipping.");
+                    continue;
+                }
+
                 var positions = assetData.Positions.Select(p => (p.X, p.Y)).ToList();
                 var asset = new Asset(assetData.AssetId, positions)
                 {
-                    FloorplanId = 1
+                    FloorplanId = 1  // Default floorplan ID
                 };
                 assets.Add(asset);
             }
 
-            var defaultFloorplan = new Floorplan("Floor 1") { FloorplanId = 1 };
+            // Create a default floorplan that contains all assets
+            var defaultFloorplan = new Floorplan("Default Floor") 
+            { 
+                FloorplanId = 1,
+                Assets = assets
+            };
+
             return (assets, new List<Floorplan> { defaultFloorplan });
         }
     }
