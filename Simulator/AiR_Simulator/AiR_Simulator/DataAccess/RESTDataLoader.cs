@@ -11,7 +11,6 @@ using AssetDataSimulator;
 
 namespace AiR_Simulator.DataAccess
 {
-    // JSON object classes
     public class FloorplanJsonObject
     {
         public int Id { get; set; }
@@ -38,13 +37,11 @@ namespace AiR_Simulator.DataAccess
         public double Y { get; set; }
     }
 
-    // Interface for data loading
     public interface IAssetDataLoader
     {
         Task<(List<Asset> Assets, List<Floorplan> Floorplans)> LoadDataAsync();
     }
 
-    // REST API implementation
     public class RestApiAssetLoader : IAssetDataLoader
     {
         private readonly string _baseUrl;
@@ -73,13 +70,11 @@ namespace AiR_Simulator.DataAccess
                 var assets = new List<Asset>();
                 var floorplans = new List<Floorplan>();
 
-                // Load floorplans from API
                 Console.WriteLine($"Loading floorplans from {_baseUrl}/floormaps...");
                 var floorplansResponse = await _httpClient.GetAsync($"{_baseUrl}/floormaps");
                 floorplansResponse.EnsureSuccessStatusCode();
                 var floorplansJson = await floorplansResponse.Content.ReadAsStringAsync();
 
-                // Load assets from API
                 Console.WriteLine($"Loading assets from {_baseUrl}/assets...");
                 var assetsResponse = await _httpClient.GetAsync($"{_baseUrl}/assets");
                 assetsResponse.EnsureSuccessStatusCode();
@@ -94,7 +89,6 @@ namespace AiR_Simulator.DataAccess
                 _floorplansData = JsonSerializer.Deserialize<List<FloorplanJsonObject>>(floorplansJson, options);
                 var assetsData = JsonSerializer.Deserialize<List<AssetJsonObject>>(assetsJson, options);
 
-                // For logging only - truncate base64 string
                 var truncatedFloorplans = _floorplansData.Select(fp => new
                 {
                     fp.Id,
@@ -105,7 +99,6 @@ namespace AiR_Simulator.DataAccess
                 Console.WriteLine($"Floorplans: {JsonSerializer.Serialize(truncatedFloorplans)}");
                 Console.WriteLine($"Assets: {assetsJson}");
 
-                // Create default floorplan if none exist
                 if (_floorplansData == null || _floorplansData.Count == 0)
                 {
                     _floorplansData = new List<FloorplanJsonObject>
@@ -133,10 +126,9 @@ namespace AiR_Simulator.DataAccess
                     foreach (var assetData in assetsData.Where(a => a.Active))
                     {
                         Console.WriteLine($"DEBUG: Processing asset - Id: {assetData.Id}, FloorMapId: {assetData.FloorMapId}");
-                        // Only use current position from REST API
                         var positions = new List<(double X, double Y)>
                         {
-                            (assetData.X, assetData.Y)  // Current position from REST API
+                            (assetData.X, assetData.Y)
                         };
 
                         var asset = new Asset(assetData.Id, positions)
@@ -144,7 +136,6 @@ namespace AiR_Simulator.DataAccess
                             FloorplanId = assetData.FloorMapId
                         };
 
-                        // More detailed debug logging
                         Console.WriteLine($"Created asset {asset.AssetId}:");
                         Console.WriteLine($"  Position: ({asset.X}, {asset.Y})");
                         Console.WriteLine($"  FloorplanId: {asset.FloorplanId}");
@@ -160,14 +151,12 @@ namespace AiR_Simulator.DataAccess
                     }
                 }
 
-                // Try to load paths from JSON file
                 try
                 {
                     var jsonPath = FileUtils.FindFileRecursively("assets.json");
-                    Console.WriteLine($"Found assets.json at: {jsonPath}");  // Show full path
-                    Console.WriteLine($"File exists: {File.Exists(jsonPath)}");  // Verify file exists
+                    Console.WriteLine($"Found assets.json at: {jsonPath}");
+                    Console.WriteLine($"File exists: {File.Exists(jsonPath)}");
                     
-                    // Read and show file contents for debugging
                     var jsonContent = File.ReadAllText(jsonPath);
                     Console.WriteLine($"JSON file contents: {jsonContent}");
                     
@@ -176,7 +165,6 @@ namespace AiR_Simulator.DataAccess
 
                     foreach (var pathData in pathsData)
                     {
-                        // Try both AssetId and Id fields
                         var existingAsset = assets.FirstOrDefault(a => a.AssetId == (pathData.AssetId ?? pathData.Id));
                         if (existingAsset != null && pathData.Positions != null && pathData.Positions.Any())
                         {
@@ -246,7 +234,6 @@ namespace AiR_Simulator.DataAccess
         }
     }
 
-    // Combined loader that can use multiple sources
     public class CompositeAssetLoader : IAssetDataLoader
     {
         private readonly List<IAssetDataLoader> _loaders;
@@ -286,7 +273,6 @@ namespace AiR_Simulator.DataAccess
         }
     }
 
-    // Helper class to process floorplan data
     public static class FloorplanDataProcessor
     {
         public static void ProcessFloorplanData(

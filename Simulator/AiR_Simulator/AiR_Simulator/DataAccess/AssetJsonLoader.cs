@@ -105,7 +105,6 @@ namespace AiR_Simulator.DataAccess
                 Console.WriteLine("Asset IDs in memory: " + string.Join(", ", assets.Select(a => a.AssetId)));
                 Console.WriteLine("Asset IDs in JSON: " + string.Join(", ", assetPaths.Select(a => a.AssetId)));
 
-                // Create a dictionary for quick asset lookup
                 var assetDict = assets.ToDictionary(a => a.AssetId);
 
                 foreach (var assetPath in assetPaths)

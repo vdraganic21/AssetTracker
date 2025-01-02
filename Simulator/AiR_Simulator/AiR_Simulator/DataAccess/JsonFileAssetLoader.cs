@@ -38,7 +38,6 @@ namespace AiR_Simulator.DataAccess
                     assets.Add(asset);
                 }
 
-                // Return empty floorplan list since we're only loading assets
                 return (assets, new List<Floorplan>());
             }
             catch (Exception ex)

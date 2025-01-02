@@ -50,7 +50,6 @@ namespace AssetDataSimulator
                 Console.ReadKey();
             }
 
-            // Set up MQTT client
             var mqttClient = await SetupMqttClient();
 
             try
@@ -59,7 +58,6 @@ namespace AssetDataSimulator
                 List<Floorplan> floorplanList = new List<Floorplan>();
                 bool usingFallback = false;
 
-                // First try to load from REST API
                 var restLoader = new RestApiAssetLoader(apiBaseUrl);
                 try
                 {
@@ -93,20 +91,17 @@ namespace AssetDataSimulator
 
                 Console.WriteLine($"Successfully loaded {assets.Count} assets using {(usingFallback ? "local JSON file" : "REST API")}.");
 
-                // Initialize floorplans dictionary
                 floorplans = new Dictionary<string, List<Asset>>();
                 foreach (var floorplan in floorplanList)
                 {
                     floorplans.Add(floorplan.Name, floorplan.Assets);
                 }
 
-                // If using fallback, pass null for restLoader to prevent API calls
                 simulator = new AssetSimulator(assets, floorplanList, usingFallback ? null : restLoader);
                 AssetsLoaded?.Invoke();
 
                 Console.WriteLine("Simulating all available floorplans...");
 
-                // Start simulation loop
                 while (true)
                 {
                     try
@@ -281,17 +276,14 @@ namespace AssetDataSimulator
 
         private static string FindJsonFilePath()
         {
-            // First try to find in current directory
             string jsonPath = "assets.json";
             if (File.Exists(jsonPath))
                 return jsonPath;
 
-            // Then try to find in SimulatorControlUI directory
             string simulatorControlPath = Path.Combine("..", "SimulatorControlUI", "assets.json");
             if (File.Exists(simulatorControlPath))
                 return simulatorControlPath;
 
-            // Finally try to find it recursively up the directory tree
             return FindFileRecursively("assets.json");
         }
 
@@ -332,12 +324,11 @@ namespace AssetDataSimulator
                 var positions = assetData.Positions.Select(p => (p.X, p.Y)).ToList();
                 var asset = new Asset(assetData.AssetId, positions)
                 {
-                    FloorplanId = 1  // Default floorplan ID
+                    FloorplanId = 1
                 };
                 assets.Add(asset);
             }
 
-            // Create a default floorplan that contains all assets
             var defaultFloorplan = new Floorplan("Default Floor") 
             { 
                 FloorplanId = 1,

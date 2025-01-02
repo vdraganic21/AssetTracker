@@ -53,15 +53,12 @@ namespace SimulatorControlUI
             {
                 if (ProgramSimulator.simulator != null && ProgramSimulator.simulator.Assets != null && ProgramSimulator.simulator.Assets.Count > 0)
                 {
-                    // First populate the floorplan list
                     PopulateFloorplanList();
 
-                    // Then update all asset target positions
                     foreach (var asset in ProgramSimulator.simulator.Assets)
                     {
                         if (asset.TargetPosition == null)
                         {
-                            // If target position is not set, initialize it to current position
                             asset.TargetPosition = new Position 
                             { 
                                 X = asset.Position.X,
@@ -71,7 +68,6 @@ namespace SimulatorControlUI
                         }
                     }
 
-                    // Force a redraw of the map
                     MapPictureBox.Invalidate();
                 }
                 else
@@ -148,11 +144,9 @@ namespace SimulatorControlUI
             var selectedAssetName = AssetSelectorComboBox.SelectedItem as string;
             if (selectedAssetName != null)
             {
-                // Parse the asset ID from the "Asset X" string
                 int assetId = int.Parse(selectedAssetName.Replace("Asset ", ""));
-                // Find the asset with matching ID in the current floorplan
                 selectedAsset = selectedFloorplan?.Assets.FirstOrDefault(a => a.AssetId == assetId);
-                MapPictureBox.Invalidate();  // Refresh to show the new selection
+                MapPictureBox.Invalidate();
             }
         }
 
@@ -177,7 +171,6 @@ namespace SimulatorControlUI
 
             foreach (var asset in assets)
             {
-                // Draw the asset as a circle - green if selected, blue otherwise
                 var brush = (asset == selectedAsset) ? Brushes.Green : Brushes.Blue;
                 
                 g.FillEllipse(brush,
@@ -186,14 +179,12 @@ namespace SimulatorControlUI
                     AssetRadius * 2,
                     AssetRadius * 2);
 
-                // Draw the asset ID
                 g.DrawString(asset.AssetId.ToString(), this.Font, Brushes.Black,
                     (float)(asset.X * MapScale),
                     (float)(asset.Y * MapScale));
 
                 if (asset.HasTarget())
                 {
-                    // Draw line from current position to target
                     g.DrawLine(Pens.Gray,
                         (float)(asset.X * MapScale),
                         (float)(asset.Y * MapScale),
@@ -211,13 +202,11 @@ namespace SimulatorControlUI
 
         private void MapPictureBox_MouseClick(object sender, MouseEventArgs e)
         {
-            // Convert screen coordinates back to world coordinates
             double clickX = e.X / MapScale;
             double clickY = e.Y / MapScale;
 
             if (selectedFloorplan?.Assets == null) return;
 
-            // First, check if we clicked near an asset
             Asset clickedAsset = null;
             double closestDistance = double.MaxValue;
 
@@ -234,11 +223,9 @@ namespace SimulatorControlUI
                 }
             }
 
-            // If we clicked close to an asset (within 3 units), select it
             if (clickedAsset != null && closestDistance < 3)
             {
                 selectedAsset = clickedAsset;
-                // Update the combo box selection
                 int index = AssetSelectorComboBox.Items.IndexOf($"Asset {clickedAsset.AssetId}");
                 if (index >= 0)
                 {
@@ -246,7 +233,6 @@ namespace SimulatorControlUI
                 }
                 MapPictureBox.Invalidate();
             }
-            // If we clicked away from assets, move the selected asset
             else if (selectedAsset != null)
             {
                 selectedAsset.SetManualTarget(clickX, clickY);
@@ -350,7 +336,6 @@ namespace SimulatorControlUI
                 try
                 {
                     Console.WriteLine("Converting base64 to image...");
-                    // Remove the data URL prefix if present
                     string base64Data = floorplanData.ImageBase64;
                     if (base64Data.Contains(","))
                     {
