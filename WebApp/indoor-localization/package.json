@@ -15,9 +15,12 @@
     "@synergy-design-system/react": "^2.11.8",
     "@synergy-design-system/styles": "^1.4.0",
     "@synergy-design-system/tokens": "^2.13.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-router-dom": "^6.28.0"
+    "konva": "^9.3.18",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-konva": "^19.0.1",
+    "react-router-dom": "^6.28.0",
+    "use-image": "^1.1.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
