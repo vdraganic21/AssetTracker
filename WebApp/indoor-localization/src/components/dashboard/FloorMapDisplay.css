@@ -42,6 +42,10 @@
   gap: 10px;
 }
 
+.bottom-right-container syn-button{
+  background-color: var(--syn-color-neutral-0);
+}
+
 .button-icon {
   color: var(--syn-color-primary-500, #0ca2eb);
   font-size: 24px;
