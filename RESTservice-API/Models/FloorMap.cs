@@ -4,6 +4,6 @@ namespace RESTservice_API.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string ImagePath { get; set; }
+        public string ImageBase64 { get; set; }
     }
 }
