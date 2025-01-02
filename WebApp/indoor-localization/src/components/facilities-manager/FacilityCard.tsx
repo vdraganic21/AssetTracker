@@ -14,7 +14,7 @@ function FacilityCard({ facility }: { facility: Facility }) {
 			<div className="facility-card-title unselectable">{facility.name}</div>
 			<SynIcon
 				library="fa"
-				name="far-edit"
+				name="far-pen-to-square"
 				className="facility-edit-icon"
 				onClick={() => {
 					navigate(`/facilities/edit/${facility.id}`);
