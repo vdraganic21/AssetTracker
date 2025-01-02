@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using AiR_Simulator.Utilities;
 
 namespace AiR_Simulator.Entities
 {
@@ -22,20 +23,23 @@ namespace AiR_Simulator.Entities
 
         public Asset(int assetId, List<(double X, double Y)> positions)
         {
+            Logger.Log($"Creating asset {assetId} with {positions?.Count} positions");
             AssetId = assetId;
-            Positions = positions;
+            Positions = positions ?? new List<(double X, double Y)>();
             _currentPositionIndex = 0;
 
-            // Only set up automatic targeting if we have multiple positions
-            if (Positions.Count > 1)
+            // Initialize with current position from REST API
+            if (Positions.Count > 0)
             {
-                UpdateAutomaticTarget();
+                X = Positions[0].X;
+                Y = Positions[0].Y;
+                TargetX = X;  // Set target to current position
+                TargetY = Y;
             }
             else
             {
-                // If we only have one position, use it as both current and target
-                X = Positions[0].X;
-                Y = Positions[0].Y;
+                X = 0;
+                Y = 0;
                 TargetX = X;
                 TargetY = Y;
             }
@@ -45,7 +49,7 @@ namespace AiR_Simulator.Entities
             {
                 X = X,
                 Y = Y,
-                FloorplanName = "Floor 1"  // Default floorplan name
+                FloorplanName = "Floor 1"
             };
 
             // Initialize TargetPosition object
@@ -53,18 +57,42 @@ namespace AiR_Simulator.Entities
             {
                 X = TargetX,
                 Y = TargetY,
-                FloorplanName = "Floor 1"  // Default floorplan name
+                FloorplanName = "Floor 1"
             };
         }
 
         public void SetManualTarget(double targetX, double targetY)
         {
+            Logger.Log($"Setting manual target for asset {AssetId}: ({targetX}, {targetY})");
             IsManualControl = true;
             _manualTargetX = targetX;
             _manualTargetY = targetY;
 
             TargetX = targetX;
             TargetY = targetY;
+
+            // Debug state after setting target
+            Logger.Log($"Asset {AssetId} state after setting target:");
+            Logger.Log($"  IsManualControl: {IsManualControl}");
+            Logger.Log($"  Current: ({X}, {Y})");
+            Logger.Log($"  Target: ({_manualTargetX}, {_manualTargetY})");
+            Logger.Log($"  Has positions: {Positions?.Count}");
+
+            // Update TargetPosition
+            if (TargetPosition == null)
+            {
+                TargetPosition = new Position
+                {
+                    X = targetX,
+                    Y = targetY,
+                    FloorplanName = Position?.FloorplanName ?? "Floor 1"
+                };
+            }
+            else
+            {
+                TargetPosition.X = targetX;
+                TargetPosition.Y = targetY;
+            }
         }
 
         public bool HasTarget()
@@ -74,22 +102,24 @@ namespace AiR_Simulator.Entities
 
         public void MoveTowardNextPosition(double speed)
         {
-            if (IsManualControl)
+            Logger.Log($"Moving asset {AssetId} - IsManualControl: {IsManualControl}, Current: ({X}, {Y}), Target: ({_manualTargetX}, {_manualTargetY})");
+            
+            if (IsManualControl)  // Manual control (clicked target) takes priority
             {
                 double dx = _manualTargetX - X;
                 double dy = _manualTargetY - Y;
                 double distance = Math.Sqrt(dx * dx + dy * dy);
 
+                Logger.Log($"Manual movement - Distance to target: {distance}");
+
                 const double arrivalThreshold = 0.1;
 
                 if (distance <= arrivalThreshold)
                 {
+                    Logger.Log($"Asset {AssetId} reached manual target");
                     X = _manualTargetX;
                     Y = _manualTargetY;
-
                     IsManualControl = false;
-
-                    UpdateAutomaticTarget();
                     return;
                 }
 
@@ -99,11 +129,10 @@ namespace AiR_Simulator.Entities
 
                 X += stepX;
                 Y += stepY;
+                Logger.Log($"Asset {AssetId} moved to ({X}, {Y})");
             }
-            else
+            else if (Positions.Count > 1)  // Only do path following if we have multiple positions
             {
-                if (Positions.Count == 0) return;
-
                 var (goalX, goalY) = Positions[_currentPositionIndex];
                 double dx = goalX - X;
                 double dy = goalY - Y;
@@ -183,7 +212,7 @@ namespace AiR_Simulator.Entities
 
         public void SetPath(List<(double X, double Y)> positions)
         {
-            Console.WriteLine($"Setting path for asset {AssetId} - Current positions: {Positions?.Count}, New positions: {positions?.Count}");
+            Logger.Log($"Setting path for asset {AssetId} - Current positions: {Positions?.Count}, New positions: {positions?.Count}");
             this.Positions = positions;
             if (positions.Count > 1)
             {

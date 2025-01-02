@@ -145,11 +145,14 @@ namespace SimulatorControlUI
 
         private void AssetSelectorComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var selectedIndex = AssetSelectorComboBox.SelectedIndex;
-            var simulatorInstance = ProgramSimulator.simulator;
-            if (selectedIndex >= 0)
+            var selectedAssetName = AssetSelectorComboBox.SelectedItem as string;
+            if (selectedAssetName != null)
             {
-                selectedAsset = simulatorInstance.Assets[selectedIndex];
+                // Parse the asset ID from the "Asset X" string
+                int assetId = int.Parse(selectedAssetName.Replace("Asset ", ""));
+                // Find the asset with matching ID in the current floorplan
+                selectedAsset = selectedFloorplan?.Assets.FirstOrDefault(a => a.AssetId == assetId);
+                MapPictureBox.Invalidate();  // Refresh to show the new selection
             }
         }
 
@@ -174,8 +177,10 @@ namespace SimulatorControlUI
 
             foreach (var asset in assets)
             {
-                // Draw the asset as a blue circle
-                g.FillEllipse(Brushes.Blue,
+                // Draw the asset as a circle - green if selected, blue otherwise
+                var brush = (asset == selectedAsset) ? Brushes.Green : Brushes.Blue;
+                
+                g.FillEllipse(brush,
                     (float)(asset.X * MapScale - AssetRadius),
                     (float)(asset.Y * MapScale - AssetRadius),
                     AssetRadius * 2,
@@ -206,13 +211,45 @@ namespace SimulatorControlUI
 
         private void MapPictureBox_MouseClick(object sender, MouseEventArgs e)
         {
-            if (selectedAsset != null)
-            {
-                // Convert screen coordinates back to world coordinates
-                double targetX = e.X / MapScale;
-                double targetY = e.Y / MapScale;
+            // Convert screen coordinates back to world coordinates
+            double clickX = e.X / MapScale;
+            double clickY = e.Y / MapScale;
 
-                selectedAsset.SetManualTarget(targetX, targetY);
+            if (selectedFloorplan?.Assets == null) return;
+
+            // First, check if we clicked near an asset
+            Asset clickedAsset = null;
+            double closestDistance = double.MaxValue;
+
+            foreach (var asset in selectedFloorplan.Assets)
+            {
+                double dx = asset.X - clickX;
+                double dy = asset.Y - clickY;
+                double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    clickedAsset = asset;
+                }
+            }
+
+            // If we clicked close to an asset (within 3 units), select it
+            if (clickedAsset != null && closestDistance < 3)
+            {
+                selectedAsset = clickedAsset;
+                // Update the combo box selection
+                int index = AssetSelectorComboBox.Items.IndexOf($"Asset {clickedAsset.AssetId}");
+                if (index >= 0)
+                {
+                    AssetSelectorComboBox.SelectedIndex = index;
+                }
+                MapPictureBox.Invalidate();
+            }
+            // If we clicked away from assets, move the selected asset
+            else if (selectedAsset != null)
+            {
+                selectedAsset.SetManualTarget(clickX, clickY);
                 MapPictureBox.Invalidate();
             }
         }
@@ -244,7 +281,12 @@ namespace SimulatorControlUI
             float yPosition = 10f;
 
             g.FillEllipse(Brushes.Blue, 10, yPosition, LegendItemWidth, LegendItemHeight);
-            g.DrawString("Current Position", this.Font, Brushes.Black, 40, yPosition);
+            g.DrawString("Asset Position", this.Font, Brushes.Black, 40, yPosition);
+
+            yPosition += LegendItemHeight + 10;
+
+            g.FillEllipse(Brushes.Green, 10, yPosition, LegendItemWidth, LegendItemHeight);
+            g.DrawString("Selected Asset", this.Font, Brushes.Black, 40, yPosition);
 
             yPosition += LegendItemHeight + 10;
 

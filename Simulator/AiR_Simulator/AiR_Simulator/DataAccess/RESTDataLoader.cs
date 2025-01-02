@@ -136,13 +136,20 @@ namespace AiR_Simulator.DataAccess
                         // Only use current position from REST API
                         var positions = new List<(double X, double Y)>
                         {
-                            (assetData.X, assetData.Y)  // Just current position
+                            (assetData.X, assetData.Y)  // Current position from REST API
                         };
 
                         var asset = new Asset(assetData.Id, positions)
                         {
                             FloorplanId = assetData.FloorMapId
                         };
+
+                        // More detailed debug logging
+                        Console.WriteLine($"Created asset {asset.AssetId}:");
+                        Console.WriteLine($"  Position: ({asset.X}, {asset.Y})");
+                        Console.WriteLine($"  FloorplanId: {asset.FloorplanId}");
+                        Console.WriteLine($"  Has positions: {asset.Positions?.Count > 0}");
+                        Console.WriteLine($"  IsManualControl: {asset.IsManualControl}");
                         assets.Add(asset);
 
                         var floorplan = floorplans.FirstOrDefault(f => f.FloorplanId == assetData.FloorMapId);
