@@ -10,5 +10,6 @@ namespace AiR_Simulator.Entities
     {
         public double X { get; set; }
         public double Y { get; set; }
+        public string FloorplanName { get; set; }
     }
 }

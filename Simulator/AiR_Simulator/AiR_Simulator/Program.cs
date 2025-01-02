@@ -9,6 +9,7 @@ using System.IO;
 using System.Collections.Generic;
 using AiR_Simulator.DataAccess;
 using AiR_Simulator.Entities;
+using System.Linq;
 
 namespace AssetDataSimulator
 {
@@ -18,12 +19,25 @@ namespace AssetDataSimulator
         private static int brokerPort = int.Parse(Environment.GetEnvironmentVariable("MQTT_BROKER_PORT") ?? "1883");
         private static string topic = Environment.GetEnvironmentVariable("ASSET_TOPIC") ?? "assets/location";
         private static int messageIntervalMilliseconds = int.Parse(Environment.GetEnvironmentVariable("MESSAGE_INTERVAL") ?? "1000");
-        private static string jsonFilePath = FindFileRecursively("assets.json");
+        private static string jsonFilePath = FindJsonFilePath();
+        private static string apiBaseUrl = Environment.GetEnvironmentVariable("API_BASE_URL") ?? "https://localhost:7018";
         private static double movementSpeed = 1.0;
         public static AssetSimulator simulator;
         private static Dictionary<string, List<Asset>> floorplans;
 
         public static event Action AssetsLoaded;
+
+        private class LocalAssetJsonObject
+        {
+            public int AssetId { get; set; }
+            public List<LocalPositionJsonObject> Positions { get; set; }
+        }
+
+        private class LocalPositionJsonObject
+        {
+            public double X { get; set; }
+            public double Y { get; set; }
+        }
 
         public static async Task Main(string[] args)
         {
@@ -36,6 +50,76 @@ namespace AssetDataSimulator
                 Console.ReadKey();
             }
 
+            // Set up MQTT client
+            var mqttClient = await SetupMqttClient();
+
+            try
+            {
+                // First try to load from REST API
+                var restLoader = new RestApiAssetLoader(apiBaseUrl);
+                List<Asset> assets = new List<Asset>();
+                List<Floorplan> floorplanList = new List<Floorplan>();
+
+                try
+                {
+                    Console.WriteLine($"Attempting to load data from REST API at {apiBaseUrl}...");
+                    (assets, floorplanList) = await restLoader.LoadDataAsync();
+                }
+                catch (Exception apiEx)
+                {
+                    Console.WriteLine($"Failed to load from REST API: {apiEx.Message}");
+                    Console.WriteLine("Falling back to JSON file...");
+                    
+                    // Fallback to JSON file
+                    (assets, floorplanList) = await LoadDataFromJsonFile();
+                }
+
+                if (assets == null || assets.Count == 0)
+                {
+                    throw new Exception("No assets were loaded from any source.");
+                }
+
+                Console.WriteLine($"Successfully loaded {assets.Count} assets.");
+
+                // Initialize floorplans dictionary
+                floorplans = new Dictionary<string, List<Asset>>();
+                foreach (var floorplan in floorplanList)
+                {
+                    floorplans.Add(floorplan.Name, floorplan.Assets);
+                }
+
+                simulator = new AssetSimulator(assets, floorplanList, restLoader);
+                AssetsLoaded?.Invoke();
+
+                Console.WriteLine("Simulating all available floorplans...");
+
+                // Start simulation loop
+                while (true)
+                {
+                    try
+                    {
+                        var simulatedDataList = simulator.SimulateNextStep(movementSpeed);
+                        OutputAssetsStatusTable(simulator);
+                        await PublishUpdatesToBroker(mqttClient, mqttClient.IsConnected, simulatedDataList);
+                        await Task.Delay(messageIntervalMilliseconds);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"Simulation error: {ex.Message}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Critical error: {ex.Message}");
+                Console.WriteLine("Press any key to exit...");
+            }
+        }
+
+        private static async Task<IMqttClient> SetupMqttClient()
+        {
             var mqttFactory = new MqttFactory();
             var mqttClient = mqttFactory.CreateMqttClient();
 
@@ -56,61 +140,17 @@ namespace AssetDataSimulator
                 await Task.CompletedTask;
             };
 
-            bool isConnected = false;
             try
             {
                 await mqttClient.ConnectAsync(mqttOptions, CancellationToken.None);
-                isConnected = true;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Failed to connect: {ex.Message}");
+                Console.WriteLine($"Failed to connect to MQTT broker: {ex.Message}");
             }
 
-            List<Asset> assets = new List<Asset>();
-            List<Floorplan> floorplanList = new List<Floorplan>();
-
-            AssetJsonLoader.Load(jsonFilePath, ref assets, ref floorplanList);
-
-            if (floorplanList == null || floorplanList.Count == 0)
-            {
-                Console.WriteLine("No floorplans or assets were initialized from the JSON file.");
-                return;
-            }
-
-            floorplans = new Dictionary<string, List<Asset>>();
-
-            foreach (var floorplan in floorplanList)
-            {
-                floorplans.Add(floorplan.Name, floorplan.Assets);
-            }
-
-            simulator = new AssetSimulator(assets, floorplanList);
-
-            AssetsLoaded?.Invoke();
-
-            Console.WriteLine("Simulating all available floorplans...");
-
-            while (true)
-            {
-                try
-                {
-                    var simulatedDataList = simulator.SimulateNextStep(movementSpeed);
-
-                    OutputAssetsStatusTable(simulator);
-
-                    await PublishUpdatesToBroker(mqttClient, isConnected, simulatedDataList);
-
-                    await Task.Delay(messageIntervalMilliseconds);
-                }
-                catch (Exception ex)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"Simulation error: {ex.Message}");
-                }
-            }
+            return mqttClient;
         }
-
 
         private static async Task PublishUpdatesToBroker(IMqttClient mqttClient, bool isConnected, List<string> simulatedDataList)
         {
@@ -174,11 +214,12 @@ namespace AssetDataSimulator
                     "MQTT_BROKER_URL=localhost",
                     "MQTT_BROKER_PORT=1883",
                     "ASSET_TOPIC=assets/location",
-                    "MESSAGE_INTERVAL=2000"
+                    "MESSAGE_INTERVAL=1000",
+                    "API_BASE_URL=https://localhost:7018"
                 };
 
                 File.WriteAllLines(fileName, defaultEnvContent);
-            }
+            };
 
             foreach (var line in File.ReadAllLines(fileName))
             {
@@ -204,7 +245,7 @@ namespace AssetDataSimulator
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("| {0,-10} | {1,-20} |",
                 asset.AssetId,
-                $"({asset.X:F2}, {asset.Y:F2})");
+                $"({asset.X.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)}, {asset.Y.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)})");
         }
 
         private static string FindFileRecursively(string fileName)
@@ -223,6 +264,48 @@ namespace AssetDataSimulator
             }
 
             throw new FileNotFoundException($"File '{fileName}' not found in the current directory or any parent directories.");
+        }
+
+        private static string FindJsonFilePath()
+        {
+            string jsonPath = "assets.json";
+            string fullPath = Path.GetFullPath(jsonPath);
+            Console.WriteLine($"Looking for assets.json at: {fullPath}");
+            return jsonPath;
+        }
+
+        public static async Task<(List<Asset>, List<Floorplan>)> LoadDataFromJsonFile()
+        {
+            string jsonPath = "assets.json";
+            string fullPath = Path.GetFullPath(jsonPath);
+            Console.WriteLine($"Looking for assets.json at: {fullPath}");
+
+            if (!File.Exists(fullPath))
+            {
+                throw new FileNotFoundException($"File '{jsonPath}' not found in the current directory or any parent directories.");
+            }
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            string jsonContent = File.ReadAllText(fullPath);
+            var assetDataList = JsonSerializer.Deserialize<List<LocalAssetJsonObject>>(jsonContent, options);
+            
+            var assets = new List<Asset>();
+            foreach (var assetData in assetDataList)
+            {
+                var positions = assetData.Positions.Select(p => (p.X, p.Y)).ToList();
+                var asset = new Asset(assetData.AssetId, positions)
+                {
+                    FloorplanId = 1
+                };
+                assets.Add(asset);
+            }
+
+            var defaultFloorplan = new Floorplan("Floor 1") { FloorplanId = 1 };
+            return (assets, new List<Floorplan> { defaultFloorplan });
         }
     }
 }

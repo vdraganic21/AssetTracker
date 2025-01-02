@@ -4,6 +4,8 @@ using System.Windows.Forms;
 using AssetDataSimulator;
 using AiR_Simulator.Entities;
 using AiR_Simulator.DataAccess;
+using System.IO;
+using System;
 
 namespace SimulatorControlUI
 {
@@ -12,6 +14,10 @@ namespace SimulatorControlUI
         private Asset selectedAsset;
         private Floorplan selectedFloorplan;
         private System.Windows.Forms.Timer refreshTimer;
+
+        private const float MapScale = 10f;
+        private const float AssetRadius = 5f;
+        private const float TargetRadius = 3f;
 
         public Form1()
         {
@@ -33,7 +39,7 @@ namespace SimulatorControlUI
 
             Task.Run(async () =>
             {
-                await ProgramSimulator.Main(new string[] { });
+                await ProgramSimulator.Main(new string[] { "--gui" });
             });
         }
 
@@ -47,7 +53,26 @@ namespace SimulatorControlUI
             {
                 if (ProgramSimulator.simulator != null && ProgramSimulator.simulator.Assets != null && ProgramSimulator.simulator.Assets.Count > 0)
                 {
+                    // First populate the floorplan list
                     PopulateFloorplanList();
+
+                    // Then update all asset target positions
+                    foreach (var asset in ProgramSimulator.simulator.Assets)
+                    {
+                        if (asset.TargetPosition == null)
+                        {
+                            // If target position is not set, initialize it to current position
+                            asset.TargetPosition = new Position 
+                            { 
+                                X = asset.Position.X,
+                                Y = asset.Position.Y,
+                                FloorplanName = asset.Position.FloorplanName
+                            };
+                        }
+                    }
+
+                    // Force a redraw of the map
+                    MapPictureBox.Invalidate();
                 }
                 else
                 {
@@ -147,10 +172,6 @@ namespace SimulatorControlUI
                 return;
             }
 
-            const float MapScale = 10f;
-            const float AssetRadius = 5f;
-            const float TargetRadius = 3f;
-
             foreach (var asset in assets)
             {
                 // Draw the asset as a blue circle
@@ -167,33 +188,31 @@ namespace SimulatorControlUI
 
                 if (asset.HasTarget())
                 {
+                    // Draw line from current position to target
+                    g.DrawLine(Pens.Gray,
+                        (float)(asset.X * MapScale),
+                        (float)(asset.Y * MapScale),
+                        (float)(asset.TargetX * MapScale),
+                        (float)(asset.TargetY * MapScale));
+
                     g.FillEllipse(Brushes.Red,
                         (float)(asset.TargetX * MapScale - TargetRadius),
                         (float)(asset.TargetY * MapScale - TargetRadius),
                         TargetRadius * 2,
                         TargetRadius * 2);
-
-                    // Draw the asset ID next to the red dot (target)
-                    g.DrawString(asset.AssetId.ToString(), this.Font, Brushes.Black,
-                        (float)(asset.TargetX * MapScale) + 5,
-                        (float)(asset.TargetY * MapScale) + 5);
                 }
             }
         }
-
-
 
         private void MapPictureBox_MouseClick(object sender, MouseEventArgs e)
         {
             if (selectedAsset != null)
             {
-                const float MapScale = 10f;
-
+                // Convert screen coordinates back to world coordinates
                 double targetX = e.X / MapScale;
                 double targetY = e.Y / MapScale;
 
                 selectedAsset.SetManualTarget(targetX, targetY);
-
                 MapPictureBox.Invalidate();
             }
         }
@@ -265,62 +284,55 @@ namespace SimulatorControlUI
             }
         }
 
-
-
-        private static string FindFolderRecursively(string folderName)
-        {
-            string currentDirectory = Directory.GetCurrentDirectory();
-
-            while (currentDirectory != null)
-            {
-                string folderPath = Path.Combine(currentDirectory, folderName);
-                if (Directory.Exists(folderPath))
-                {
-                    return folderPath;
-                }
-
-                currentDirectory = Directory.GetParent(currentDirectory)?.FullName;
-            }
-
-            throw new DirectoryNotFoundException($"Folder '{folderName}' not found in the current directory or any parent directories.");
-        }
-
-        private Image LoadFloorplanImage(string floorplanName)
-        {
-            try
-            {
-                string floorplansFolder = FindFolderRecursively("Floorplans");
-
-                string imagePath = Path.Combine(floorplansFolder, $"{floorplanName}.png");
-
-                if (File.Exists(imagePath))
-                {
-                    return Image.FromFile(imagePath);
-                }
-                else
-                {
-                    MessageBox.Show($"Image '{floorplanName}.png' not found in the 'Floorplans' folder.");
-                }
-            }
-            catch (DirectoryNotFoundException ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-
-            return null;
-        }
-
         private void SetFloorplanBackground(string floorplanName)
         {
-            var floorplanImage = LoadFloorplanImage(floorplanName);
-            if (floorplanImage != null)
+            if (ProgramSimulator.simulator?.RestLoader is RestApiAssetLoader restLoader)
             {
-                MapPictureBox.BackgroundImage = floorplanImage;
-                MapPictureBox.BackgroundImageLayout = ImageLayout.Stretch;
+                Console.WriteLine($"Getting floorplan data for: {floorplanName}");
+                var floorplanData = restLoader.GetFloorplanData(floorplanName);
+                
+                if (floorplanData == null)
+                {
+                    Console.WriteLine("FloorplanData is null");
+                    MessageBox.Show($"No floorplan data found for '{floorplanName}'");
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(floorplanData.ImageBase64))
+                {
+                    Console.WriteLine("ImageBase64 is null or empty");
+                    MessageBox.Show($"No image data found for floorplan '{floorplanName}'");
+                    return;
+                }
+
+                try
+                {
+                    Console.WriteLine("Converting base64 to image...");
+                    // Remove the data URL prefix if present
+                    string base64Data = floorplanData.ImageBase64;
+                    if (base64Data.Contains(","))
+                    {
+                        base64Data = base64Data.Split(',')[1];
+                    }
+                    
+                    byte[] imageBytes = Convert.FromBase64String(base64Data);
+                    using (var ms = new MemoryStream(imageBytes))
+                    {
+                        MapPictureBox.BackgroundImage = Image.FromStream(ms);
+                        MapPictureBox.BackgroundImageLayout = ImageLayout.Stretch;
+                        Console.WriteLine("Successfully set background image");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Failed to load base64 image: {ex.Message}");
+                    MessageBox.Show($"Failed to load image for floorplan '{floorplanName}': {ex.Message}");
+                }
             }
             else
             {
-                MessageBox.Show($"No image found for floorplan '{floorplanName}'.");
+                Console.WriteLine("RestLoader is not available");
+                MessageBox.Show("REST loader is not properly initialized");
             }
         }
 

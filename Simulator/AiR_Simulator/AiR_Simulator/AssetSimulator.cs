@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using AiR_Simulator.Entities;
+using AiR_Simulator.DataAccess;
+using System.Threading.Tasks;
 
 namespace AssetDataSimulator
 {
@@ -9,11 +11,13 @@ namespace AssetDataSimulator
     {
         public List<Asset> Assets { get; }
         public List<Floorplan> Floorplans { get; }
+        public IAssetDataLoader RestLoader { get; private set; }
 
-        public AssetSimulator(List<Asset> assets, List<Floorplan> floorplans)
+        public AssetSimulator(List<Asset> assets, List<Floorplan> floorplans, IAssetDataLoader loader)
         {
             Assets = assets;
             Floorplans = floorplans;
+            RestLoader = loader;
         }
 
         public List<string> SimulateNextStep(double speed)

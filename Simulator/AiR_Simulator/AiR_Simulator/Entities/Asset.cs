@@ -17,19 +17,44 @@ namespace AiR_Simulator.Entities
         public bool IsManualControl { get; private set; } = false;
         private double _manualTargetX, _manualTargetY;
 
+        public Position Position { get; set; }
+        public Position TargetPosition { get; set; }
+
         public Asset(int assetId, List<(double X, double Y)> positions)
         {
             AssetId = assetId;
             Positions = positions;
-            if (Positions.Count > 0)
+            _currentPositionIndex = 0;
+
+            // Only set up automatic targeting if we have multiple positions
+            if (Positions.Count > 1)
             {
+                UpdateAutomaticTarget();
+            }
+            else
+            {
+                // If we only have one position, use it as both current and target
                 X = Positions[0].X;
                 Y = Positions[0].Y;
-
-                TargetX = Positions[0].X;
-                TargetY = Positions[0].Y;
+                TargetX = X;
+                TargetY = Y;
             }
-            _currentPositionIndex = 0;
+
+            // Initialize Position object
+            Position = new Position
+            {
+                X = X,
+                Y = Y,
+                FloorplanName = "Floor 1"  // Default floorplan name
+            };
+
+            // Initialize TargetPosition object
+            TargetPosition = new Position
+            {
+                X = TargetX,
+                Y = TargetY,
+                FloorplanName = "Floor 1"  // Default floorplan name
+            };
         }
 
         public void SetManualTarget(double targetX, double targetY)
@@ -104,6 +129,25 @@ namespace AiR_Simulator.Entities
                 X += stepX;
                 Y += stepY;
             }
+
+            // Update Position and TargetPosition after movement
+            Position.X = X;
+            Position.Y = Y;
+            
+            if (TargetPosition == null)
+            {
+                TargetPosition = new Position 
+                { 
+                    X = TargetX,
+                    Y = TargetY,
+                    FloorplanName = Position.FloorplanName 
+                };
+            }
+            else
+            {
+                TargetPosition.X = TargetX;
+                TargetPosition.Y = TargetY;
+            }
         }
 
         private void UpdateAutomaticTarget()
@@ -113,11 +157,37 @@ namespace AiR_Simulator.Entities
                 var (nextTargetX, nextTargetY) = Positions[_currentPositionIndex];
                 TargetX = nextTargetX;
                 TargetY = nextTargetY;
+
+                // Update TargetPosition to match
+                if (TargetPosition == null)
+                {
+                    TargetPosition = new Position 
+                    { 
+                        X = nextTargetX,
+                        Y = nextTargetY,
+                        FloorplanName = Position?.FloorplanName ?? "Floor 1"
+                    };
+                }
+                else
+                {
+                    TargetPosition.X = nextTargetX;
+                    TargetPosition.Y = nextTargetY;
+                }
             }
             else
             {
                 TargetX = double.NaN;
                 TargetY = double.NaN;
+            }
+        }
+
+        public void SetPath(List<(double X, double Y)> positions)
+        {
+            Console.WriteLine($"Setting path for asset {AssetId} - Current positions: {Positions?.Count}, New positions: {positions?.Count}");
+            this.Positions = positions;
+            if (positions.Count > 1)
+            {
+                UpdateAutomaticTarget();
             }
         }
     }
