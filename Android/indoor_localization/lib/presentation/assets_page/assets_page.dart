@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:indoor_localization/domain/entities/asset.dart';
-import '../../config/app_colors.dart';
+import '../../presentation/common_components/dropdown_menu.dart';
 import 'asset_list_item.dart';
 
 class AssetsPage extends StatefulWidget {
@@ -83,120 +83,20 @@ class _AssetsPageState extends State<AssetsPage> {
                 ),
               ),
               const SizedBox(height: 8),
-              Material(
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: AppColors.primary500,
-                    border: Border.all(color: AppColors.neutral400),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: ButtonTheme(
-                      alignedDropdown: true,
-                      child: DropdownButton<String>(
-                        value: sortBy,
-                        isExpanded: true,
-                      dropdownColor: Colors.white,
-                      items: [
-                        DropdownMenuItem(
-                          value: 'Name Ascending',
-                          child: Container(
-                            width: double.infinity,
-                            color: sortBy == 'Name Ascending' ? AppColors.primary500 : Colors.transparent,
-                            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                            child: Align(
-                            alignment: Alignment.centerLeft,
-                              child: Text(
-                                'Name Ascending',
-                                style: TextStyle(
-                                  color: sortBy == 'Name Ascending' ? Colors.white : Colors.black,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        DropdownMenuItem(
-                          value: 'Name Descending',
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Container(
-                              width: double.infinity,
-                              color: sortBy == 'Name Descending' ? AppColors.primary500 : Colors.transparent,
-                              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                              child: Text(
-                                'Name Descending',
-                                style: TextStyle(
-                                  color: sortBy == 'Name Descending' ? Colors.white : Colors.black,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        DropdownMenuItem(
-                          value: 'Facility Ascending',
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Container(
-                              width: double.infinity,
-                              color: sortBy == 'Facility Ascending' ? AppColors.primary500 : Colors.transparent,
-                              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                              child: Text(
-                                'Facility Ascending',
-                                style: TextStyle(
-                                  color: sortBy == 'Facility Ascending' ? Colors.white : Colors.black,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        DropdownMenuItem(
-                          value: 'Facility Descending',
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Container(
-                              width: double.infinity,
-                              color: sortBy == 'Facility Descending' ? AppColors.primary500 : Colors.transparent,
-                              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                              child: Text(
-                                'Facility Descending',
-                                style: TextStyle(
-                                  color: sortBy == 'Facility Descending' ? Colors.white : Colors.black,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                      onChanged: (value) {
-                        if (value != null) {
-                          setState(() {
-                            sortBy = value;
-                            _sortAssets();
-                          });
-                        }
-                      },
-                      selectedItemBuilder: (BuildContext context) {
-                        return [
-                          'Name Ascending',
-                          'Name Descending',
-                          'Facility Ascending',
-                          'Facility Descending'
-                        ].map((String value) {
-                          return Row(
-                            children: [
-                              Text(
-                                'Sort by: $value',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ],
-                          );
-                        }).toList();
-                      },
-                    ),
-                    ),
-                  ),
-                ),
+              CustomDropdown(
+                selectedValue: sortBy,
+                items: [
+                  'Name Ascending',
+                  'Name Descending',
+                  'Facility Ascending',
+                  'Facility Descending',
+                ],
+                onChanged: (value) {
+                  setState(() {
+                    sortBy = value;
+                    _sortAssets();
+                  });
+                },
               ),
             ],
           ),
