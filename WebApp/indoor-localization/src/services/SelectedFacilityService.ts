@@ -28,4 +28,7 @@ export default class SelectedFacilityService {
 
 		return selectedFacility;
 	}
+	static setSelectedFacilityId(facilityId: number) {
+		CookieService.set("selectedFacility", facilityId.toString());
+	}
 }
