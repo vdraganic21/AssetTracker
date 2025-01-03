@@ -1,5 +1,7 @@
-import { Circle, Layer } from "react-konva";
+import { Layer } from "react-konva";
 import { Asset } from "../../../entities/Asset";
+import AssetDot from "./AssetDot";
+import AssetDotNameBox from "./AssetDotNameBox";
 
 function AssetDisplayLayer({
 	scale,
@@ -13,21 +15,35 @@ function AssetDisplayLayer({
 	y: number;
 }) {
 	return (
-		<Layer scale={{ x: scale, y: scale }}>
-			{assets.map((asset, index) => {
-				const assetPosition = asset.GetPosition();
-				return (
-					<Circle
-						key={index}
-						fill={"red"}
-						width={15 / scale}
-						height={15 / scale}
-						x={x + assetPosition.x}
-						y={y - assetPosition.y}
-					/>
-				);
-			})}
-		</Layer>
+		<>
+			<Layer scale={{ x: scale, y: scale }}>
+				{assets.map((asset, index) => {
+					const assetPosition = asset.GetPosition();
+					return (
+						<AssetDot
+							key={index}
+							scale={scale}
+							x={assetPosition.x + x}
+							y={y - assetPosition.y}
+						/>
+					);
+				})}
+			</Layer>
+			<Layer scale={{ x: scale, y: scale }}>
+				{assets.map((asset, index) => {
+					const assetPosition = asset.GetPosition();
+					return (
+						<AssetDotNameBox
+							key={index}
+							scale={scale}
+							x={assetPosition.x + x}
+							y={y - assetPosition.y}
+							name={asset.name}
+						/>
+					);
+				})}
+			</Layer>
+		</>
 	);
 }
 
