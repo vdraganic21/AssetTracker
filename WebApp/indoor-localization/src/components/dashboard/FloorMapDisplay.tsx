@@ -6,6 +6,7 @@ import { Stage, Layer, Image } from "react-konva";
 import useImage from "use-image";
 import Grid from "./dashboard-display-elements/Grid";
 import { Facility } from "../../entities/Facility";
+import AssetDispalyLayer from "./dashboard-display-elements/AssetDisplayLayer";
 
 function FloorMapDisplay({ facility }: { facility: Facility }) {
 	const stageRef = useRef<Konva.Stage>(null);
@@ -140,6 +141,15 @@ function FloorMapDisplay({ facility }: { facility: Facility }) {
 							/>
 						)}
 					</Layer>
+					<AssetDispalyLayer
+						assets={facility.GetAssets()}
+						scale={scale}
+						x={(stageSize.width - imageSize.width * imageScale) / 2}
+						y={
+							(stageSize.height - imageSize.height * imageScale) / 2 +
+							imageSize.height
+						}
+					/>
 				</Stage>
 			</div>
 
