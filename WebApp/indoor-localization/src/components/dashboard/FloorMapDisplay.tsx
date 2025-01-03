@@ -5,15 +5,16 @@ import { useEffect, useRef, useState } from "react";
 import { Stage, Layer, Image } from "react-konva";
 import useImage from "use-image";
 import Grid from "./dashboard-display-elements/Grid";
+import { Facility } from "../../entities/Facility";
 
-function FloorMapDisplay() {
+function FloorMapDisplay({ facility }: { facility: Facility }) {
 	const stageRef = useRef<Konva.Stage>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
 
 	const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
 	const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
 	const [zoomLevel, setZoomLevel] = useState(100);
-	const [image] = useImage("/floorMapDemo.png");
+	const [image] = useImage(facility.imageBase64);
 	const [imageScale, setImageScale] = useState(1);
 	const [isGridVisible, setIsGridVisible] = useState(false);
 	const scale = imageScale * (zoomLevel / 100);
@@ -144,7 +145,7 @@ function FloorMapDisplay() {
 
 			<div className="bottom-right-container">
 				<div className="facility-column">
-					<p className="facility-name unselectable">Facility name</p>
+					<p className="facility-name unselectable">{facility.name}</p>
 				</div>
 				<div className="buttons-column">
 					<SynButton onClick={() => setIsGridVisible(!isGridVisible)}>
