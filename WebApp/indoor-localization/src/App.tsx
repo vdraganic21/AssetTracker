@@ -10,8 +10,11 @@ import EditAssetForm from "./components/assets-manager/EditAssetForm";
 import AddAssetForm from "./components/assets-manager/AddAssetForm";
 import EditFacilityForm from "./components/facilities-manager/EditFacilityForm";
 import NotFoundPage from "./components/NotFoundPage";
+import ReportModulesService from "./services/ReportModulesService";
 
 function App() {
+	const reportModules = ReportModulesService.GetAllModules();
+
 	return (
 		<div className="application">
 			<Header />
@@ -24,6 +27,13 @@ function App() {
 				<Route path="/assets/edit/:id" element={<EditAssetForm />} />
 				<Route path="/assets/add" element={<AddAssetForm />} />
 				<Route path="/facilities/edit/:id" element={<EditFacilityForm />} />
+				{reportModules.map((module, index) => (
+					<Route
+						key={index}
+						path={module.GetUrl()}
+						element={module.GetComponent()}
+					/>
+				))}
 				<Route path="*" element={<NotFoundPage />} />
 			</Routes>
 		</div>
