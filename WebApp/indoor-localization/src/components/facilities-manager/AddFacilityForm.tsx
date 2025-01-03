@@ -4,8 +4,8 @@ import {
 	SynFile,
 	SynInput,
 } from "@synergy-design-system/react";
-import Footer from "../Footer";
-import "../Form.css";
+import Footer from "../common/Footer";
+import "../common/Form.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {

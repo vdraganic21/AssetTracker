@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import FullPageNotification from "./common/FullPageNotification";
+import FullPageNotification from "./FullPageNotification";
 
 function NotFoundPage() {
 	const navigate = useNavigate();

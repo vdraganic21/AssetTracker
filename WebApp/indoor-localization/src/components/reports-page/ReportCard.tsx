@@ -1,4 +1,4 @@
-import "../Manager.css";
+import "../common/Manager.css";
 import "./ReportCard.css";
 
 interface ReportProp {

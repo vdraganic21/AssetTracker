@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
-import Header from "./components/Header";
+import Header from "./components/common/Header";
 import Dashboard from "./components/dashboard/Dashboard";
 import FacilitiesManager from "./components/facilities-manager/FacilitiesManager";
 import ReportsPage from "./components/reports-page/ReportsPage";
@@ -9,7 +9,7 @@ import AddFacilityForm from "./components/facilities-manager/AddFacilityForm";
 import EditAssetForm from "./components/assets-manager/EditAssetForm";
 import AddAssetForm from "./components/assets-manager/AddAssetForm";
 import EditFacilityForm from "./components/facilities-manager/EditFacilityForm";
-import NotFoundPage from "./components/NotFoundPage";
+import NotFoundPage from "./components/common/NotFoundPage";
 
 function App() {
 	return (
