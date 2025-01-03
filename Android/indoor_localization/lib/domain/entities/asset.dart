@@ -25,8 +25,8 @@ class Asset {
   });
 
   Facility? getCurrentFacility() {
-    updateData();
-    return FacilityService.get(id);
+    final facility = FacilityService.get(parentFacilityId);
+    return facility;
   }
 
   Point getPosition() {

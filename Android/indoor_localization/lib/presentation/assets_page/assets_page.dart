@@ -1,23 +1,64 @@
 import 'package:flutter/material.dart';
 import 'package:indoor_localization/domain/entities/asset.dart';
-import '../../config/app_colors.dart';
+import '../../presentation/common_components/dropdown_menu.dart';
 import 'asset_list_item.dart';
 
 class AssetsPage extends StatefulWidget {
+  final List<Asset> assets;
+
+  const AssetsPage({Key? key, required this.assets}) : super(key: key);
+
   @override
   _AssetsPageState createState() => _AssetsPageState();
 }
 
 class _AssetsPageState extends State<AssetsPage> {
-  bool _isAscending = true; // Track ascending/descending state
-  List<Asset> assets = [
+  late List<Asset> sortedAssets;
+  late List<Asset> displayedAssets;
+  final TextEditingController _searchController = TextEditingController();
 
-  ];
+  String sortBy = 'Name Ascending';
 
-  void _toggleSortOrder() {
+  @override
+  void initState() {
+    super.initState();
+    sortedAssets = List.from(widget.assets);
+    _sortAssets();
+    displayedAssets = List.from(sortedAssets);
+  }
+
+  void _sortAssets() {
     setState(() {
-      _isAscending = !_isAscending; // Toggle sorting order
+      if (sortBy == 'Name Ascending') {
+        sortedAssets.sort((a, b) => a.name.compareTo(b.name));
+      } else if (sortBy == 'Name Descending') {
+        sortedAssets.sort((a, b) => b.name.compareTo(a.name));
+      } else if (sortBy == 'Facility Ascending') {
+        sortedAssets.sort((a, b) => a.parentFacilityId.compareTo(b.parentFacilityId));
+      } else if (sortBy == 'Facility Descending') {
+        sortedAssets.sort((a, b) => b.parentFacilityId.compareTo(a.parentFacilityId));
+      }
+      _filterAssets();
     });
+  }
+
+  void _filterAssets() {
+    setState(() {
+      final query = _searchController.text.toLowerCase();
+      if (query.isEmpty) {
+        displayedAssets = List.from(sortedAssets);
+      } else {
+        displayedAssets = sortedAssets
+            .where((asset) => asset.name.toLowerCase().startsWith(query))
+            .toList();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -25,12 +66,13 @@ class _AssetsPageState extends State<AssetsPage> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(16,16,16,8),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Search Bar
               TextField(
+                controller: _searchController,
+                onChanged: (value) => _filterAssets(),
                 decoration: InputDecoration(
                   contentPadding: const EdgeInsets.symmetric(vertical: 12),
                   hintText: 'Search...',
@@ -41,49 +83,20 @@ class _AssetsPageState extends State<AssetsPage> {
                 ),
               ),
               const SizedBox(height: 8),
-              // Filter and Sorting Widgets
-              Row(
-                children: [
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      // Filter logic here
-                    },
-                    icon: const Icon(Icons.filter_list),
-                    label: const Text('Filter'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary500,
-                      foregroundColor: AppColors.neutral0,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: _toggleSortOrder, // Toggle sort order on click
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary500,
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                      ),
-                      child: Row(
-                        children: [
-                          const Text(
-                            'Sort by:',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            _isAscending
-                                ? 'Name-ascending'
-                                : 'Name-descending', // Display current sorting
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+              CustomDropdown(
+                selectedValue: sortBy,
+                items: [
+                  'Name Ascending',
+                  'Name Descending',
+                  'Facility Ascending',
+                  'Facility Descending',
                 ],
+                onChanged: (value) {
+                  setState(() {
+                    sortBy = value;
+                    _sortAssets();
+                  });
+                },
               ),
             ],
           ),
@@ -92,18 +105,14 @@ class _AssetsPageState extends State<AssetsPage> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: ListView.builder(
-              itemCount: assets.length + 1,
+              itemCount: displayedAssets.length,
               itemBuilder: (context, index) {
-                if (index < assets.length) {
-                  return AssetListItem(asset: assets[index]);
-                } else {
-                  return const SizedBox(height: 8);
-                }
+                Asset asset = displayedAssets[index];
+                return AssetListItem(asset: asset);
               },
             ),
           ),
         ),
-
       ],
     );
   }

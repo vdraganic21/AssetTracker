@@ -9,6 +9,7 @@ class AssetListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('Printing out asset: ${asset.name}');
     return Container(
       padding: const EdgeInsets.all(8.0),
       margin: const EdgeInsets.symmetric(vertical: 4.0),

@@ -4,10 +4,12 @@ import '../../config/app_colors.dart';
 import '../facilities_page/facilities_page.dart';
 import '../assets_page/assets_page.dart';
 import '../reports_page/reports_page.dart';
-import 'floor_map_widget.dart'; // Import the new FloorMapWidget
+import 'floor_map_widget.dart';
+import '../../domain/entities/asset.dart';
 
 class DashboardPage extends StatefulWidget {
-  const DashboardPage({super.key});
+  final List<Asset> assets;
+  const DashboardPage({Key? key, required this.assets}) : super(key: key);
 
   @override
   State<DashboardPage> createState() => _DashboardPageState();
@@ -16,14 +18,19 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   int _selectedIndex = 0;
 
-  // List of pages for navigation
-  final List<Widget> _pages = [
-    DashboardContent(),
-    FacilitiesPage(),
-    AssetsPage(),
-    ReportsPage(),
-  ];
+  late List<Widget> _pages;
 
+  @override
+  void initState() {
+    super.initState();
+    // Pass assets to AssetsPage
+    _pages = [
+      DashboardContent(),
+      FacilitiesPage(),
+      AssetsPage(assets: widget.assets),
+      ReportsPage(),
+    ];
+  }
   void _navigateBottomBar(int index) {
     setState(() {
       _selectedIndex = index;
