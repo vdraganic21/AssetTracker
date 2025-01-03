@@ -1,6 +1,6 @@
 import ReportModulesService from "../../services/ReportModulesService";
-import Footer from "../Footer";
-import "../Manager.css";
+import Footer from "../common/Footer";
+import "../common/Manager.css";
 import ReportCardsContainer from "./ReportCardsContainer";
 
 function ReportsPage() {
@@ -12,7 +12,7 @@ function ReportsPage() {
 				<span className="syn-heading--3x-large">Reports</span>
 				<ReportCardsContainer reports={reportModules} />
 			</div>
-			<Footer></Footer>
+			<Footer />
 		</>
 	);
 }
