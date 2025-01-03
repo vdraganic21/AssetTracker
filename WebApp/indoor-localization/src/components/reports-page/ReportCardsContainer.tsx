@@ -1,27 +1,18 @@
 import "../common/Manager.css";
 import "./ReportCardsContainer.css";
 import ReportCard from "./ReportCard";
+import { ReportModule } from "../../interfaces/ReportModule";
 
-interface ReportProp {
-	id: number;
-	name: string;
-	imageSrc: string;
-	imageAlt: string;
-}
-
-interface ReportsContainerProp {
-	reports: ReportProp[];
-}
-
-function ReportCardsContainer({ reports }: ReportsContainerProp) {
+function ReportCardsContainer({ reports }: { reports: ReportModule[] }) {
 	return (
 		<div className="reports-container">
-			{reports.map((report) => (
+			{reports.map((report, index) => (
 				<ReportCard
-					id={report.id}
-					name={report.name}
-					imageSrc={report.imageSrc}
-					imageAlt={report.imageAlt}
+					key={index}
+					name={report.GetName()}
+					imageSrc={report.GetIcon()}
+					imageAlt={report.GetName()}
+					route={report.GetUrl()}
 				/>
 			))}
 		</div>
