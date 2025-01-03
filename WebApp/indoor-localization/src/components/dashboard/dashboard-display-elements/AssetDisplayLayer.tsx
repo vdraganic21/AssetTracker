@@ -14,11 +14,11 @@ function AssetDisplayLayer({
 }) {
 	return (
 		<Layer scale={{ x: scale, y: scale }}>
-			{assets.map((asset) => {
+			{assets.map((asset, index) => {
 				const assetPosition = asset.GetPosition();
-				console.log(assetPosition);
 				return (
 					<Circle
+						key={index}
 						fill={"red"}
 						width={15 / scale}
 						height={15 / scale}

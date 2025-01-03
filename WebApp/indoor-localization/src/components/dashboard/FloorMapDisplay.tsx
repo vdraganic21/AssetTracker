@@ -11,6 +11,7 @@ import AssetDispalyLayer from "./dashboard-display-elements/AssetDisplayLayer";
 function FloorMapDisplay({ facility }: { facility: Facility }) {
 	const stageRef = useRef<Konva.Stage>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
+	const [assets, setAssets] = useState(facility.GetAssets());
 
 	const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
 	const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
@@ -19,6 +20,16 @@ function FloorMapDisplay({ facility }: { facility: Facility }) {
 	const [imageScale, setImageScale] = useState(1);
 	const [isGridVisible, setIsGridVisible] = useState(false);
 	const scale = imageScale * (zoomLevel / 100);
+	const refreshIntervalMillis = 500;
+
+	useEffect(() => {
+		const interval = setInterval(() => {
+			const updatedAssets = facility.GetAssets();
+			setAssets(updatedAssets);
+		}, refreshIntervalMillis);
+
+		return () => clearInterval(interval);
+	}, [facility]);
 
 	useEffect(() => {
 		if (image && stageSize.width && stageSize.height) {
@@ -142,7 +153,7 @@ function FloorMapDisplay({ facility }: { facility: Facility }) {
 						)}
 					</Layer>
 					<AssetDispalyLayer
-						assets={facility.GetAssets()}
+						assets={assets}
 						scale={scale}
 						x={(stageSize.width - imageSize.width * imageScale) / 2}
 						y={
