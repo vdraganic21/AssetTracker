@@ -1,4 +1,4 @@
-import "../Manager.css";
+import "../common/Manager.css";
 import "./ReportCardsContainer.css";
 import ReportCard from "./ReportCard";
 import { ReportModule } from "../../interfaces/ReportModule";

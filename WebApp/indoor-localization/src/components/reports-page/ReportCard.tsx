@@ -1,5 +1,5 @@
+import "../common/Manager.css";
 import { useNavigate } from "react-router-dom";
-import "../Manager.css";
 import "./ReportCard.css";
 
 interface ReportProp {

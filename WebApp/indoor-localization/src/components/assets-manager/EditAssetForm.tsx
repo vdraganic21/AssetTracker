@@ -4,13 +4,13 @@ import {
 	SynIcon,
 	SynInput,
 } from "@synergy-design-system/react";
-import Footer from "../Footer";
-import "../Form.css";
+import Footer from "../common/Footer";
+import "../common/Form.css";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { SynInputEvent } from "@synergy-design-system/react/components/checkbox.js";
 import { AssetService } from "../../services/AssetService";
-import PopUpConfirmation from "../PopUpConfirmation";
+import PopUpConfirmation from "../common/PopUpConfirmation";
 
 function EditAssetForm() {
 	const navigate = useNavigate();

@@ -1,0 +1,27 @@
+.full-page-notification-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+	text-align: center;
+	background-color: var(--syn-color-neutral-100);
+}
+
+.full-page-notification-title {
+	font-size: var(--syn-font-size-4x-large);
+	font-weight: bold;
+	color: var(--syn-color-neutral-1000);
+	margin-bottom: var(--syn-spacing-medium);
+}
+
+.full-page-notification-message {
+	font-size: var(--syn-font-size-medium);
+	color: var(--syn-color-neutral-700);
+	margin-bottom: var(--syn-spacing-large);
+}
+
+.full-page-notification-button {
+	padding: var(--syn-spacing-small) var(--syn-spacing-large);
+	font-size: var(--syn-font-size-medium);
+}
