@@ -67,7 +67,6 @@ function FloorMapDisplay({ facility }: { facility: Facility }) {
 	};
 
 	const handleWheel = (e: React.WheelEvent) => {
-		e.preventDefault();
 		const zoomIncrement = e.deltaY < 0 ? 10 : -10;
 		updateZoom(zoomIncrement);
 	};
