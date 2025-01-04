@@ -1,0 +1,8 @@
+.asset-report-button-group {
+  display: flex;
+  gap: 8px;
+}
+
+.export-buttons-top-margin {
+  margin-top: var(--syn-spacing-x-small);
+}
