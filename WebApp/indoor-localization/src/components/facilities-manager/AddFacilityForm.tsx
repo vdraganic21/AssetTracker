@@ -78,7 +78,7 @@ function AddFacilityForm() {
 
 	return (
 		<>
-			<div className="content content-border">
+			<div className="content content-width content-border">
 				<span className="syn-heading--3x-large">Add facility</span>
 				<SynDivider className="content-divider" />
 				<SynInput

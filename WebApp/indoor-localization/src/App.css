@@ -23,8 +23,6 @@
 }
 
 .content-border {
-  /* max-width: 1140px;
-  min-width: 800px; */
   border-radius: var(--syn-border-radius-medium);
   border-width: var(--syn-border-width-small);
   border-color: var(--syn-color-neutral-700);
@@ -34,6 +32,11 @@
   margin-left: auto;
   margin-right: auto;
   padding: var(--syn-spacing-x-large);
+}
+
+.content-width{
+  max-width: 1140px;
+  min-width: 800px;
 }
 
 .content-divider {

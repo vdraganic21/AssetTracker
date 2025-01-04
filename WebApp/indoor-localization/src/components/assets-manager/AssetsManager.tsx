@@ -112,7 +112,7 @@ function AssetsManager() {
 
 	return (
 		<>
-			<div className="content content-border">
+			<div className="content content-width content-border">
 				<div className="header-row">
 					<span className="syn-heading--3x-large">Assets</span>
 					<div className="button-group">

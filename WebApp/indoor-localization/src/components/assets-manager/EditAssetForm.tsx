@@ -61,7 +61,7 @@ function EditAssetForm() {
 
 	return (
 		<>
-			<div className="content content-border">
+			<div className="content content-width content-border">
 				<div className="header-row">
 					<span className="syn-heading--3x-large">Edit asset</span>
 					<div className="button-group">
