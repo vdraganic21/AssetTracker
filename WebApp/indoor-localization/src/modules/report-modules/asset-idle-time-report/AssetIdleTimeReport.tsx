@@ -1,3 +1,4 @@
+import ReportExportButtonGroup from "../../../components/common/ReportExportButtonGroup";
 import { AssetService } from "../../../services/AssetService";
 
 function AssetIdleTimeReport() {
@@ -6,9 +7,7 @@ function AssetIdleTimeReport() {
   return (
     <div className="asset-idle-time-report-container">
       <div className="asset-idle-time-panel">
-        <div>
-          <p>Asset Idle Time Report</p>
-        </div>
+        <p>Asset Idle Time Report</p>
         <table className="syn-table--default">
           <thead>
             <tr>
@@ -36,7 +35,8 @@ function AssetIdleTimeReport() {
           </tbody>
         </table>
       </div>
-      <div>
+      <ReportExportButtonGroup className="export-buttons-top-margin" />
+      <div className="asset-idle-time-details">
         <p>Asset idle time reports -- other components go here</p>
       </div>
     </div>
