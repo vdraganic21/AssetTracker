@@ -1,7 +1,7 @@
 *,
 *::before,
 *::after {
-  font-family: 'Open Sans', sans-serif !important;
+  font-family: "Open Sans", sans-serif !important;
   margin: 0;
 }
 
@@ -17,14 +17,14 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  flex-grow: 1; 
+  flex-grow: 1;
   position: relative;
   overflow: hidden;
 }
 
 .content-border {
-  max-width: 1140px;
-  min-width: 800px;
+  /* max-width: 1140px;
+  min-width: 800px; */
   border-radius: var(--syn-border-radius-medium);
   border-width: var(--syn-border-width-small);
   border-color: var(--syn-color-neutral-700);
@@ -41,12 +41,12 @@
   margin-bottom: var(--syn-spacing-medium);
 }
 
-syn-icon{
+syn-icon {
   font-size: 20px;
   color: var(--syn-color-neutral-800);
 }
 
-syn-icon:hover{
+syn-icon:hover {
   color: var(--syn-color-primary-600);
   cursor: pointer;
 }
