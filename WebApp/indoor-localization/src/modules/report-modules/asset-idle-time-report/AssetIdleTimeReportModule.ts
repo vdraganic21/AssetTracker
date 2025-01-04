@@ -1,4 +1,4 @@
-import { ReportModule } from "../../../interfaces/ReportI";
+import { ReportModule } from "../../../interfaces/ReportModule";
 import AssetIdleTimeReport from "./AssetIdleTimeReport";
 
 class AssetIdleTimeReportModule implements ReportModule {
