@@ -10,18 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.0",
     "@fontsource/open-sans": "^5.1.0",
-    "@mui/material": "^6.3.1",
     "@synergy-design-system/assets": "^1.9.0",
     "@synergy-design-system/react": "^2.11.8",
     "@synergy-design-system/styles": "^1.4.0",
     "@synergy-design-system/tokens": "^2.13.0",
     "konva": "^9.3.18",
     "react": "^19.0.0",
-    "react-bootstrap": "^2.10.7",
-    "react-datepicker": "^7.5.0",
     "react-dom": "^19.0.0",
     "react-konva": "^19.0.1",
     "react-router-dom": "^6.28.0",
