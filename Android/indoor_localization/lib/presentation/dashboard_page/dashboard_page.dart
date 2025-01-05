@@ -6,10 +6,12 @@ import '../assets_page/assets_page.dart';
 import '../reports_page/reports_page.dart';
 import 'floor_map_widget.dart';
 import '../../domain/entities/asset.dart';
+import '../../domain/entities/facility.dart';
 
 class DashboardPage extends StatefulWidget {
   final List<Asset> assets;
-  const DashboardPage({Key? key, required this.assets}) : super(key: key);
+  final List<Facility> facilities;
+  const DashboardPage({Key? key, required this.assets, required this.facilities}) : super(key: key);
 
   @override
   State<DashboardPage> createState() => _DashboardPageState();
@@ -23,10 +25,10 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   void initState() {
     super.initState();
-    // Pass assets to AssetsPage
+
     _pages = [
       DashboardContent(),
-      FacilitiesPage(),
+      FacilitiesPage(facilities: widget.facilities),
       AssetsPage(assets: widget.assets),
       ReportsPage(),
     ];
@@ -57,7 +59,7 @@ class _DashboardPageState extends State<DashboardPage> {
         ),
         centerTitle: true,
       ),
-      body: _pages[_selectedIndex], // Display the content of the selected page
+      body: _pages[_selectedIndex],
       bottomNavigationBar: Container(
         color: AppColors.primary500,
         child: Padding(
@@ -96,7 +98,6 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 }
 
-// Dashboard content (with interactive floor map)
 class DashboardContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
