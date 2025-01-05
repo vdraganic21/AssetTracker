@@ -1,6 +1,25 @@
 import DataComparisonReportWidget from "../../../components/common/DataComparisonReportWidget";
 import ReportExportButtonGroup from "../../../components/common/ReportExportButtonGroup";
 import { AssetService } from "../../../services/AssetService";
+import SummaryList from "../../../components/common/SummaryList";
+
+const summaryData = [
+  { note: "Zone 1 has the highest activity level (24 hrs)", icon: "🔥" },
+  { note: "Zone 4 has the lowest activity level (2 hrs)", icon: "❄️" },
+  { note: "Zone 5 has no recorded activity", icon: "⚠️" },
+  { note: "Zone 1 has the highest activity level (24 hrs)", icon: "🔥" },
+  { note: "Zone 4 has the lowest activity level (2 hrs)", icon: "❄️" },
+  { note: "Zone 5 has no recorded activity", icon: "⚠️" },
+  { note: "Zone 1 has the highest activity level (24 hrs)", icon: "🔥" },
+  { note: "Zone 4 has the lowest activity level (2 hrs)", icon: "❄️" },
+  { note: "Zone 5 has no recorded activity", icon: "⚠️" },
+  { note: "Zone 1 has the highest activity level (24 hrs)", icon: "🔥" },
+  { note: "Zone 4 has the lowest activity level (2 hrs)", icon: "❄️" },
+  { note: "Zone 5 has no recorded activity", icon: "⚠️" },
+  { note: "Zone 1 has the highest activity level (24 hrs)", icon: "🔥" },
+  { note: "Zone 4 has the lowest activity level (2 hrs)", icon: "❄️" },
+  { note: "Zone 5 has no recorded activity", icon: "⚠️" },
+];
 
 function AssetIdleTimeReport() {
   const assets = AssetService.GetAll();
@@ -36,6 +55,9 @@ function AssetIdleTimeReport() {
               ))}
             </tbody>
           </table>
+        </div>
+        <div className="content-border take-space">
+          <SummaryList summaryItems={summaryData} />
         </div>
         <div className="content-border">
           <ReportExportButtonGroup className="export-buttons-top-margin" />
