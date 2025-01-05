@@ -1,7 +1,19 @@
-.asset-idle-time-report-container {
-  margin: 0;
+.asset-idle-time-main-container {
+  background: var(--syn-color-neutral-0);
+  height: 100%;
 }
 
-.asset-idle-time-panel {
-  padding: 20px;
+.asset-idle-time-stats-container,
+.graphs {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: white;
+}
+
+.card {
+  border: 1px solid white;
+  border-radius: 8px;
+  background-color: white;
+  text-align: center;
+  font-weight: bold;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
