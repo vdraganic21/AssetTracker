@@ -1,11 +1,15 @@
-import { SynButton } from "@synergy-design-system/react";
+import { SynButton, SynOption, SynSelect } from "@synergy-design-system/react";
 import "./ReportExportButtonGroup.css";
 
 function ReportExportButtonGroup({ className = "" }: { className?: string }) {
   return (
     <div className={"asset-report-button-group " + className}>
-      <SynButton>Export as PDF</SynButton>
-      <SynButton>Export as PNG</SynButton>
+      <span className="export-input-label">Export as</span>
+      <SynSelect value={"Export as"} className="sort-select">
+        <SynOption value={"PNG"}>{"PNG"}</SynOption>
+        <SynOption value={"PDF"}>{"PDF"}</SynOption>
+      </SynSelect>
+      <SynButton>Export</SynButton>
       <SynButton>Print</SynButton>
     </div>
   );

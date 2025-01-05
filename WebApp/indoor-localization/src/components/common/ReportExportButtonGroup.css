@@ -6,3 +6,8 @@
 .export-buttons-top-margin {
   margin-top: var(--syn-spacing-x-small);
 }
+
+.export-input-label {
+  text-align: center;
+  margin-top: 10px;
+}
