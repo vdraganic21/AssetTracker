@@ -77,7 +77,7 @@ function FacilitiesManager() {
 
 	return (
 		<>
-			<div className="content content-width content-border">
+			<div className="content content-width content-border content-margin">
 				<div className="header-row">
 					<span className="syn-heading--3x-large">Facilities</span>
 					<div className="button-group">

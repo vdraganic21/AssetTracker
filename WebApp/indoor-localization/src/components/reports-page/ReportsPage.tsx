@@ -8,7 +8,7 @@ function ReportsPage() {
 
 	return (
 		<>
-			<div className="content content-width content-border">
+			<div className="content content-width content-border content-margin">
 				<span className="syn-heading--3x-large">Reports</span>
 				<ReportCardsContainer reports={reportModules} />
 			</div>

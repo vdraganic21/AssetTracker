@@ -26,12 +26,15 @@
   border-radius: var(--syn-border-radius-medium);
   border-width: var(--syn-border-width-small);
   border-color: var(--syn-color-neutral-700);
-  margin-top: var(--syn-spacing-medium);
-  margin-bottom: var(--syn-spacing-medium);
   border-style: solid;
+  padding: var(--syn-spacing-x-large);
+}
+
+.content-margin {
+  margin-top: var(var(--syn-spacing-medium));
+  margin-bottom: var(var(--syn-spacing-medium));
   margin-left: auto;
   margin-right: auto;
-  padding: var(--syn-spacing-x-large);
 }
 
 .content-width{
