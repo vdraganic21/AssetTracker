@@ -1,0 +1,11 @@
+.time-picker {
+  width: 220px;
+  height: 50px;
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+}
+
+.time-picker syn-select {
+  max-height: 300px;
+}
