@@ -11,6 +11,7 @@ import {
 import "../../../components/common/Report.css";
 import DataComparisonReportWidget from "../../../components/common/DataComparisonReportWidget";
 import ReportExportButtonGroup from "../../../components/common/ReportExportButtonGroup";
+import SummaryList from "../../../components/common/SummaryList";
 
 function ZoneRetentionTimeReport() {
   const [facility, setFacility] = useState("");
@@ -86,8 +87,26 @@ function ZoneRetentionTimeReport() {
   const hourOptions = generateDigitOptions(23);
   const minuteOptions = generateDigitOptions(59);
 
+  const summaryData = [
+    { note: "Zone 1 has the highest activity level (24 hrs)", icon: "🔥" },
+    { note: "Zone 4 has the lowest activity level (2 hrs)", icon: "❄️" },
+    { note: "Zone 5 has no recorded activity", icon: "⚠️" },
+    { note: "Zone 1 has the highest activity level (24 hrs)", icon: "🔥" },
+    { note: "Zone 4 has the lowest activity level (2 hrs)", icon: "❄️" },
+    { note: "Zone 5 has no recorded activity", icon: "⚠️" },
+    { note: "Zone 1 has the highest activity level (24 hrs)", icon: "🔥" },
+    { note: "Zone 4 has the lowest activity level (2 hrs)", icon: "❄️" },
+    { note: "Zone 5 has no recorded activity", icon: "⚠️" },
+    { note: "Zone 1 has the highest activity level (24 hrs)", icon: "🔥" },
+    { note: "Zone 4 has the lowest activity level (2 hrs)", icon: "❄️" },
+    { note: "Zone 5 has no recorded activity", icon: "⚠️" },
+    { note: "Zone 1 has the highest activity level (24 hrs)", icon: "🔥" },
+    { note: "Zone 4 has the lowest activity level (2 hrs)", icon: "❄️" },
+    { note: "Zone 5 has no recorded activity", icon: "⚠️" },
+  ];
+
   return (
-    <div className="report-row take-space report-padding">
+    <div className="report-row report-padding">
       <div className="report-column">
         <div className="retention-panel content-border">
           <div>
@@ -179,7 +198,9 @@ function ZoneRetentionTimeReport() {
             </SynButton>
           </div>
         </div>
-        <div className="take-space content-border">Blah</div>
+        <div className="content-border take-space">
+          <SummaryList summaryItems={summaryData} />
+        </div>
         <div className="zone-export-buttons content-border">
           <ReportExportButtonGroup />
         </div>
