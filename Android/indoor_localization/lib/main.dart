@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
+import 'domain/services/report_modules_service.dart';
 import 'presentation/dashboard_page/dashboard_page.dart';
 import 'config/app_colors.dart';
 import 'domain/mock-repositories/mock_data_initializer.dart';
 import 'domain/services/asset_service.dart';
 import 'domain/entities/asset.dart';
+import 'domain/modules/report-modules/asset_idle_time_report.dart';
 
 void main() {
   // Initialize the data at the application load
   MockDataInitializer.initializeData();
   List<Asset> assets = AssetService.getAll();
-
+  ReportModulesService.registerModules([
+    AssetIdleTimeReportModule(),
+    // more modules here
+  ]);
   runApp(MyApp(assets: assets));
 }
 
