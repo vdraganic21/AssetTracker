@@ -17,55 +17,57 @@
 }
 
 .panel-title {
-  text-align: center;
-  margin-bottom: 20px;
+  font-size: large;
 }
 
 .input-group {
-  margin-bottom: 20px;
+  flex-direction: column;
 }
 
 .input-label {
-  margin-bottom: 8px;
+  padding-bottom: 8px;
+  padding-top: 8px;
   font-size: 14px;
   font-weight: bold;
 }
 
-.facility-dropdown,
-.zone-dropdown,
-.time-span-dropdown {
-  width: 100%;
-}
-
 .picker-row {
   display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
 }
 
-.time-picker,
 .date-picker {
   width: 120px;
+  height: 50px;
+  background-color: white;
+  font-size: 14px;
+  text-align: center;
+}
+
+.time-picker .colon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: bold;
+  margin: 0 5px;
+}
+
+.time-picker select {
+  width: 60px;
   height: 40px;
-  padding: 8px;
   border: 1px solid var(--syn-color-neutral-400);
   border-radius: 5px;
   background-color: white;
   font-size: 14px;
-  box-sizing: border-box;
   text-align: center;
 }
 
-.time-picker:focus,
 .date-picker:focus {
-  border-color: var(--syn-color-primary-500);
-  outline: none;
-}
-
-.time-picker .MuiMenuItem-root,
-.date-picker .MuiMenuItem-root {
-  font-size: 14px;
-  line-height: 1.5;
+  border-color: var(--syn-color-neutral-400);
 }
 
 .button-group {

@@ -12,6 +12,7 @@ import "../../../components/common/Report.css";
 import DataComparisonReportWidget from "../../../components/common/DataComparisonReportWidget";
 import ReportExportButtonGroup from "../../../components/common/ReportExportButtonGroup";
 import SummaryList from "../../../components/common/SummaryList";
+import TimePicker from "../../../components/common/TimePicker";
 
 function ZoneRetentionTimeReport() {
   const [facility, setFacility] = useState("");
@@ -30,32 +31,12 @@ function ZoneRetentionTimeReport() {
     toTime: "00:00",
   });
 
-  const generateDigitOptions = (max: number): string[] => {
+  const generateDigitOptions = (max: number, step: number = 1): string[] => {
     const options: string[] = [];
-    for (let i = 0; i <= max; i++) {
+    for (let i = 0; i <= max; i += step) {
       options.push(i.toString().padStart(2, "0"));
     }
     return options;
-  };
-
-  interface CustomTimeChangeParams {
-    value: string;
-    isFrom: boolean;
-    isHour: boolean;
-  }
-
-  const handleCustomTimeChange = ({
-    value,
-    isFrom,
-    isHour,
-  }: CustomTimeChangeParams) => {
-    const key = isFrom ? "fromTime" : "toTime";
-    const currentTime = customRange[key].split(":");
-    const newTime = isHour
-      ? `${value}:${currentTime[1]}`
-      : `${currentTime[0]}:${value}`;
-
-    setCustomRange({ ...customRange, [key]: newTime });
   };
 
   interface ThresholdChangeParams {
@@ -85,7 +66,7 @@ function ZoneRetentionTimeReport() {
   };
 
   const hourOptions = generateDigitOptions(23);
-  const minuteOptions = generateDigitOptions(59);
+  const minuteOptions = generateDigitOptions(59, 5);
 
   const summaryData = [
     { note: "Zone 1 has the highest activity level (24 hrs)", icon: "🔥" },
@@ -110,60 +91,70 @@ function ZoneRetentionTimeReport() {
       <div className="report-column">
         <div className="retention-panel content-border">
           <div>
-            <span className="panel-title">Retention Report</span>
+            <p className="panel-title">Retention Report</p>
             <div className="input-group">
               <span className="input-label">Facility</span>
-              <SynSelect value={"option1"} className="sort-select">
-                <SynOption value={"Facility 1"}>{"Facility1"}</SynOption>
+              <SynSelect
+                value={facility}
+                onChange={(e) =>
+                  setFacility((e.target as HTMLSelectElement).value)
+                }
+                className="sort-select"
+              >
+                <SynOption value="">Select a Facility</SynOption>{" "}
+                <SynOption value="Facility 1">Facility 1</SynOption>
+                <SynOption value="Facility 2">Facility 2</SynOption>
+                <SynOption value="Facility 3">Facility 3</SynOption>{" "}
               </SynSelect>
             </div>
             <div className="input-group">
               <span className="input-label">Zone</span>
-              <SynSelect value={"option1"} className="sort-select">
-                <SynOption value={"Facility 1"}>{"Facility1"}</SynOption>
+              <SynSelect
+                value={zone}
+                onChange={(e) => setZone((e.target as HTMLSelectElement).value)}
+                className="sort-select"
+              >
+                <SynOption value="">Select a Zone</SynOption>{" "}
+                <SynOption value="Zone 1">Zone 1</SynOption>
+                <SynOption value="Zone 2">Zone 2</SynOption>
+                <SynOption value="Zone 3">Zone 3</SynOption>{" "}
               </SynSelect>
             </div>
             <div className="input-group">
               <span className="input-label">Retention Threshold</span>
-              <div className="picker-row">
-                <SynSelect value={"option1"} className="sort-select">
-                  <SynOption value={"Facility 1"}>{"Facility1"}</SynOption>
-                </SynSelect>
-                :
-                <SynSelect value={"option1"} className="sort-select">
-                  <SynOption value={"Facility 1"}>{"Facility1"}</SynOption>
-                </SynSelect>
-              </div>
+              <TimePicker
+                value={threshold}
+                onChange={handleThresholdChange}
+                hourOptions={hourOptions}
+                minuteOptions={minuteOptions}
+              ></TimePicker>
             </div>
           </div>
-          <SynDivider className="content-divider"></SynDivider>
-          <div className="time-span-container">
-            <div className="input-group">
-              <span className="input-label">Time Span</span>
-              <SynSelect value={"option1"} className="sort-select">
-                <SynOption value={"Facility 1"}>{"Facility1"}</SynOption>
-              </SynSelect>
-            </div>
+          <div>
+            <SynDivider className="content-divider"></SynDivider>
+          </div>
+          <div className="input-group">
+            <span className="input-label">Time Span</span>
+            <SynSelect
+              value={timeSpan}
+              onChange={(e) =>
+                setTimeSpan((e.target as HTMLSelectElement).value)
+              }
+              className="sort-select"
+            >
+              <SynOption value="lastDay">Last Day</SynOption>
+              <SynOption value="lastWeek">Last Week</SynOption>
+              <SynOption value="lastMonth">Last Month</SynOption>
+              <SynOption value="custom">Custom</SynOption>
+            </SynSelect>
             <span className="input-label">From</span>
             <div className="picker-row">
-              <DatePicker
-                selected={customRange.from}
-                onChange={(date) =>
-                  setCustomRange({ ...customRange, from: date })
-                }
-                placeholderText="Select Date"
-                className="date-picker"
-              />
-              <SynSelect value={"option1"} className="sort-select">
-                <SynOption value={"Facility 1"}>{"Facility1"}</SynOption>
-              </SynSelect>
-              :
-              <SynSelect value={"option1"} className="sort-select">
-                <SynOption value={"Facility 1"}>{"Facility1"}</SynOption>
-              </SynSelect>
-            </div>
-            <span className="input-label">To</span>
-            <div className="picker-row">
+              <TimePicker
+                value={threshold}
+                onChange={handleThresholdChange}
+                hourOptions={hourOptions}
+                minuteOptions={minuteOptions}
+              ></TimePicker>
               <DatePicker
                 selected={customRange.to}
                 onChange={(date) =>
@@ -172,13 +163,25 @@ function ZoneRetentionTimeReport() {
                 placeholderText="Select Date"
                 className="date-picker"
               />
-              <SynSelect value={"option1"} className="sort-select">
-                <SynOption value={"Facility 1"}>{"Facility1"}</SynOption>
-              </SynSelect>
-              :
-              <SynSelect value={"option1"} className="sort-select">
-                <SynOption value={"Facility 1"}>{"Facility1"}</SynOption>
-              </SynSelect>
+            </div>
+            <span className="input-label">To</span>
+            <div className="picker-row">
+              <TimePicker
+                value={threshold}
+                onChange={handleThresholdChange}
+                hourOptions={hourOptions}
+                minuteOptions={minuteOptions}
+              ></TimePicker>
+              <div className="date-picker">
+                <DatePicker
+                  selected={customRange.to}
+                  onChange={(date) =>
+                    setCustomRange({ ...customRange, to: date })
+                  }
+                  placeholderText="Select Date"
+                  className="date-picker"
+                />
+              </div>
             </div>
           </div>
           <div className="button-group">
