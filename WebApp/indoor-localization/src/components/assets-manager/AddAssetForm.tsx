@@ -45,7 +45,7 @@ function AddAssetForm() {
 
 	return (
 		<>
-			<div className="content content-width content-border">
+			<div className="content content-width content-border content-margin">
 				<span className="syn-heading--3x-large">Add asset</span>
 				<SynDivider className="content-divider" />
 				<SynInput
