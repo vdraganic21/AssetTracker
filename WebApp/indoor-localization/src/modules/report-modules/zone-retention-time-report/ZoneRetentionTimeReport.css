@@ -7,10 +7,13 @@
 }
 
 .retention-panel {
-  padding: 20px;
-  border: 1px solid var(--syn-color-neutral-400);
-  border-radius: 10px;
-  width: 350px;
+  width: 420px;
+  display: flex;
+  flex-direction: column;
+}
+
+.zone-export-buttons {
+  max-width: 420px;
 }
 
 .panel-title {
@@ -32,14 +35,6 @@
 .zone-dropdown,
 .time-span-dropdown {
   width: 100%;
-}
-
-.time-span-container {
-  padding: 20px;
-  border: 1px solid var(--syn-color-neutral-400);
-  border-radius: 10px;
-  margin-bottom: 20px;
-  margin-top: 20px;
 }
 
 .picker-row {
@@ -75,9 +70,10 @@
 
 .button-group {
   display: flex;
-  justify-content: flex-end;
+  justify-self: flex-end;
   gap: 10px;
   margin-top: 20px;
+  align-self: flex-end;
 }
 
 .reset-button,
