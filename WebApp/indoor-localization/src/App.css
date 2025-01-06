@@ -1,7 +1,7 @@
 *,
 *::before,
 *::after {
-  font-family: "Open Sans", sans-serif !important;
+  font-family: 'Open Sans', sans-serif !important;
   margin: 0;
 }
 
@@ -17,7 +17,7 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  flex-grow: 1;
+  flex-grow: 1; 
   position: relative;
   overflow: hidden;
 }
@@ -47,12 +47,12 @@
   margin-bottom: var(--syn-spacing-medium);
 }
 
-syn-icon {
+syn-icon{
   font-size: 20px;
   color: var(--syn-color-neutral-800);
 }
 
-syn-icon:hover {
+syn-icon:hover{
   color: var(--syn-color-primary-600);
   cursor: pointer;
 }
