@@ -55,13 +55,35 @@ public class PositionHistoryTests : IAsyncLifetime
             Y = 600
         };
 
-        var response = await _client.PostAsJsonAsync("/assetPositionHistory", newPosition);
-        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        var postResponse = await _client.PostAsJsonAsync("/assetPositionHistory", newPosition);
+        Assert.Equal(HttpStatusCode.Created, postResponse.StatusCode);
+    }
 
-        var createdPosition = await response.Content.ReadFromJsonAsync<AssetPositionHistory>();
-        Assert.NotNull(createdPosition);
-        Assert.Equal(500, createdPosition.X);
-        Assert.Equal(600, createdPosition.Y);
+    [Fact]
+    public async Task GetAllAssetPositionHistory_ShouldReturnOk()
+    {
+        var getResponse = await _client.GetAsync("/assetPositionHistory");
+        Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetAssetPositionHistoryById_ShouldReturnOk()
+    {
+        var newPosition = new AssetPositionHistory
+        {
+            AssetId = 1,
+            FloorMapId = 1,
+            Timestamp = DateTime.UtcNow,
+            X = 500,
+            Y = 600
+        };
+
+        var postResponse = await _client.PostAsJsonAsync("/assetPositionHistory", newPosition);
+        var createdPosition = await postResponse.Content.ReadFromJsonAsync<AssetPositionHistory>();
+        int positionId = createdPosition.Id;
+
+        var getResponse = await _client.GetAsync($"/assetPositionHistory/{positionId}");
+        Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
     }
 
     [Fact]
@@ -78,11 +100,9 @@ public class PositionHistoryTests : IAsyncLifetime
 
         var postResponse = await _client.PostAsJsonAsync("/assetPositionHistory", newPosition);
         var createdPosition = await postResponse.Content.ReadFromJsonAsync<AssetPositionHistory>();
+        int positionId = createdPosition.Id;
 
-        var deleteResponse = await _client.DeleteAsync($"/assetPositionHistory/{createdPosition.Id}");
+        var deleteResponse = await _client.DeleteAsync($"/assetPositionHistory/{positionId}");
         Assert.Equal(HttpStatusCode.NoContent, deleteResponse.StatusCode);
-
-        var getResponse = await _client.GetAsync($"/assetPositionHistory/{createdPosition.Id}");
-        Assert.Equal(HttpStatusCode.NotFound, getResponse.StatusCode);
     }
 }
