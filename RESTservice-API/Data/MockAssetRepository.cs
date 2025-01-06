@@ -10,8 +10,9 @@ public class MockAssetRepository : IAssetRepository
     {
         _mockAssets = new List<Asset>
         {
-            new Asset { Id = 1, Name = "Asset 1", X = 100, Y = 200, Active = true },
-            new Asset { Id = 2, Name = "Asset 2", X = 150, Y = 250, Active = false }
+            new Asset { Id = 1, Name = "Asset 1", FloorMapId = 1, X = 100, Y = 200, Active = true },
+            new Asset { Id = 2, Name = "Asset 2", FloorMapId = 1, X = 150, Y = 250, Active = false },
+            new Asset { Id = 3, Name = "Asset 3", FloorMapId = 2, X = 150, Y = 250, Active = true }
         };
 
         _assets = new List<Asset>(_mockAssets);
