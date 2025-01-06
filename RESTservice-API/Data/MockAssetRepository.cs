@@ -4,14 +4,17 @@ using RESTservice_API.Models;
 public class MockAssetRepository : IAssetRepository
 {
     private List<Asset> _assets;
+    private readonly List<Asset> _mockAssets;
 
     public MockAssetRepository()
     {
-        _assets = new List<Asset>
+        _mockAssets = new List<Asset>
         {
             new Asset { Id = 1, Name = "Asset 1", X = 100, Y = 200, Active = true },
             new Asset { Id = 2, Name = "Asset 2", X = 150, Y = 250, Active = false }
         };
+
+        _assets = new List<Asset>(_mockAssets);
     }
 
     public IEnumerable<Asset> GetAllAssets()
@@ -53,5 +56,10 @@ public class MockAssetRepository : IAssetRepository
     public void SaveChanges()
     {
         // Simulate saving changes to mock data (no-op)
+    }
+
+    public void ResetAssets()
+    {
+        _assets = new List<Asset>(_mockAssets);
     }
 }

@@ -47,4 +47,9 @@ namespace RESTservice_API.Data
     {
         //database doesn't support this
     }
+
+    public void ResetPositionHistories()
+    {
+        //database doesn't support this
+    }
 }
