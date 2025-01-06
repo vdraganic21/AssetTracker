@@ -43,4 +43,9 @@ public class AssetRepository : IAssetRepository
     {
         _context.SaveChanges(); // Save changes to the database
     }
+
+    public void ResetAssets()
+    {
+        //database doesn't support this
+    }
 }

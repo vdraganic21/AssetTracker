@@ -11,5 +11,6 @@ namespace RESTservice_API.Data
         void UpdateAsset(Asset asset);
         void DeleteAsset(int id);
         void SaveChanges();
+        void ResetAssets();
     }
 }

@@ -42,4 +42,9 @@ namespace RESTservice_API.Data
             }
         }
     }
+
+    public void ResetPositionHistories()
+    {
+        //database doesn't support this
+    }
 }

@@ -9,5 +9,6 @@ namespace RESTservice_API.Data
         PositionHistory GetPositionHistoryById(int id);
         void AddPositionHistory(PositionHistory positionHistory);
         void DeletePositionHistory(int id);
+        void ResetPositionHistories();
     }
 }
