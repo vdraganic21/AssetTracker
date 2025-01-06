@@ -11,7 +11,7 @@ class MockDataInitializer {
 
   static void initializeData() {
     if (_isDataInitialized) return;
-    const String floorMapDemo = "/logo192.png";
+    const String floorMapDemo = "/floor_map.png";
 
     FacilityService.add(
       Facility(

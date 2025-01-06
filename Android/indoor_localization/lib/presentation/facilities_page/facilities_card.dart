@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:indoor_localization/config/app_colors.dart';
+import 'package:indoor_localization/domain/entities/facility.dart';
 
 class FacilityCard extends StatelessWidget {
-  final String title;
-  final String imageUrl;
+  final Facility facility;
 
-  const FacilityCard({
-    super.key,
-    required this.title,
-    required this.imageUrl,
-  });
+  const FacilityCard({super.key, required this.facility});
 
   @override
   Widget build(BuildContext context) {
@@ -31,14 +27,13 @@ class FacilityCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(height: 30),
-          // Facility Image
           ClipRRect(
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(12),
               topRight: Radius.circular(12),
             ),
             child: Image.asset(
-              imageUrl,
+              facility.imageBase64,
               height: 200,
               width: double.infinity,
               fit: BoxFit.contain,
@@ -55,11 +50,10 @@ class FacilityCard extends StatelessWidget {
               ),
             ),
           ),
-          // Title
           Padding(
             padding: const EdgeInsets.all(25.0),
             child: Text(
-              title,
+              facility.name,
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
