@@ -9,6 +9,7 @@ if (useMockData)
 {
     builder.Services.AddSingleton<IAssetRepository, MockAssetRepository>();
     builder.Services.AddSingleton<IPositionHistoryRepository, MockPositionHistoryRepository>();
+    builder.Services.AddSingleton<IFloorMapRepository, MockFloorMapRepository>();
 }
 else
 {
@@ -16,6 +17,7 @@ else
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
     builder.Services.AddScoped<IAssetRepository, AssetRepository>();
     builder.Services.AddScoped<IPositionHistoryRepository, PositionHistoryRepository>();
+    builder.Services.AddScoped<IFloorMapRepository, FloorMapRepository>();
 }
 
 builder.Services.AddControllers();
