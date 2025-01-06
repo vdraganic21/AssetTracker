@@ -7,6 +7,7 @@ namespace RESTservice_API.Data
     public class MockPositionHistoryRepository : IPositionHistoryRepository
     {
         private List<PositionHistory> _positionHistories;
+        private readonly List<PositionHistory> _mockPositionHistories;
         private int _currentId = 2;
 
         public MockPositionHistoryRepository()

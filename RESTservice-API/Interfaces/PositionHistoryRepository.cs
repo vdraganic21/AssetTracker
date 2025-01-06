@@ -41,15 +41,9 @@ namespace RESTservice_API.Data
                 _context.SaveChanges();
             }
         }
-    }
-
-    public void ResetPositionHistories()
-    {
-        //database doesn't support this
-    }
-
-    public void ResetPositionHistories()
-    {
-        //database doesn't support this
+        public void ResetPositionHistories()
+        {
+            //database doesn't support this
+        }
     }
 }

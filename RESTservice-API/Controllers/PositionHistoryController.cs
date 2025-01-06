@@ -49,11 +49,4 @@ public class PositionHistoryController : ControllerBase
         _repository.ResetPositionHistories();
         return Ok();
     }
-
-    [HttpDelete("reset")]
-    public IActionResult ResetPositionHistories()
-    {
-        _repository.ResetPositionHistories();
-        return Ok();
-    }
 }

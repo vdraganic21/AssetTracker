@@ -68,11 +68,4 @@ public class AssetsController : ControllerBase
         _repository.ResetAssets();
         return Ok();
     }
-
-    [HttpDelete("reset")]
-    public IActionResult ResetAssets()
-    {
-        _repository.ResetAssets();
-        return Ok();
-    }
 }

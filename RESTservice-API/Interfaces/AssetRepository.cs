@@ -48,9 +48,4 @@ public class AssetRepository : IAssetRepository
     {
         //database doesn't support this
     }
-
-    public void ResetAssets()
-    {
-        //database doesn't support this
-    }
 }
