@@ -16,7 +16,7 @@ class RefreshButton extends StatelessWidget {
           child: FloatingActionButton(
             onPressed: onPressed,
             backgroundColor: AppColors.primary500,
-            child: const Icon(Icons.refresh, color: AppColors.neutral1000),
+            child: const Icon(Icons.refresh, color: AppColors.neutral0),
           )
       )
     );

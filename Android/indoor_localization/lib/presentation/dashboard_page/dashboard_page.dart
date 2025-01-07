@@ -51,7 +51,7 @@ class _DashboardPageState extends State<DashboardPage> {
           children: [
             Text(
               'Indoor Localization',
-              style: TextStyle(color: AppColors.neutral1000, fontSize: 20),
+              style: TextStyle(color: AppColors.neutral0, fontSize: 20),
             ),
             Text(
               'SICK | Mobilisis',
@@ -68,9 +68,9 @@ class _DashboardPageState extends State<DashboardPage> {
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
           child: GNav(
             backgroundColor: AppColors.primary500,
-            color: AppColors.neutral1000,
-            activeColor: AppColors.neutral1000,
-            tabBackgroundColor: AppColors.primary300,
+            color: AppColors.neutral0,
+            activeColor: AppColors.neutral0,
+            tabBackgroundColor: AppColors.primary600,
             padding: EdgeInsets.all(16),
             gap: 8,
             selectedIndex: _selectedIndex,

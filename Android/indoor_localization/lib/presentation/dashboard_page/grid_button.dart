@@ -16,7 +16,7 @@ class GridButton extends StatelessWidget {
           child:FloatingActionButton(
             onPressed: onPressed,
             backgroundColor: AppColors.primary500,
-            child: const Icon(Icons.grid_view, color: AppColors.neutral1000),
+            child: const Icon(Icons.grid_view, color: AppColors.neutral0),
           )
       )
     );
