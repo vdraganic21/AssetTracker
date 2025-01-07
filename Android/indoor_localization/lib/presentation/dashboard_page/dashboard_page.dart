@@ -7,6 +7,7 @@ import '../reports_page/reports_page.dart';
 import 'floor_map_widget.dart';
 import '../../domain/entities/asset.dart';
 import '../../domain/entities/facility.dart';
+import 'package:indoor_localization/presentation/dashboard_page/refresh_button.dart';
 
 class DashboardPage extends StatefulWidget {
   final List<Asset> assets;
@@ -101,6 +102,17 @@ class _DashboardPageState extends State<DashboardPage> {
 class DashboardContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return FloorMapWidget();
+    return Stack(
+      children: [
+        FloorMapWidget(), // Main content
+        Positioned(
+          bottom: 20,
+          left: 20,
+          child: RefreshButton(),
+        ),
+      ],
+    );
   }
 }
+
+
