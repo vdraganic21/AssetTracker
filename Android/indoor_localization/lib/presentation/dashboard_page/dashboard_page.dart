@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:indoor_localization/presentation/dashboard_page/grid_button.dart';
 import '../../config/app_colors.dart';
 import '../facilities_page/facilities_page.dart';
 import '../assets_page/assets_page.dart';
@@ -105,11 +106,8 @@ class DashboardContent extends StatelessWidget {
     return Stack(
       children: [
         FloorMapWidget(), // Main content
-        Positioned(
-          bottom: 20,
-          left: 20,
-          child: RefreshButton(),
-        ),
+        RefreshButton(),
+        GridButton()
       ],
     );
   }
