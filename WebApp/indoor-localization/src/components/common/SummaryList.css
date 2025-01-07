@@ -1,0 +1,26 @@
+.summary-list-item {
+  display: flex;
+  align-items: left;
+}
+
+.summary-list-item .bullet {
+  margin-right: 8px;
+  font-size: 1.2rem;
+  color: var(--syn-color-neutral-500);
+}
+
+.summary-list-item .note {
+  margin-right: 8px;
+  font-size: small;
+  color: black;
+}
+
+.summary-list {
+  display: flex;
+  flex-direction: column;
+  max-height: 250px;
+}
+
+.summary-label {
+  padding: 8px;
+}

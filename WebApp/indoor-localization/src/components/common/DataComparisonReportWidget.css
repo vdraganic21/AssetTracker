@@ -1,0 +1,31 @@
+.widget {
+  min-width: 200px;
+  width: 100%;
+  text-align: center;
+  padding: 16px;
+}
+
+.bottom-data-container {
+  display: flex;
+  justify-content: space-around;
+}
+
+.divider {
+  margin-top: var(--syn-spacing-medium);
+  margin-bottom: var(--syn-spacing-medium);
+}
+
+.main-data {
+  font-size: var(--syn-font-size-3x-large);
+  margin: 0px;
+}
+
+.secondary-data {
+  font-size: var(--syn-font-size-large);
+  margin: 0px;
+}
+
+.description-text {
+  color: var(--syn-color-neutral-500);
+  margin: 0px;
+}
