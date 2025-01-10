@@ -98,7 +98,7 @@ namespace AiR_Simulator.Entities
         public void MoveTowardNextPosition(double speed)
         {
             Logger.Log($"Moving asset {AssetId} - IsManualControl: {IsManualControl}, Current: ({X}, {Y}), Target: ({_manualTargetX}, {_manualTargetY})");
-            
+
             if (IsManualControl)
             {
                 double dx = _manualTargetX - X;
@@ -115,6 +115,7 @@ namespace AiR_Simulator.Entities
                     X = _manualTargetX;
                     Y = _manualTargetY;
                     IsManualControl = false;
+                    UpdateAutomaticTarget();
                     return;
                 }
 
@@ -124,6 +125,7 @@ namespace AiR_Simulator.Entities
 
                 X += stepX;
                 Y += stepY;
+
                 Logger.Log($"Asset {AssetId} moved to ({X}, {Y})");
             }
             else if (Positions.Count > 1)
@@ -151,11 +153,14 @@ namespace AiR_Simulator.Entities
 
                 X += stepX;
                 Y += stepY;
+
+                TargetPosition.X = goalX;
+                TargetPosition.Y = goalY;
             }
 
             Position.X = X;
             Position.Y = Y;
-            
+
             if (TargetPosition == null)
             {
                 TargetPosition = new Position 

@@ -162,7 +162,6 @@ namespace SimulatorControlUI
 
         private void DrawAssets(Graphics g, List<Asset> assets)
         {
-            // Draw the grid for debugging
             DrawGrid(g);
             
             var simulatorInstance = ProgramSimulator.simulator;
@@ -173,10 +172,9 @@ namespace SimulatorControlUI
                 return;
             }
 
-            // Get the size of the background image
             var imageSize = MapPictureBox.BackgroundImage?.Size ?? new Size(1, 1);
-            float scaleX = MapPictureBox.Width / (float)imageSize.Width; // Scale factor for X
-            float scaleY = MapPictureBox.Height / (float)imageSize.Height; // Scale factor for Y
+            float scaleX = MapPictureBox.Width / (float)imageSize.Width;
+            float scaleY = MapPictureBox.Height / (float)imageSize.Height;
 
             Console.WriteLine($"MapPictureBox Size: {MapPictureBox.Width}x{MapPictureBox.Height}");
             Console.WriteLine($"Background Image Size: {imageSize.Width}x{imageSize.Height}");
@@ -188,9 +186,8 @@ namespace SimulatorControlUI
 
                 // Calculate scaled positions using the scale factors
                 float scaledX = (float)(asset.X * scaleX);
-                float scaledY = (float)((imageSize.Height - asset.Y) * scaleY); // Invert Y-coordinate
+                float scaledY = (float)((imageSize.Height - asset.Y) * scaleY);
 
-                // Debugging output to check calculated positions
                 Console.WriteLine($"Drawing Asset ID: {asset.AssetId}, Original Position: ({asset.X}, {asset.Y}), Scaled Position: ({scaledX}, {scaledY})");
 
                 // Check if the calculated positions are within the bounds of the image
@@ -217,11 +214,11 @@ namespace SimulatorControlUI
                         scaledX,
                         scaledY,
                         (float)(asset.TargetX * scaleX),
-                        (float)((imageSize.Height - asset.TargetY) * scaleY)); // Invert Y-coordinate for target
+                        (float)((imageSize.Height - asset.TargetY) * scaleY));
 
                     g.FillEllipse(Brushes.Red,
                         (float)(asset.TargetX * scaleX - TargetRadius),
-                        (float)((imageSize.Height - asset.TargetY) * scaleY - TargetRadius), // Invert Y-coordinate for target
+                        (float)((imageSize.Height - asset.TargetY) * scaleY - TargetRadius),
                         TargetRadius * 2,
                         TargetRadius * 2);
                 }
@@ -230,8 +227,8 @@ namespace SimulatorControlUI
 
         private void MapPictureBox_MouseClick(object? sender, MouseEventArgs e)
         {
-            double clickX = e.X; // Use the raw click coordinates
-            double clickY = e.Y; // Use the raw click coordinates
+            double clickX = e.X;
+            double clickY = e.Y;
 
             Console.WriteLine($"Mouse Clicked at: ({clickX}, {clickY})");
 
@@ -240,9 +237,8 @@ namespace SimulatorControlUI
             // Get the size of the background image
             var imageSize = MapPictureBox.BackgroundImage?.Size ?? new Size(1, 1);
             
-            // Define scale factors
-            float scaleX = MapPictureBox.Width / (float)imageSize.Width; // Scale factor for X
-            float scaleY = MapPictureBox.Height / (float)imageSize.Height; // Scale factor for Y
+            float scaleX = MapPictureBox.Width / (float)imageSize.Width;
+            float scaleY = MapPictureBox.Height / (float)imageSize.Height;
 
             Asset? clickedAsset = null;
             double closestDistance = double.MaxValue;
@@ -273,8 +269,7 @@ namespace SimulatorControlUI
             }
             else if (selectedAsset != null)
             {
-                // Set the target position using the raw click coordinates adjusted for scaling
-                selectedAsset.SetManualTarget(clickX / scaleX, imageSize.Height - (clickY / scaleY)); // Invert Y-coordinate
+                selectedAsset.SetManualTarget(clickX / scaleX, imageSize.Height - (clickY / scaleY));
                 Console.WriteLine($"Setting target for Asset ID: {selectedAsset.AssetId} to ({clickX / scaleX}, {imageSize.Height - (clickY / scaleY)})");
                 MapPictureBox.Invalidate();
             }
@@ -405,7 +400,7 @@ namespace SimulatorControlUI
 
         private void DrawGrid(Graphics g)
         {
-            for (int i = 0; i < MapPictureBox.Width; i += 20) // Adjust the step for grid size
+            for (int i = 0; i < MapPictureBox.Width; i += 20)
             {
                 g.DrawLine(Pens.LightGray, i, 0, i, MapPictureBox.Height);
             }
