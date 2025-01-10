@@ -1,5 +1,7 @@
 using RESTservice_API.Data;
 using RESTservice_API.Models;
+using System.Collections.Generic;
+using System.Linq;
 
 public class AssetRepository : IAssetRepository
 {
@@ -23,11 +25,13 @@ public class AssetRepository : IAssetRepository
     public void AddAsset(Asset asset)
     {
         _context.Assets.Add(asset);
+        SaveChanges();
     }
 
     public void UpdateAsset(Asset asset)
     {
         _context.Assets.Update(asset);
+        SaveChanges();
     }
 
     public void DeleteAsset(int id)
@@ -36,16 +40,17 @@ public class AssetRepository : IAssetRepository
         if (asset != null)
         {
             _context.Assets.Remove(asset);
+            SaveChanges();
         }
     }
 
     public void SaveChanges()
     {
-        _context.SaveChanges(); // Save changes to the database
+        _context.SaveChanges();
     }
 
     public void ResetAssets()
     {
-        //database doesn't support this
+        // Database doesn't support this
     }
 }
