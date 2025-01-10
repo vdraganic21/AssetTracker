@@ -16,6 +16,8 @@ Make sure you have installed postresql and added it to PATH variables.
 
 To setup a filled database use:
 psql -U postgres -f setup_database.sql
+
+Then use:
 psql -U postgres -f full_setup_database.sql
 
 To setup an empty database use:
