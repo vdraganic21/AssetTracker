@@ -21,7 +21,7 @@ namespace AssetDataSimulator
         private static int messageIntervalMilliseconds = int.Parse(Environment.GetEnvironmentVariable("MESSAGE_INTERVAL") ?? "1000");
         private static string jsonFilePath = FindJsonFilePath();
         private static string apiBaseUrl = Environment.GetEnvironmentVariable("API_BASE_URL") ?? "https://localhost:7018";
-        private static double movementSpeed = 1.0;
+        private static double movementSpeed = 50.0;
         public static AssetSimulator simulator;
         private static Dictionary<string, List<Asset>> floorplans;
 
