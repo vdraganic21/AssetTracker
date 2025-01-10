@@ -184,13 +184,11 @@ namespace SimulatorControlUI
             {
                 var brush = (asset == selectedAsset) ? Brushes.Green : Brushes.Blue;
 
-                // Calculate scaled positions using the scale factors
                 float scaledX = (float)(asset.X * scaleX);
                 float scaledY = (float)((imageSize.Height - asset.Y) * scaleY);
 
                 Console.WriteLine($"Drawing Asset ID: {asset.AssetId}, Original Position: ({asset.X}, {asset.Y}), Scaled Position: ({scaledX}, {scaledY})");
 
-                // Check if the calculated positions are within the bounds of the image
                 if (scaledX >= 0 && scaledX <= imageSize.Width && scaledY >= 0 && scaledY <= imageSize.Height)
                 {
                     g.FillEllipse(brush,
@@ -234,7 +232,6 @@ namespace SimulatorControlUI
 
             if (selectedFloorplan?.Assets == null) return;
 
-            // Get the size of the background image
             var imageSize = MapPictureBox.BackgroundImage?.Size ?? new Size(1, 1);
             
             float scaleX = MapPictureBox.Width / (float)imageSize.Width;
@@ -245,19 +242,21 @@ namespace SimulatorControlUI
 
             foreach (var asset in selectedFloorplan.Assets)
             {
-                // Calculate the distance from the click to the asset's position
-                double dx = asset.X - clickX;
-                double dy = asset.Y - clickY;
+                float scaledX = (float)(asset.X * scaleX);
+                float scaledY = (float)((imageSize.Height - asset.Y) * scaleY);
+
+                double dx = scaledX - clickX;
+                double dy = scaledY - clickY;
                 double distance = Math.Sqrt(dx * dx + dy * dy);
 
-                if (distance < closestDistance)
+                if (distance < closestDistance && distance < 10)
                 {
                     closestDistance = distance;
                     clickedAsset = asset;
                 }
             }
 
-            if (clickedAsset != null && closestDistance < 3) // Check if the click is close enough to the asset
+            if (clickedAsset != null)
             {
                 selectedAsset = clickedAsset;
                 int index = AssetSelectorComboBox.Items.IndexOf($"Asset {clickedAsset.AssetId}");
