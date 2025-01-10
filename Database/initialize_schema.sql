@@ -7,7 +7,7 @@ DROP TABLE IF EXISTS floorMaps;
 CREATE TABLE floorMaps (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    image TEXT
+    image VARCHAR(500000)
 );
 
 CREATE TABLE assets (
@@ -34,13 +34,4 @@ CREATE TABLE assetPositionHistory (
     x INT NOT NULL,
     y INT NOT NULL,
     dateTime TIMESTAMP NOT NULL
-);
-
-CREATE TABLE assetZoneHistory (
-    id SERIAL PRIMARY KEY,
-    assetId INT REFERENCES assets(id) ON DELETE CASCADE,
-    zoneId INT REFERENCES zones(id) ON DELETE CASCADE,
-    enterDateTime TIMESTAMP NOT NULL,
-    exitDateTime TIMESTAMP,
-    retentionTime INT
 );
