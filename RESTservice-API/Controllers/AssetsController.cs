@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using RESTservice_API.Models;
 using RESTservice_API.Data;
+using RESTservice_API.Models;
 
 [ApiController]
 [Route("assets")]
@@ -16,50 +16,95 @@ public class AssetsController : ControllerBase
     [HttpGet]
     public IActionResult GetAssets()
     {
-        var assets = _repository.GetAllAssets();
-        return Ok(assets);
+        try
+        {
+            var assets = _repository.GetAllAssets();
+            return Ok(assets);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error retrieving assets: {ex.Message}");
+            return StatusCode(500, "An error occurred while retrieving the assets.");
+        }
     }
 
     [HttpGet("{id}")]
     public IActionResult GetAssetById(int id)
     {
-        var asset = _repository.GetAssetById(id);
-        if (asset == null) return NotFound();
-        return Ok(asset);
+        try
+        {
+            var asset = _repository.GetAssetById(id);
+            if (asset == null) return NotFound($"Asset with ID {id} not found.");
+            return Ok(asset);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error retrieving asset: {ex.Message}");
+            return StatusCode(500, "An error occurred while retrieving the asset.");
+        }
     }
 
     [HttpPost]
     public IActionResult CreateAsset([FromBody] Asset asset)
     {
-        _repository.AddAsset(asset);
-        _repository.SaveChanges();
-        return CreatedAtAction(nameof(GetAssetById), new { id = asset.Id }, asset);
+        try
+        {
+            _repository.AddAsset(asset);
+            _repository.SaveChanges();
+            return CreatedAtAction(nameof(GetAssetById), new { id = asset.Id }, asset);
+        }
+        catch (InvalidOperationException ex)
+        {
+            Console.WriteLine($"Error creating asset: {ex.Message}");
+            return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error creating asset: {ex.Message}");
+            return StatusCode(500, "An error occurred while creating the asset.");
+        }
     }
 
     [HttpPut("{id}")]
     public IActionResult UpdateAsset(int id, [FromBody] Asset updatedAsset)
     {
-        var asset = _repository.GetAssetById(id);
-        if (asset == null) return NotFound();
+        try
+        {
+            var asset = _repository.GetAssetById(id);
+            if (asset == null) return NotFound($"Asset with ID {id} not found.");
 
-        asset.Name = updatedAsset.Name;
-        asset.X = updatedAsset.X;
-        asset.Y = updatedAsset.Y;
-        asset.Active = updatedAsset.Active;
+            asset.Name = updatedAsset.Name;
+            asset.X = updatedAsset.X;
+            asset.Y = updatedAsset.Y;
+            asset.Active = updatedAsset.Active;
 
-        _repository.SaveChanges();
-        return Ok(asset);
+            _repository.SaveChanges();
+            return Ok(asset);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error updating asset: {ex.Message}");
+            return StatusCode(500, "An error occurred while updating the asset.");
+        }
     }
 
     [HttpDelete("{id}")]
     public IActionResult DeleteAsset(int id)
     {
-        var asset = _repository.GetAssetById(id);
-        if (asset == null) return NotFound();
+        try
+        {
+            var asset = _repository.GetAssetById(id);
+            if (asset == null) return NotFound($"Asset with ID {id} not found.");
 
-        _repository.DeleteAsset(id);
-        _repository.SaveChanges();
-        return NoContent();
+            _repository.DeleteAsset(id);
+            _repository.SaveChanges();
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error deleting asset: {ex.Message}");
+            return StatusCode(500, "An error occurred while deleting the asset.");
+        }
     }
 
     [HttpDelete("reset")]
