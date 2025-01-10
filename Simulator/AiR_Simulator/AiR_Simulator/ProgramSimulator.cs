@@ -106,7 +106,7 @@ namespace AssetDataSimulator
                 {
                     try
                     {
-                        var simulatedDataList = simulator.SimulateNextStep(movementSpeed);
+                        var simulatedDataList = await simulator.SimulateNextStep(movementSpeed);
                         OutputAssetsStatusTable(simulator);
                         await PublishUpdatesToBroker(mqttClient, mqttClient.IsConnected, simulatedDataList);
                         await Task.Delay(messageIntervalMilliseconds);

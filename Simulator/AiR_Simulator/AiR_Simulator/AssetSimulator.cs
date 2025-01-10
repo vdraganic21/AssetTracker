@@ -4,6 +4,9 @@ using System.Globalization;
 using AiR_Simulator.Entities;
 using AiR_Simulator.DataAccess;
 using System.Threading.Tasks;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
 
 namespace AssetDataSimulator
 {
@@ -20,7 +23,7 @@ namespace AssetDataSimulator
             RestLoader = loader;
         }
 
-        public List<string> SimulateNextStep(double speed)
+        public async Task<List<string>> SimulateNextStep(double speed)
         {
             var result = new List<string>();
 
@@ -28,8 +31,9 @@ namespace AssetDataSimulator
             {
                 asset.MoveTowardNextPosition(speed);
 
-                var floorplanName = GetFloorplanForAsset(asset);
+                await SendAssetDataToRestService(asset);
 
+                var floorplanName = GetFloorplanForAsset(asset);
                 result.Add($"{{\"asset_id\":{asset.AssetId},\"x\":{asset.X.ToString(CultureInfo.InvariantCulture)},\"y\":{asset.Y.ToString(CultureInfo.InvariantCulture)},\"floorplan\":\"{floorplanName}\",\"status\":\"active\",\"timestamp\":\"{DateTime.UtcNow:yyyy-MM-ddTHH:mm:ss.fffZ}\"}}");
             }
 
@@ -40,6 +44,36 @@ namespace AssetDataSimulator
         {
             var floorplan = Floorplans.Find(fp => fp.FloorplanId == asset.FloorplanId);
             return floorplan?.Name ?? "Unknown";
+        }
+
+        private static async Task SendAssetDataToRestService(Asset asset)
+        {
+            using (var httpClient = new HttpClient())
+            {
+                var assetData = new AssetData
+                {
+                    Id = asset.AssetId,
+                    Name = $"Asset {asset.AssetId}",
+                    FloorMapId = asset.FloorplanId,
+                    X = asset.X,
+                    Y = asset.Y,
+                    Active = true
+                };
+
+                var json = JsonSerializer.Serialize(assetData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await httpClient.PutAsync($"https://localhost:7018/assets/{asset.AssetId}", content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"Successfully sent data for Asset ID: {asset.AssetId}");
+                }
+                else
+                {
+                    Console.WriteLine($"Failed to send data for Asset ID: {asset.AssetId}. Status Code: {response.StatusCode}");
+                }
+            }
         }
     }
 }
