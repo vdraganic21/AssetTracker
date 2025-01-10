@@ -115,7 +115,7 @@ namespace AiR_Simulator.Entities
                     X = _manualTargetX;
                     Y = _manualTargetY;
                     IsManualControl = false;
-                    UpdateAutomaticTarget();
+                    if (Positions.Count >= 2) UpdateAutomaticTarget();
                     return;
                 }
 
