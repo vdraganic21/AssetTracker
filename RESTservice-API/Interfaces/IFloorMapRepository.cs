@@ -10,5 +10,6 @@ namespace RESTservice_API.Data
         void UpdateFloorMap(FloorMap floorMap);
         void DeleteFloorMap(int id);
         void SaveChanges();
+        void ResetFloorMaps();
     }
 }

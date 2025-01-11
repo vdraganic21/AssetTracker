@@ -62,5 +62,12 @@ namespace RESTservice_API.Controllers
             _repository.SaveChanges();
             return NoContent();
         }
+
+        [HttpDelete("reset")]
+        public IActionResult ResetFloorMaps()
+        {
+            _repository.ResetFloorMaps();
+            return Ok();
+        }
     }
 }

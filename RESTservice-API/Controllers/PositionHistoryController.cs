@@ -73,4 +73,11 @@ public class PositionHistoryController : ControllerBase
             return StatusCode(500, "An error occurred while deleting position history.");
         }
     }
+
+    [HttpDelete("reset")]
+    public IActionResult ResetPositionHistories()
+    {
+        _repository.ResetPositionHistories();
+        return Ok();
+    }
 }

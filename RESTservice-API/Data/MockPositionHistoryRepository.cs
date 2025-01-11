@@ -7,15 +7,18 @@ namespace RESTservice_API.Data
     public class MockPositionHistoryRepository : IPositionHistoryRepository
     {
         private List<PositionHistory> _positionHistories;
+        private readonly List<PositionHistory> _mockPositionHistories;
         private int _currentId = 2;
 
         public MockPositionHistoryRepository()
         {
-            _positionHistories = new List<PositionHistory>
+            _mockPositionHistories = new List<PositionHistory>
             {
                 new PositionHistory { Id = 1, AssetId = 1, X = 100, Y = 200, Timestamp = DateTime.Now },
                 new PositionHistory { Id = 2, AssetId = 2, X = 150, Y = 250, Timestamp = DateTime.Now }
             };
+
+            _positionHistories = new List<PositionHistory>(_mockPositionHistories);
         }
 
         public IEnumerable<PositionHistory> GetAllPositionHistories()
@@ -30,7 +33,6 @@ namespace RESTservice_API.Data
 
         public void AddPositionHistory(PositionHistory positionHistory)
         {
-            positionHistory.Id = ++_currentId;
             _positionHistories.Add(positionHistory);
         }
 
@@ -41,6 +43,11 @@ namespace RESTservice_API.Data
             {
                 _positionHistories.Remove(positionHistory);
             }
+        }
+
+        public void ResetPositionHistories()
+        {
+            _positionHistories = new List<PositionHistory>(_mockPositionHistories);
         }
     }
 }

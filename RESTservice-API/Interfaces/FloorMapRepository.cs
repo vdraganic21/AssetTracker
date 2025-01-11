@@ -1,5 +1,7 @@
-using RESTservice_API.Data;
 using RESTservice_API.Models;
+using RESTservice_API.Data;
+using System.Collections.Generic;
+using System.Linq;
 
 public class FloorMapRepository : IFloorMapRepository
 {
@@ -33,7 +35,7 @@ public class FloorMapRepository : IFloorMapRepository
         {
             existingFloorMap.Name = floorMap.Name;
             existingFloorMap.ImageBase64 = floorMap.ImageBase64;
-            SaveChanges(); 
+            SaveChanges();
         }
     }
 
@@ -50,5 +52,10 @@ public class FloorMapRepository : IFloorMapRepository
     public void SaveChanges()
     {
         _context.SaveChanges();
+    }
+
+    public void ResetFloorMaps()
+    {
+        // Database doesn't support this
     }
 }
