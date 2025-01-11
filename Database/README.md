@@ -15,6 +15,9 @@ This folder contains SQL scripts for managing the database schemas and data for 
 Make sure you have installed postresql and added it to PATH variables.
 
 To setup a filled database use:
+psql -U postgres -f setup_database.sql
+
+Then use:
 psql -U postgres -f full_setup_database.sql
 
 To setup an empty database use:
@@ -28,3 +31,9 @@ psql -U postgres -d asset_managment -f fill_tables.sql
 
 To clear all data from the database:
 psql -U postgres -d asset_managment -f wipe_tables.sql
+
+## Issues
+
+Since we're using Base64 to store images you cannot easily use SELECT * FROM floorMaps; 
+instead you should use psql -U postgres -d asset_managment -c "SELECT * FROM floorMaps;" > output.txt 
+which will give you a slightly better overview of what is stored inside that table.
