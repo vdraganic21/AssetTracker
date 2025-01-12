@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:indoor_localization/config/app_colors.dart';
 import 'package:indoor_localization/domain/entities/facility.dart';
@@ -26,29 +27,13 @@ class FacilityCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 30),
+          const SizedBox(height: 30),
           ClipRRect(
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(12),
               topRight: Radius.circular(12),
             ),
-            child: Image.asset(
-              facility.imageBase64,
-              height: 200,
-              width: double.infinity,
-              fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) => Container(
-                color: Colors.grey[300],
-                height: 120,
-                child: const Center(
-                  child: Icon(
-                    Icons.image,
-                    size: 50,
-                    color: Colors.white70,
-                  ),
-                ),
-              ),
-            ),
+            child: _buildImage(),
           ),
           Padding(
             padding: const EdgeInsets.all(25.0),
@@ -62,6 +47,41 @@ class FacilityCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildImage() {
+    try {
+
+      final base64String = facility.imageBase64.replaceFirst(RegExp(r'data:image/[^;]+;base64,'), '');
+
+      final decodedBytes = base64Decode(base64String);
+
+      return Image.memory(
+        decodedBytes,
+        height: 200,
+        width: double.infinity,
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) {
+          return _buildErrorPlaceholder();
+        },
+      );
+    } catch (e) {
+      return _buildErrorPlaceholder();
+    }
+  }
+
+  Widget _buildErrorPlaceholder() {
+    return Container(
+      color: Colors.grey[300],
+      height: 200,
+      child: const Center(
+        child: Icon(
+          Icons.image,
+          size: 50,
+          color: Colors.white70,
+        ),
       ),
     );
   }
