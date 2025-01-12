@@ -5,12 +5,12 @@ class MockZoneRepository implements IZoneRepository {
   static final List<Zone> _zones = [];
 
   @override
-  Zone get(int id) {
+  Future<Zone> get(int id) async {
     return _zones.firstWhere((zone) => zone.id == id);
   }
 
   @override
-  List<Zone> getAll() {
+  Future<List<Zone>> getAll() async {
     return _zones;
   }
 
@@ -40,3 +40,5 @@ class MockZoneRepository implements IZoneRepository {
     return false;
   }
 }
+
+
