@@ -2,11 +2,11 @@ abstract class IRepository<T> {
   /// Gets a single entity by its ID.
   /// @param id - The ID of the entity.
   /// @returns The entity of type T.
-  T? get(int id);
+  Future<T?> get(int id);
 
   /// Gets all entities.
   /// @returns A list of entities of type T.
-  List<T> getAll();
+  Future<List<T>> getAll();
 
   /// Adds a new entity.
   /// @param entity - The entity to add.
