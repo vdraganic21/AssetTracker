@@ -1,66 +1,101 @@
 import 'package:indoor_localization/domain/entities/facility.dart';
-import 'package:indoor_localization/domain/entities/point.dart';
 import 'package:indoor_localization/domain/entities/zone.dart';
 import 'package:indoor_localization/domain/services/asset_service.dart';
 import 'package:indoor_localization/domain/services/facility_service.dart';
 import 'package:indoor_localization/domain/services/zone_service.dart';
 
 class Asset {
-  int id;
-  String name;
-  int parentFacilityId;
-  Point position;
-  DateTime lastSync;
-  bool isActive;
-  List<int> currentZonesIds;
+  final int id;
+  final String name;
+  final int floorMapId;
+  int x;
+  int y;
+  final DateTime lastSync;
+  final bool isActive;
+  final List<int> currentZonesIds;
 
   Asset({
     required this.id,
     required this.name,
-    required this.parentFacilityId,
-    required this.position,
+    required this.floorMapId,
+    required this.x,
+    required this.y,
     required this.lastSync,
     required this.isActive,
     required this.currentZonesIds,
   });
 
-  Facility? getCurrentFacility() {
-    final facility = FacilityService.get(parentFacilityId);
-    return facility;
+  factory Asset.fromJson(Map<String, dynamic> json) {
+    return Asset(
+      id: json['id'] ?? 0,
+      name: json['name'] ?? 'Unknown',
+      floorMapId: json['floorMapId'] ?? 0,
+      x: json['x'] ?? 0,
+      y: json['y'] ?? 0,
+      lastSync: DateTime.tryParse(json['lastSync'] ?? '') ?? DateTime.now(),
+      isActive: json['isActive'] ?? false,
+      currentZonesIds: (json['currentZonesIds'] as List?)?.map((e) => e as int).toList() ?? [],
+    );
   }
 
-  Point getPosition() {
-    updateData();
-    return position;
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'x': x,
+      'y':y,
+      'lastSync': lastSync.toIso8601String(),
+      'isActive': isActive,
+      'currentZonesIds': currentZonesIds,
+    };
   }
 
-  DateTime getLastSync() {
-    updateData();
-    return lastSync;
+
+  Future<Facility?> getCurrentFacility() async {
+    return await FacilityService.get(floorMapId);
   }
 
-  bool isActiveStatus() {
-    updateData();
-    return isActive;
+  Future<String> getFacilityName() async {
+    final facility = await FacilityService.get(floorMapId);
+    return facility?.name ?? 'Unknown Facility';
   }
 
-  List<Zone> getCurrentZones() {
-    updateData();
-    return currentZonesIds
+
+  Future<Asset> updateData() async {
+    final updatedData = await AssetService.get(id);
+    if (updatedData == null) {
+      return this;
+    }
+    return updatedData;
+  }
+
+
+  Future<int> getPosition() async {
+    final updatedAsset = await updateData();
+    return updatedAsset.x;
+  }
+
+
+  Future<DateTime> getLastSync() async {
+    final updatedAsset = await updateData();
+    return updatedAsset.lastSync;
+  }
+
+
+  Future<bool> isActiveStatus() async {
+    final updatedAsset = await updateData();
+    return updatedAsset.isActive;
+  }
+
+
+  Future<List<Zone>> getCurrentZones() async {
+    final updatedAsset = await updateData();
+    final updatedZones = updatedAsset.currentZonesIds
         .map((zoneId) => ZoneService.get(zoneId))
         .where((zone) => zone != null)
         .cast<Zone>()
         .toList();
-  }
-
-  void updateData() {
-    final updatedData = AssetService.get(id);
-    if (updatedData == null) return;
-    currentZonesIds = updatedData.currentZonesIds;
-    isActive = updatedData.isActive;
-    lastSync = updatedData.lastSync;
-    name = updatedData.name;
-    parentFacilityId = updatedData.parentFacilityId;
-    position = updatedData.position;
+    return updatedZones;
   }
 }
