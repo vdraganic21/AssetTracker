@@ -3,10 +3,11 @@ import "./AssetsSidePanel.css";
 import AssetsSidePaneList from "./AssetsSidePanelList";
 import { SynInputEvent } from "@synergy-design-system/react/components/checkbox.js";
 import { useEffect, useState } from "react";
-import { AssetService } from "../../../services/AssetService";
+import SelectedFacilityService from "../../../services/SelectedFacilityService";
 
 function AssetsSidePanel() {
-	const assets = AssetService.GetAll();
+	const assets =
+		SelectedFacilityService.getSelectedFacility()?.GetAssets() || [];
 
 	const [searchTerm, setSearchTerm] = useState("");
 	const [filteredAssets, setFilteredAssets] = useState(assets);
@@ -17,6 +18,11 @@ function AssetsSidePanel() {
 	};
 
 	useEffect(() => {
+		if (!assets) {
+			setFilteredAssets([]);
+			return;
+		}
+
 		let filtered = assets.filter((asset) =>
 			asset.name.toLowerCase().includes(searchTerm.toLowerCase())
 		);
