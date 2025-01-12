@@ -12,7 +12,7 @@ export class MockDataInitializer {
 
         FacilityService.Add(new Facility(1, "Warehouse 1", floorMapDemo, [1,2], [1]));
         FacilityService.Add(new Facility(2, "Warehouse 35", floorMapDemo, [3], [2]));
-        FacilityService.Add(new Facility(3, "Production Line", floorMapDemo, [4], [3]));
+        FacilityService.Add(new Facility(3, "Production Line", floorMapDemo, [], []));
 
         ZoneService.Add(new Zone(1, "Zone 1", [new Point(100,100), new Point(100,200), new Point(200,200), new Point(200,100)], 1, []));
         ZoneService.Add(new Zone(2, "Zone 2", [new Point(100,100), new Point(100,200), new Point(200,200), new Point(200,100)], 2, []));

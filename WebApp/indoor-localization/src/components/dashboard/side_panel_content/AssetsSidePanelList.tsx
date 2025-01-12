@@ -1,12 +1,12 @@
 import { SynDivider } from "@synergy-design-system/react";
 import { Asset } from "../../../entities/Asset";
-import "./AssetsSidePanelList.css";
+import "./SidePanelList.css";
 
 function AssetsSidePanelList({ assets }: { assets: Asset[] }) {
 	if (assets.length == 0)
 		return (
 			<div>
-				<p className="no-assets-message">No assets found.</p>
+				<p className="no-items-message">No assets found.</p>
 			</div>
 		);
 

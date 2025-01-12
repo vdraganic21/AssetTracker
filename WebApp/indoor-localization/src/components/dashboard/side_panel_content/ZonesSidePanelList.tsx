@@ -1,11 +1,12 @@
 import { SynDivider } from "@synergy-design-system/react";
 import { Zone } from "../../../entities/Zone";
+import "./SidePanelList.css";
 
 function ZonesSidePanelList({ zones }: { zones: Zone[] }) {
 	if (zones.length == 0)
 		return (
 			<div>
-				<p className="no-zones-message">No zones found.</p>
+				<p className="no-items-message">No zones found.</p>
 			</div>
 		);
 
