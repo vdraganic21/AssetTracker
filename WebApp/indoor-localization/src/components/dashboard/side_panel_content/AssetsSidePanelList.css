@@ -1,9 +1,9 @@
-.side-panel-asset-list{
+.side-panel-item-list{
     padding: var(--syn-spacing-medium);
     padding-left: var(--syn-spacing-x-large);
 }
 
-.no-assets-message{
+.no-items-message{
     font-size: var(--syn-font-size-x-medium);
     text-align: center;
     color: var(--syn-color-neutral-700);

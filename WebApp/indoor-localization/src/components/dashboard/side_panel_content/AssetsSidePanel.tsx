@@ -6,39 +6,39 @@ import { useEffect, useState } from "react";
 import { AssetService } from "../../../services/AssetService";
 
 function AssetsSidePanel() {
-  const assets = AssetService.GetAll();
+	const assets = AssetService.GetAll();
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filteredAssets, setFilteredAssets] = useState(assets);
+	const [searchTerm, setSearchTerm] = useState("");
+	const [filteredAssets, setFilteredAssets] = useState(assets);
 
-  const handleSearch = (event: SynInputEvent) => {
-    const term = (event.target as HTMLInputElement).value;
-    setSearchTerm(term);
-  };
+	const handleSearch = (event: SynInputEvent) => {
+		const term = (event.target as HTMLInputElement).value;
+		setSearchTerm(term);
+	};
 
-  useEffect(() => {
-    let filtered = assets.filter((asset) =>
-      asset.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+	useEffect(() => {
+		let filtered = assets.filter((asset) =>
+			asset.name.toLowerCase().includes(searchTerm.toLowerCase())
+		);
 
-    filtered = filtered.sort((a, b) => a.name.localeCompare(b.name));
+		filtered = filtered.sort((a, b) => a.name.localeCompare(b.name));
 
-    setFilteredAssets(filtered);
-  }, [searchTerm]);
+		setFilteredAssets(filtered);
+	}, [searchTerm]);
 
-  return (
-    <>
-      <SynInput
-        className="side-panel-asset-search"
-        placeholder="Search"
-        value={searchTerm}
-        onSynInput={handleSearch}
-      />
-      <div className="scrollable-list">
-        <AssetsSidePaneList assets={filteredAssets} />
-      </div>
-    </>
-  );
+	return (
+		<>
+			<SynInput
+				className="side-panel-search"
+				placeholder="Search"
+				value={searchTerm}
+				onSynInput={handleSearch}
+			/>
+			<div className="scrollable-list">
+				<AssetsSidePaneList assets={filteredAssets} />
+			</div>
+		</>
+	);
 }
 
 export default AssetsSidePanel;
