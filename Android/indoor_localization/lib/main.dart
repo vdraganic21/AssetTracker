@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'presentation/dashboard_page/dashboard_page.dart';
 import 'config/app_colors.dart';
-import 'domain/mock-repositories/mock_data_initializer.dart';
 import 'domain/services/asset_service.dart';
 import 'domain/services/facility_service.dart';
 import 'domain/entities/asset.dart';
@@ -9,18 +8,13 @@ import 'domain/entities/facility.dart';
 
 void main() {
   // Initialize the data at the application load
-  MockDataInitializer.initializeData();
-  List<Asset> assets = AssetService.getAll();
-  List<Facility> facilities = FacilityService.getAll();
+  //MockDataInitializer.initializeData();
 
-  runApp(MyApp(assets: assets, facilities: facilities));
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final List<Asset> assets;
-  final List<Facility> facilities;
-
-  const MyApp({Key? key, required this.assets, required this.facilities}) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +26,59 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: AppColors.neutral0,
         fontFamily: 'OpenSans',
       ),
-      home: DashboardPage(assets: assets, facilities:facilities),
+      home: FutureBuilder<List<Asset>>(
+        future: AssetService.getAll(), // Fetch assets
+        builder: (context, snapshot) {
+          // Handle loading, error, and data states
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+
+          if (snapshot.hasError) {
+            return Scaffold(
+              body: Center(child: Text('Error: ${snapshot.error}')),
+            );
+          }
+
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Scaffold(
+              body: Center(child: Text('No assets available')),
+            );
+          }
+
+          // Once the assets data is loaded, fetch facilities
+          return FutureBuilder<List<Facility>>(
+            future: FacilityService.getAll(), // Fetch facilities
+            builder: (context, facilitySnapshot) {
+              if (facilitySnapshot.connectionState == ConnectionState.waiting) {
+                return Scaffold(
+                  body: Center(child: CircularProgressIndicator()),
+                );
+              }
+
+              if (facilitySnapshot.hasError) {
+                return Scaffold(
+                  body: Center(child: Text('Error: ${facilitySnapshot.error}')),
+                );
+              }
+
+              if (!facilitySnapshot.hasData || facilitySnapshot.data!.isEmpty) {
+                return Scaffold(
+                  body: Center(child: Text('No facilities available')),
+                );
+              }
+
+              // Once both assets and facilities are loaded, pass them to DashboardPage
+              return DashboardPage(
+                assets: snapshot.data!,
+                facilities: facilitySnapshot.data!,
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }
