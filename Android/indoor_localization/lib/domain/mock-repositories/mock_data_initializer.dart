@@ -1,6 +1,5 @@
 import 'package:indoor_localization/domain/entities/asset.dart';
 import 'package:indoor_localization/domain/entities/facility.dart';
-import 'package:indoor_localization/domain/entities/point.dart';
 import 'package:indoor_localization/domain/entities/zone.dart';
 import 'package:indoor_localization/domain/services/asset_service.dart';
 import 'package:indoor_localization/domain/services/facility_service.dart';
@@ -39,7 +38,8 @@ class MockDataInitializer {
       Zone(
         id: 1,
         name: "Zone 1",
-        points: [],
+        x: 1,
+        y: 1,
         parentFacilityId: 1,
         containedAssetsIds: [],
       )
@@ -48,7 +48,8 @@ class MockDataInitializer {
       Zone(
         id: 2,
         name: "Zone 2",
-        points: [],
+        x: 1,
+        y: 1,
         parentFacilityId: 2,
         containedAssetsIds: [],
       )
@@ -57,7 +58,8 @@ class MockDataInitializer {
       Zone(
         id: 3,
         name: "Zone 3",
-        points: [],
+        x: 1,
+        y: 1,
         parentFacilityId: 3,
         containedAssetsIds: [],
       )
@@ -67,8 +69,10 @@ class MockDataInitializer {
       Asset(
         id: 1,
         name: "Forklift",
-        parentFacilityId: 1,
-        position: Point(x: 10, y: 10),
+        floorMapId: 1,
+        //position: Point(x: 10, y: 10),
+        x: 10,
+        y: 10,
         lastSync: DateTime.now(),
         isActive: true,
         currentZonesIds: [1],
@@ -78,8 +82,10 @@ class MockDataInitializer {
       Asset(
         id: 2,
         name: "Crate 47",
-        parentFacilityId: 2,
-        position: Point(x: 10, y: 10),
+        floorMapId: 2,
+        //position: Point(x: 10, y: 10),
+        x: 10,
+        y: 10,
         lastSync: DateTime.now(),
         isActive: true,
         currentZonesIds: [1],
@@ -89,8 +95,10 @@ class MockDataInitializer {
       Asset(
         id: 3,
         name: "Robot Dog",
-        parentFacilityId: 1,
-        position: Point(x: 10, y: 10),
+        floorMapId: 1,
+        //position: Point(x: 10, y: 10),
+        x: 10,
+        y: 10,
         lastSync: DateTime.now(),
         isActive: true,
         currentZonesIds: [1],
@@ -100,8 +108,10 @@ class MockDataInitializer {
         Asset(
           id: 4,
           name: "Pallet 2x5",
-          parentFacilityId: 1,
-          position: Point(x: 10, y: 10),
+          floorMapId: 1,
+          //position: Point(x: 10, y: 10),
+          x: 10,
+          y: 10,
           lastSync: DateTime.now(),
           isActive: true,
           currentZonesIds: [3],
