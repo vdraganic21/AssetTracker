@@ -34,9 +34,9 @@ class _AssetsPageState extends State<AssetsPage> {
       } else if (sortBy == 'Name Descending') {
         sortedAssets.sort((a, b) => b.name.compareTo(a.name));
       } else if (sortBy == 'Facility Ascending') {
-        sortedAssets.sort((a, b) => a.parentFacilityId.compareTo(b.parentFacilityId));
+        sortedAssets.sort((a, b) => a.floorMapId.compareTo(b.floorMapId));
       } else if (sortBy == 'Facility Descending') {
-        sortedAssets.sort((a, b) => b.parentFacilityId.compareTo(a.parentFacilityId));
+        sortedAssets.sort((a, b) => b.floorMapId.compareTo(a.floorMapId));
       }
       _filterAssets();
     });
@@ -104,13 +104,7 @@ class _AssetsPageState extends State<AssetsPage> {
         Expanded(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: ListView.builder(
-              itemCount: displayedAssets.length,
-              itemBuilder: (context, index) {
-                Asset asset = displayedAssets[index];
-                return AssetListItem(asset: asset);
-              },
-            ),
+            child: AssetList(assets: displayedAssets), // Use AssetList here
           ),
         ),
       ],
