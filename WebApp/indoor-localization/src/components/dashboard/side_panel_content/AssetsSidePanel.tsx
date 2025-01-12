@@ -1,5 +1,4 @@
 import { SynInput } from "@synergy-design-system/react";
-import "./AssetsSidePanel.css";
 import AssetsSidePaneList from "./AssetsSidePanelList";
 import { SynInputEvent } from "@synergy-design-system/react/components/checkbox.js";
 import { useEffect, useState } from "react";
