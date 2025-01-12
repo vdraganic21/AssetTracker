@@ -5,11 +5,11 @@ import 'package:indoor_localization/domain/services/entity_service.dart';
 
 class FacilityService extends EntityService {
 
-  static Facility? get(int id) {
-    return EntityService.facilityRepo.get(id);
+  static Future<Facility?> get(int id) async {
+    return await EntityService.facilityRepo.get(id);
   }
 
-  static List<Facility> getAll() {
+  static Future<List<Facility>> getAll() {
     return EntityService.facilityRepo.getAll();
   }
 
@@ -25,8 +25,8 @@ class FacilityService extends EntityService {
     return EntityService.facilityRepo.update(facility);
   }
 
-  static List<Asset> getAssetsInFacility(int id) {
-    final facility = EntityService.facilityRepo.get(id);
+  static Future<List<Asset>> getAssetsInFacility(int id) async {
+    final facility = await EntityService.facilityRepo.get(id);
     if (facility != null) {
       return facility.containedAssetsIds
           .map((assetId) => EntityService.assetRepo.get(assetId))
@@ -37,8 +37,8 @@ class FacilityService extends EntityService {
     return [];
   }
 
-  static List<Zone> getZonesInFacility(int id) {
-    final facility = EntityService.facilityRepo.get(id);
+  static Future<List<Zone>> getZonesInFacility(int id) async {
+    final facility = await EntityService.facilityRepo.get(id);
     if (facility != null) {
       return facility.containedZonesIds
           .map((zoneId) => EntityService.zoneRepo.get(zoneId))
@@ -49,16 +49,16 @@ class FacilityService extends EntityService {
     return [];
   }
 
-  static bool facilityContainsAsset(int facilityId, int assetId) {
-    final facility = EntityService.facilityRepo.get(facilityId);
+  static Future<bool> facilityContainsAsset(int facilityId, int assetId) async {
+    final facility = await EntityService.facilityRepo.get(facilityId);
     if (facility != null) {
       return facility.containedAssetsIds.contains(assetId);
     }
     return false;
   }
 
-  static bool facilityContainsZone(int facilityId, int zoneId) {
-    final facility = EntityService.facilityRepo.get(facilityId);
+  static Future<bool> facilityContainsZone(int facilityId, int zoneId) async {
+    final facility = await EntityService.facilityRepo.get(facilityId);
     if (facility != null) {
       return facility.containedZonesIds.contains(zoneId);
     }
