@@ -1,11 +1,11 @@
 import { SynInput } from "@synergy-design-system/react";
-import { ZoneService } from "../../../services/ZoneService";
 import { useEffect, useState } from "react";
 import { SynInputEvent } from "@synergy-design-system/react/components/checkbox.js";
 import ZonesSidePanelList from "./ZonesSidePanelList";
+import SelectedFacilityService from "../../../services/SelectedFacilityService";
 
 function ZonesSidePanel() {
-	const zones = ZoneService.GetAll();
+	const zones = SelectedFacilityService.getSelectedFacility()?.GetZones() || [];
 
 	const [searchTerm, setSearchTerm] = useState("");
 	const [filteredZones, setFilteredZones] = useState(zones);
