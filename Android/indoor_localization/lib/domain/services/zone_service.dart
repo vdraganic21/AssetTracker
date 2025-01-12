@@ -5,12 +5,12 @@ import 'package:indoor_localization/domain/services/entity_service.dart';
 
 class ZoneService extends EntityService {
 
-  static Zone? get(int id) {
+  static Future<Zone?> get(int id) {
     return EntityService.zoneRepo.get(id);
   }
 
   static List<Zone> getAll() {
-    return EntityService.zoneRepo.getAll();
+    return [];
   }
 
   static bool add(Zone zone) {
@@ -25,31 +25,32 @@ class ZoneService extends EntityService {
     return EntityService.zoneRepo.update(zone);
   }
 
-  static Facility? getZoneParentFacility(int id) {
-    final zone = EntityService.zoneRepo.get(id);
+
+  static Future<Facility?> getZoneParentFacility(int id) async {
+    final zone = await EntityService.zoneRepo.get(id);
     if (zone != null) {
-      return EntityService.facilityRepo.get(zone.parentFacilityId);
+      return await EntityService.facilityRepo.get(zone.parentFacilityId);
     }
     return null;
   }
 
-  static List<Asset> getAssetsInZone(int id) {
-    final zone = EntityService.zoneRepo.get(id);
+  static Future<List<Asset>> getAssetsInZone(int id) async {
+    final zone = await EntityService.zoneRepo.get(id);
     if (zone != null) {
-      return zone.containedAssetsIds
-          .map((assetId) => EntityService.assetRepo.get(assetId))
-          .where((asset) => asset != null)
-          .cast<Asset>()
-          .toList();
+      final assets = await Future.wait(
+        zone.containedAssetsIds.map((assetId) async => await EntityService.assetRepo.get(assetId)),
+      );
+      return assets.whereType<Asset>().toList();
     }
     return [];
   }
 
-  static bool zoneContainsAsset(int zoneId, int assetId) {
-    final zone = EntityService.zoneRepo.get(zoneId);
+  static Future<bool> zoneContainsAsset(int zoneId, int assetId) async {
+    final zone = await EntityService.zoneRepo.get(zoneId);
     if (zone != null) {
       return zone.containedAssetsIds.contains(assetId);
     }
     return false;
   }
 }
+
