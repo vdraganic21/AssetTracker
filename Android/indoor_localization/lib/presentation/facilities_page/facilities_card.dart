@@ -53,10 +53,7 @@ class FacilityCard extends StatelessWidget {
 
   Widget _buildImage() {
     try {
-
-      final base64String = facility.imageBase64.replaceFirst(RegExp(r'data:image/[^;]+;base64,'), '');
-
-      final decodedBytes = base64Decode(base64String);
+      final decodedBytes = base64Decode(facility.imageBase64);
 
       return Image.memory(
         decodedBytes,
