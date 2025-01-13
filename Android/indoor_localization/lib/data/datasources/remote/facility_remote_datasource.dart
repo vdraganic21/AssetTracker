@@ -9,7 +9,6 @@ class FacilityRemoteDataSource {
 
   FacilityRemoteDataSource({required this.client});
 
-  // Fetch facilities from the API
   Future<List<Facility>> fetchFacilities() async {
     final response = await http.get(Uri.parse('${api.apiUrl}/floorMaps'));
 
