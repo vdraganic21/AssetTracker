@@ -19,4 +19,17 @@ class FacilityRemoteDataSource {
       throw Exception('Failed to load facilities');
     }
   }
+
+  Future<Facility> fetchFacilityById(int id) async {
+    final response = await http.get(Uri.parse('${api.apiUrl}/floorMaps/$id'));
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> jsonData = json.decode(response.body);
+      return Facility.fromJson(jsonData);
+    } else if (response.statusCode == 404) {
+      throw Exception('Facility with id $id not found');
+    } else {
+      throw Exception('Failed to load facility with id $id');
+    }
+  }
 }

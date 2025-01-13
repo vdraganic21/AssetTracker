@@ -16,15 +16,10 @@ class FacilityRepository implements IFacilityRepository {
   @override
   Future<Facility?> get(int id) async {
     try {
-      final facilities = await remoteDataSource.fetchFacilities();
-      return facilities.firstWhere(
-            (facility) => facility.id == id,
-        orElse: () {
-          throw Exception('No facility found');
-        },
-      );
+      return await remoteDataSource.fetchFacilityById(id);
     } catch (e) {
-      throw Exception('Something went wrong');
+      print('Error fetching facility by id: $e');
+      throw Exception('Something went wrong while fetching facility');
     }
   }
 
