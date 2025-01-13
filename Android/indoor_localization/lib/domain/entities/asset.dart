@@ -3,16 +3,17 @@ import 'package:indoor_localization/domain/entities/zone.dart';
 import 'package:indoor_localization/domain/services/asset_service.dart';
 import 'package:indoor_localization/domain/services/facility_service.dart';
 import 'package:indoor_localization/domain/services/zone_service.dart';
+import 'package:flutter/material.dart';
 
 class Asset {
   final int id;
-  final String name;
-  final int floorMapId;
+  String name;
+  int floorMapId;
   int x;
   int y;
-  final DateTime lastSync;
-  final bool isActive;
-  final List<int> currentZonesIds;
+  DateTime lastSync;
+  bool isActive;
+  List<int> currentZonesIds;
 
   Asset({
     required this.id,
@@ -64,22 +65,28 @@ class Asset {
 
   Future<Asset> updateData() async {
     final updatedData = await AssetService.get(id);
-    if (updatedData == null) {
-      return this;
+    if (updatedData != null) {
+      name = updatedData.name;
+      floorMapId = updatedData.floorMapId;
+      x = updatedData.x;
+      y = updatedData.y;
+      lastSync = updatedData.lastSync;
+      isActive = updatedData.isActive;
+      currentZonesIds = updatedData.currentZonesIds;
     }
-    return updatedData;
+    return this;
   }
 
 
-  Future<int> getPosition() async {
+  Future<Offset> getPosition() async {
     final updatedAsset = await updateData();
-    return updatedAsset.x;
+    return Offset(updatedAsset.x.toDouble(), updatedAsset.y.toDouble());
   }
 
 
   Future<DateTime> getLastSync() async {
-    final updatedAsset = await updateData();
-    return updatedAsset.lastSync;
+    updateData();
+    return lastSync;
   }
 
 
