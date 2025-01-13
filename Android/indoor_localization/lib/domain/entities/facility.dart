@@ -66,10 +66,12 @@ class Facility {
   }
 
   factory Facility.fromJson(Map<String, dynamic> json) {
+    final rawBase64 = json['imageBase64'] as String? ?? '';
+    final cleanedBase64 = rawBase64.replaceFirst(RegExp(r'data:image/[^;]+;base64,'), '');
     return Facility(
       id: json['id'] ?? 0,
       name: json['name'] ?? 'Unknown',
-      imageBase64: json['imageBase64'] ?? '',
+      imageBase64: cleanedBase64,
       containedAssetsIds: (json['containedAssetsIds'] as List?)?.map((e) => e as int).toList() ?? [],
       containedZonesIds: (json['containedZonesIds'] as List?)?.map((e) => e as int).toList() ?? [],
     );
