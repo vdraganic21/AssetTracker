@@ -5,38 +5,38 @@ import { useEffect, useState } from "react";
 import { SynInputEvent } from "@synergy-design-system/react/components/checkbox.js";
 
 function FacilitiesSidePanel() {
-  const facilities = FacilityService.GetAll();
+	const facilities = FacilityService.GetAll();
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filteredFacilities, setFilteredFacilities] = useState(facilities);
+	const [searchTerm, setSearchTerm] = useState("");
+	const [filteredFacilities, setFilteredFacilities] = useState(facilities);
 
-  const handleSearch = (event: SynInputEvent) => {
-    const term = (event.target as HTMLInputElement).value;
-    setSearchTerm(term);
-  };
+	const handleSearch = (event: SynInputEvent) => {
+		const term = (event.target as HTMLInputElement).value;
+		setSearchTerm(term);
+	};
 
-  useEffect(() => {
-    let filtered = facilities.filter((facility) =>
-      facility.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+	useEffect(() => {
+		let filtered = facilities.filter((facility) =>
+			facility.name.toLowerCase().includes(searchTerm.toLowerCase())
+		);
 
-    filtered = filtered.sort((a, b) => a.name.localeCompare(b.name));
+		filtered = filtered.sort((a, b) => a.name.localeCompare(b.name));
 
-    setFilteredFacilities(filtered);
-  }, [searchTerm]);
-  return (
-    <>
-      <SynInput
-        className="side-panel-asset-search"
-        placeholder="Search"
-        onSynInput={handleSearch}
-      />
-      <SynDivider />
-      <div className="scrollable-list">
-        <FacilityCardContainer facilities={filteredFacilities} />
-      </div>
-    </>
-  );
+		setFilteredFacilities(filtered);
+	}, [searchTerm]);
+	return (
+		<>
+			<SynInput
+				className="side-panel-search"
+				placeholder="Search"
+				onSynInput={handleSearch}
+			/>
+			<SynDivider />
+			<div className="scrollable-list">
+				<FacilityCardContainer facilities={filteredFacilities} />
+			</div>
+		</>
+	);
 }
 
 export default FacilitiesSidePanel;
