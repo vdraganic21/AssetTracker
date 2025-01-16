@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:indoor_localization/domain/entities/facility.dart';
-import 'package:indoor_localization/data/connections/api.dart';
+import 'package:indoor_localization/config/api.dart';
 
 
 class FacilityRemoteDataSource {
