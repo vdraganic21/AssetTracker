@@ -11,22 +11,6 @@ function convertPointsToCoordsList(points: Point[]) {
 	return coordsList;
 }
 
-function calculateCentroid(points: Point[]): Point {
-	const n = points.length;
-	let centroidX = 0;
-	let centroidY = 0;
-
-	for (let point of points) {
-		centroidX += point.x;
-		centroidY += point.y;
-	}
-
-	return {
-		x: centroidX / n,
-		y: centroidY / n,
-	};
-}
-
 function ZonesDisplayLayer({
 	scale,
 	zones,
@@ -69,18 +53,18 @@ function ZonesDisplayLayer({
 			)}
 
 			{zones.map((zone) => {
-				const centroid = calculateCentroid(zone.points);
 				return (
 					<Text
 						key={`zone-name-${zone.id}`}
 						text={zone.name}
-						x={centroid.x + x}
-						y={y - centroid.y}
-						fontSize={16 / scale}
+						x={zone.points[0].x + x}
+						y={y - zone.points[0].y}
+						fontSize={32}
 						fill={"#072E4ACC"}
 						align="center"
 						verticalAlign="middle"
-						offsetX={zone.name.length * 8}
+						offsetX={-16}
+						offsetY={40}
 					/>
 				);
 			})}
