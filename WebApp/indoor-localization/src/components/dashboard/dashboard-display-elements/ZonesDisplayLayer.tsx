@@ -38,7 +38,7 @@ function ZonesDisplayLayer({
 	x: number;
 	y: number;
 }) {
-	const rectSize = 16;
+	const rectSize = 12;
 
 	return (
 		<Layer scale={{ x: scale, y: scale }}>
