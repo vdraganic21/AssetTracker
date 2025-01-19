@@ -7,11 +7,29 @@ import useImage from "use-image";
 import Grid from "./dashboard-display-elements/Grid";
 import { Facility } from "../../entities/Facility";
 import AssetDispalyLayer from "./dashboard-display-elements/AssetDisplayLayer";
+import ZonesDisplayLayer from "./dashboard-display-elements/ZonesDisplayLayer";
+import { Zone } from "../../entities/Zone";
+import { Point } from "../../entities/Point";
 
 function FloorMapDisplay({ facility }: { facility: Facility }) {
 	const stageRef = useRef<Konva.Stage>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const [assets, setAssets] = useState(facility.GetAssets());
+	const zones = [
+		new Zone(
+			1,
+			"Zona",
+			[
+				new Point(0, 0),
+				new Point(500, 0),
+				new Point(500, 500),
+				new Point(250, 650),
+				new Point(0, 500),
+			],
+			1,
+			[]
+		),
+	];
 
 	const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
 	const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
@@ -151,6 +169,15 @@ function FloorMapDisplay({ facility }: { facility: Facility }) {
 							/>
 						)}
 					</Layer>
+					<ZonesDisplayLayer
+						zones={zones}
+						scale={scale}
+						x={(stageSize.width - imageSize.width * imageScale) / 2}
+						y={
+							(stageSize.height - imageSize.height * imageScale) / 2 +
+							imageSize.height
+						}
+					/>
 					<AssetDispalyLayer
 						assets={assets}
 						scale={scale}
