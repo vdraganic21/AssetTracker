@@ -5,7 +5,8 @@ import 'config/app_colors.dart';
 import 'domain/mock-repositories/mock_data_initializer.dart';
 import 'domain/services/asset_service.dart';
 import 'domain/entities/asset.dart';
-import 'domain/modules/report-modules/asset_idle_time_report.dart';
+import 'package:custom_report_module/reports/asset_idle_time_report.dart';
+//import 'domain/modules/report-modules/asset_idle_time_report.dart';
 
 void main() {
   // Initialize the data at the application load

@@ -1,4 +1,5 @@
-import '../modules/report-modules/report_module.dart';
+//import '../modules/report-modules/report_module.dart';
+import 'package:report_module_core/reports/report_module.dart';
 
 class ReportModulesService {
   static final List<ReportModule> _modules = [];
