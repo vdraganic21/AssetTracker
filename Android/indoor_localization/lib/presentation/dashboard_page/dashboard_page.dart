@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:indoor_localization/presentation/dashboard_page/grid_button.dart';
 import '../../config/app_colors.dart';
 import '../facilities_page/facilities_page.dart';
 import '../assets_page/assets_page.dart';
 import '../reports_page/reports_page.dart';
 import 'floor_map_widget.dart';
 import '../../domain/entities/asset.dart';
+import '../../domain/entities/facility.dart';
+import 'package:indoor_localization/presentation/dashboard_page/refresh_button.dart';
 
 class DashboardPage extends StatefulWidget {
   final List<Asset> assets;
-  const DashboardPage({Key? key, required this.assets}) : super(key: key);
+  final List<Facility> facilities;
+  const DashboardPage({Key? key, required this.assets, required this.facilities}) : super(key: key);
 
   @override
   State<DashboardPage> createState() => _DashboardPageState();
@@ -23,10 +27,10 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   void initState() {
     super.initState();
-    // Pass assets to AssetsPage
+
     _pages = [
       DashboardContent(),
-      FacilitiesPage(),
+      FacilitiesPage(facilities: widget.facilities),
       AssetsPage(assets: widget.assets),
       ReportsPage(),
     ];
@@ -47,7 +51,7 @@ class _DashboardPageState extends State<DashboardPage> {
           children: [
             Text(
               'Indoor Localization',
-              style: TextStyle(color: AppColors.neutral1000, fontSize: 20),
+              style: TextStyle(color: AppColors.neutral0, fontSize: 20),
             ),
             Text(
               'SICK | Mobilisis',
@@ -57,16 +61,16 @@ class _DashboardPageState extends State<DashboardPage> {
         ),
         centerTitle: true,
       ),
-      body: _pages[_selectedIndex], // Display the content of the selected page
+      body: _pages[_selectedIndex],
       bottomNavigationBar: Container(
         color: AppColors.primary500,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
           child: GNav(
             backgroundColor: AppColors.primary500,
-            color: AppColors.neutral1000,
-            activeColor: AppColors.neutral1000,
-            tabBackgroundColor: AppColors.primary300,
+            color: AppColors.neutral0,
+            activeColor: AppColors.neutral0,
+            tabBackgroundColor: AppColors.primary600,
             padding: EdgeInsets.all(16),
             gap: 8,
             selectedIndex: _selectedIndex,
@@ -96,10 +100,17 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 }
 
-// Dashboard content (with interactive floor map)
 class DashboardContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return FloorMapWidget();
+    return Stack(
+      children: [
+        FloorMapWidget(), // Main content
+        RefreshButton(),
+        GridButton()
+      ],
+    );
   }
 }
+
+

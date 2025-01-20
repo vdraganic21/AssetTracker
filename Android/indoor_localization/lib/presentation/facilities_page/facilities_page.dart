@@ -1,49 +1,74 @@
 import 'package:flutter/material.dart';
-import '../../config/app_colors.dart';
+import 'package:indoor_localization/domain/entities/facility.dart';
+import '../../presentation/common_components/dropdown_menu.dart';
 import 'facilities_card.dart';
 
 class FacilitiesPage extends StatefulWidget {
-  const FacilitiesPage({super.key});
+  final List<Facility> facilities;
+  const FacilitiesPage({Key? key, required this.facilities}) : super(key: key);
 
   @override
   _FacilitiesPageState createState() => _FacilitiesPageState();
 }
 
 class _FacilitiesPageState extends State<FacilitiesPage> {
-  bool _isAscending = true; // Track ascending/descending state
+  late List<Facility> sortedFacilites;
+  late List<Facility> displayedFacilities;
+  final TextEditingController _searchController = TextEditingController();
 
-  void _toggleSortOrder() {
+  String sortBy = 'Name Ascending';
+
+
+  @override
+  void initState() {
+    super.initState();
+    sortedFacilites = List.from(widget.facilities);
+    _sortAssets();
+    displayedFacilities = List.from(sortedFacilites);
+  }
+
+  void _sortAssets() {
     setState(() {
-      _isAscending = !_isAscending; // Toggle sorting order
+      if (sortBy == 'Name Ascending') {
+        sortedFacilites.sort((a, b) => a.name.compareTo(b.name));
+      } else if (sortBy == 'Name Descending') {
+        sortedFacilites.sort((a, b) => b.name.compareTo(a.name));
+      }
+      _filterAssets();
     });
   }
-// mock data
-  final List<Map<String, String>> facilities = [
-    {
-      'title': 'Warehouse12 - Sesvete Ludbreške',
-      'imageUrl': 'assets/floor_map.png',
-    },
-    {
-      'title': 'Factory - Ivanec',
-      'imageUrl': 'assets/floor_map.png',
-    },
-    {
-      'title': 'Warehouse78 - Banfica',
-      'imageUrl': 'assets/floor_map.png',
-    },
-  ];
+
+  void _filterAssets() {
+    setState(() {
+      final query = _searchController.text.toLowerCase();
+      if (query.isEmpty) {
+        displayedFacilities = List.from(sortedFacilites);
+      } else {
+        displayedFacilities = sortedFacilites
+            .where((asset) => asset.name.toLowerCase().startsWith(query))
+            .toList();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Search Bar
               TextField(
+                controller: _searchController,
+                onChanged: (value) => _filterAssets(),
                 decoration: InputDecoration(
                   contentPadding: const EdgeInsets.symmetric(vertical: 12),
                   hintText: 'Search...',
@@ -54,63 +79,29 @@ class _FacilitiesPageState extends State<FacilitiesPage> {
                 ),
               ),
               const SizedBox(height: 8),
-              // Filter and Sorting Widgets
-              Row(
-                children: [
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      // Filter logic here
-                    },
-                    icon: const Icon(Icons.filter_list),
-                    label: const Text('Filter'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary500,
-                      foregroundColor: AppColors.neutral0,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: _toggleSortOrder, // Toggle sort order on click
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary500,
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                      ),
-                      child: Row(
-                        children: [
-                          const Text(
-                            'Sort by:',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            _isAscending
-                                ? 'Name-ascending'
-                                : 'Name-descending', // Display current sorting
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+              CustomDropdown(
+                selectedValue: sortBy,
+                items: [
+                  'Name Ascending',
+                  'Name Descending'
                 ],
+                onChanged: (value) {
+                  setState(() {
+                    sortBy = value;
+                    _sortAssets();
+                  });
+                },
               ),
             ],
           ),
         ),
         Expanded(
           child: ListView.builder(
-            itemCount: facilities.length,
+            itemCount: displayedFacilities.length,
             itemBuilder: (context, index) {
-              final facility = facilities[index];
-              return FacilityCard(
-                title: facility['title']!,
-                imageUrl: facility['imageUrl']!,
-              );
-            },
+              Facility facility = displayedFacilities[index];
+              return FacilityCard(facility: facility);
+            }
           ),
         ),
       ],
