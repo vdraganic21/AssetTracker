@@ -1,4 +1,8 @@
 # Miscellaneous
+*.cc
+*.h
+*.cmake
+*.swift
 *.class
 *.log
 *.pyc
