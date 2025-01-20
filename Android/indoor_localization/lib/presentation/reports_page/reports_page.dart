@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../config/app_colors.dart';
 import 'package:report_module_core/reports/report_module.dart';
-//import '../../domain/modules/report-modules/report_module.dart';
 import '../../domain/services/report_modules_service.dart';
 
 class ReportsPage extends StatelessWidget {

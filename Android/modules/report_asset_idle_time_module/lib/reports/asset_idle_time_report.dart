@@ -3,7 +3,7 @@ import 'package:report_module_core/reports/report_module.dart';
 
 class AssetIdleTimeReportModule implements ReportModule {
   @override
-  String getIcon() => '../../../../assets/floor_map.png';
+  String getIcon() => '../../assets/floor_map.png';
 
   @override
   String getName() => 'Asset Idle Time';
