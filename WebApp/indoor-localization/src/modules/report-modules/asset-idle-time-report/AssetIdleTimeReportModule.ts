@@ -1,9 +1,10 @@
 import { ReportModule } from "../../../interfaces/ReportModule";
 import AssetIdleTimeReport from "./AssetIdleTimeReport";
+import icon from "./assetIdle_icon.png";
 
 class AssetIdleTimeReportModule implements ReportModule {
   GetIcon(): string {
-    return "/logo512.png";
+    return icon;
   }
 
   GetName(): string {

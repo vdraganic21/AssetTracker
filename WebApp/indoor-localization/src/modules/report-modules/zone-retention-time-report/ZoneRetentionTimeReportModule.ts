@@ -1,9 +1,10 @@
 import { ReportModule } from "../../../interfaces/ReportModule";
 import ZoneRetentionTimeReport from "./ZoneRetentionTimeReport";
+import icon from "./zoneRetention_icon.png";
 
 class ZoneRetentionTimeReportModule implements ReportModule {
   GetIcon(): string {
-    return "/logo512.png";
+    return icon;
   }
 
   GetName(): string {
