@@ -42,11 +42,30 @@
   gap: 10px;
 }
 
-.bottom-right-container syn-button{
+.bottom-right-container syn-button {
   background-color: var(--syn-color-neutral-0);
 }
 
 .button-icon {
   color: var(--syn-color-primary-500, #0ca2eb);
   font-size: 24px;
+}
+
+.dashboard-control-button {
+  border: #0ca2eb;
+  border-width: 1px;
+  border-style: solid;
+  background: var(--syn-color-neutral-0);
+  width: 48px;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.dashboard-control-button img {
+  object-fit: contain;
+  max-width: 60%;
+  max-height: 60%;
 }
