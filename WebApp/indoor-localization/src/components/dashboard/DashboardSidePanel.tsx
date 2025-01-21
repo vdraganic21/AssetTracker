@@ -30,13 +30,17 @@ function DashboardSidePanel() {
   };
 
   const panelItems = [
-    { name: "Assets", imageSrc: "/logo192.png", content: AssetsSidePanel },
+    { name: "Assets", imageSrc: "/assetIcon.png", content: AssetsSidePanel },
     {
       name: "Facilities",
-      imageSrc: "/logo192.png",
+      imageSrc: "/facilityIcon.png",
       content: FacilitiesSidePanel,
     },
-    { name: "Zones", imageSrc: "/logo192.png", content: ZonesSidePanel },
+    {
+      name: "Zones",
+      imageSrc: "/zoneIcon_regular.png",
+      content: ZonesSidePanel,
+    },
   ];
 
   return (
