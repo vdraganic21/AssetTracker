@@ -7,6 +7,7 @@ import useImage from "use-image";
 import Grid from "./dashboard-display-elements/Grid";
 import { Facility } from "../../entities/Facility";
 import AssetDispalyLayer from "./dashboard-display-elements/AssetDisplayLayer";
+import ZonesDisplayLayer from "./dashboard-display-elements/ZonesDisplayLayer";
 
 function FloorMapDisplay({ facility }: { facility: Facility }) {
 	const stageRef = useRef<Konva.Stage>(null);
@@ -19,6 +20,7 @@ function FloorMapDisplay({ facility }: { facility: Facility }) {
 	const [image] = useImage(facility.imageBase64);
 	const [imageScale, setImageScale] = useState(1);
 	const [isGridVisible, setIsGridVisible] = useState(false);
+	const [isZonesVisible, setZonesVisible] = useState(false);
 	const scale = imageScale * (zoomLevel / 100);
 	const refreshIntervalMillis = 500;
 
@@ -151,6 +153,17 @@ function FloorMapDisplay({ facility }: { facility: Facility }) {
 							/>
 						)}
 					</Layer>
+					{isZonesVisible && (
+						<ZonesDisplayLayer
+							zones={facility.GetZones()}
+							scale={scale}
+							x={(stageSize.width - imageSize.width * imageScale) / 2}
+							y={
+								(stageSize.height - imageSize.height * imageScale) / 2 +
+								imageSize.height
+							}
+						/>
+					)}
 					<AssetDispalyLayer
 						assets={assets}
 						scale={scale}
@@ -168,6 +181,13 @@ function FloorMapDisplay({ facility }: { facility: Facility }) {
 					<p className="facility-name unselectable">{facility.name}</p>
 				</div>
 				<div className="buttons-column">
+					<SynButton onClick={() => setZonesVisible(!isZonesVisible)}>
+						<SynIcon
+							library="fa"
+							name={isZonesVisible ? "far-square" : "fas-square"}
+							className="button-icon"
+						/>
+					</SynButton>
 					<SynButton onClick={() => setIsGridVisible(!isGridVisible)}>
 						<SynIcon
 							library="fa"
