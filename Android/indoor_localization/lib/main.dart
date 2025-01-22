@@ -20,7 +20,6 @@ void main() {
   ]);
 
   List<Facility> facilities = FacilityService.getAll();
-
   runApp(MyApp(assets: assets, facilities: facilities));
 
 }
