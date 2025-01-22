@@ -18,7 +18,6 @@ void main() {
     AssetIdleTimeReportModule(),
     // more modules here
   ]);
-  runApp(MyApp(assets: assets));
 
   List<Facility> facilities = FacilityService.getAll();
 
