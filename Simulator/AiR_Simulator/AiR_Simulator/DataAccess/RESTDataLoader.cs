@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Net.Http;
@@ -194,6 +194,16 @@ namespace AiR_Simulator.DataAccess
                 Console.WriteLine($"DEBUG: Exception stack trace: {ex.StackTrace}");
                 throw new Exception($"Error processing API response: {ex.Message}", ex);
             }
+        }
+
+        public async Task<HttpResponseMessage> SendRequestAsync(HttpMethod method, string endpoint, HttpContent content = null)
+        {
+            var request = new HttpRequestMessage(method, $"{_baseUrl}/{endpoint}");
+            if (content != null)
+            {
+                request.Content = content;
+            }
+            return await _httpClient.SendAsync(request);
         }
 
         public FloorplanJsonObject GetFloorplanData(string name)

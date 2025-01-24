@@ -277,13 +277,17 @@ namespace SimulatorControlUI
         private void StartAutoRefresh()
         {
             refreshTimer = new System.Windows.Forms.Timer();
-            refreshTimer.Interval = 100;
+            refreshTimer.Interval = 2000;
             refreshTimer.Tick += RefreshTimer_Tick;
             refreshTimer.Start();
         }
 
-        private void RefreshTimer_Tick(object sender, EventArgs e)
+        private async void RefreshTimer_Tick(object sender, EventArgs e)
         {
+            if (ProgramSimulator.simulator != null)
+            {
+                await ProgramSimulator.simulator.SimulateNextStep(ProgramSimulator.MovementSpeed);
+            }
             MapPictureBox.Invalidate();
         }
 
