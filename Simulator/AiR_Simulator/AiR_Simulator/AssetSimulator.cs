@@ -27,7 +27,6 @@ namespace AssetDataSimulator
         public async Task<List<string>> SimulateNextStep(double speed)
         {
             var result = new List<string>();
-            Console.WriteLine($"[DEBUG] Starting SimulateNextStep with {Assets.Count} assets, RestLoader type: {RestLoader?.GetType().Name ?? "null"}");
 
             foreach (var asset in Assets)
             {
@@ -36,21 +35,19 @@ namespace AssetDataSimulator
                 try 
                 {
                     await SendAssetDataToRestService(asset);
-                    Console.WriteLine($"[DEBUG] Successfully sent asset data for Asset {asset.AssetId}");
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"[DEBUG] Error sending asset data: {ex.Message}");
+                    Console.WriteLine($"Error sending asset data: {ex.Message}");
                 }
 
                 try 
                 {
                     await SendPositionHistoryToRestService(asset);
-                    Console.WriteLine($"[DEBUG] Successfully sent position history for Asset {asset.AssetId}");
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"[DEBUG] Error sending position history: {ex.Message}");
+                    Console.WriteLine($"Error sending position history: {ex.Message}");
                 }
 
                 var floorplanName = GetFloorplanForAsset(asset);
@@ -70,7 +67,6 @@ namespace AssetDataSimulator
         {
             if (RestLoader is RestApiAssetLoader restLoader)
             {
-                Console.WriteLine($"[DEBUG] Sending asset data for Asset {asset.AssetId} using {restLoader.GetType().Name}");
                 var assetData = new AssetData
                 {
                     Id = asset.AssetId,
@@ -85,7 +81,6 @@ namespace AssetDataSimulator
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await restLoader.SendRequestAsync(HttpMethod.Put, $"assets/{asset.AssetId}", content);
-                Console.WriteLine($"[DEBUG] Asset data response: {response.StatusCode}");
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -96,17 +91,12 @@ namespace AssetDataSimulator
                     Console.WriteLine($"Failed to send data for Asset ID: {asset.AssetId}. Status Code: {response.StatusCode}");
                 }
             }
-            else
-            {
-                Console.WriteLine($"[DEBUG] RestLoader is not RestApiAssetLoader, it is {RestLoader?.GetType().Name ?? "null"}");
-            }
         }
 
         private async Task SendPositionHistoryToRestService(Asset asset)
         {
             if (RestLoader is RestApiAssetLoader restLoader)
             {
-                Console.WriteLine($"[DEBUG] Sending position history for Asset {asset.AssetId} using {restLoader.GetType().Name}");
                 var positionHistory = new
                 {
                     AssetId = asset.AssetId,
@@ -120,7 +110,6 @@ namespace AssetDataSimulator
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await restLoader.SendRequestAsync(HttpMethod.Post, "assetPositionHistory", content);
-                Console.WriteLine($"[DEBUG] Position history response: {response.StatusCode}");
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -130,10 +119,6 @@ namespace AssetDataSimulator
                 {
                     Console.WriteLine($"Failed to send position history for Asset ID: {asset.AssetId}. Status Code: {response.StatusCode}");
                 }
-            }
-            else
-            {
-                Console.WriteLine($"[DEBUG] RestLoader is not RestApiAssetLoader, it is {RestLoader?.GetType().Name ?? "null"}");
             }
         }
     }

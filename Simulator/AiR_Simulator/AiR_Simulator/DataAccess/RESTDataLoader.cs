@@ -107,25 +107,20 @@ namespace AiR_Simulator.DataAccess
                     };
                 }
 
-                Console.WriteLine($"DEBUG: Starting floorplan processing. Count: {_floorplansData?.Count}");
                 foreach (var floorplanData in _floorplansData)
                 {
-                    Console.WriteLine($"DEBUG: Processing floorplan - Id: {floorplanData.Id}, Name: {floorplanData.Name}");
                     var floorplan = new Floorplan(floorplanData.Name ?? "Floor 1")
                     {
                         FloorplanId = floorplanData.Id > 0 ? floorplanData.Id : 1,
                         Assets = new List<Asset>()
                     };
                     floorplans.Add(floorplan);
-                    Console.WriteLine($"DEBUG: Added floorplan - Id: {floorplan.FloorplanId}, Name: {floorplan.Name}");
                 }
 
-                Console.WriteLine($"DEBUG: Starting asset processing. Count: {assetsData?.Count}");
                 if (assetsData != null)
                 {
                     foreach (var assetData in assetsData.Where(a => a.Active))
                     {
-                        Console.WriteLine($"DEBUG: Processing asset - Id: {assetData.Id}, FloorMapId: {assetData.FloorMapId}");
                         var positions = new List<(double X, double Y)>
                         {
                             (assetData.X, assetData.Y)
@@ -191,7 +186,6 @@ namespace AiR_Simulator.DataAccess
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"DEBUG: Exception stack trace: {ex.StackTrace}");
                 throw new Exception($"Error processing API response: {ex.Message}", ex);
             }
         }
