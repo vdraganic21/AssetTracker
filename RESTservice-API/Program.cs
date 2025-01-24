@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using RESTservice_API.Data;
+using RESTservice_API.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<IAssetRepository, AssetRepository>();
 builder.Services.AddScoped<IPositionHistoryRepository, PositionHistoryRepository>();
 builder.Services.AddScoped<IFloorMapRepository, FloorMapRepository>();
+builder.Services.AddScoped<IZoneRepository, ZoneRepository>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
