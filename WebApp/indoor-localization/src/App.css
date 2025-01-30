@@ -31,8 +31,8 @@
 }
 
 .content-margin {
-  margin-top: var(var(--syn-spacing-medium));
-  margin-bottom: var(var(--syn-spacing-medium));
+  margin-top: var(--syn-spacing-medium);
+  margin-bottom: var(--syn-spacing-medium);
   margin-left: auto;
   margin-right: auto;
 }
