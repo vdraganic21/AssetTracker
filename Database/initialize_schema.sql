@@ -34,3 +34,12 @@ CREATE TABLE PositionHistories (
     y INT NOT NULL,
     dateTime TIMESTAMP NOT NULL
 );
+
+CREATE TABLE AssetZoneHistory (
+    id SERIAL PRIMARY KEY,
+    assetId INT REFERENCES Assets(id) ON DELETE CASCADE,
+    zoneId INT REFERENCES Zones(id) ON DELETE CASCADE,
+    enterDateTime TIMESTAMP NOT NULL,
+    exitDateTime TIMESTAMP,
+    retentionTime INT
+);
