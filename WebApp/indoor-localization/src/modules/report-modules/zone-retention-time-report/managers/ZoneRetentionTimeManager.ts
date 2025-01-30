@@ -1,4 +1,3 @@
-import { Asset } from "../../../../entities/Asset";
 import { AssetZoneHistoryLog } from "../../../../entities/AssetZoneHistoryLog";
 
 export default class ZoneRetentionTimeManager {
@@ -8,7 +7,7 @@ export default class ZoneRetentionTimeManager {
         this.dataset = dataset;
     }
 
-    public getAssetsInDataset(): Asset[]{
+    public getAssetIdsInDataset(): number[]{
 
         return [];
     }
