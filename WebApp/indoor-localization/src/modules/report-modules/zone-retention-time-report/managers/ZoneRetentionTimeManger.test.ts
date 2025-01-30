@@ -2,7 +2,7 @@ import { AssetZoneHistoryLog } from "../../../../entities/AssetZoneHistoryLog";
 import ZoneRetentionTimeManager from "./ZoneRetentionTimeManager";
 
 describe('ZoneRetentionTimeManager', () => {
-    it('should accept list of zone retention logs in constructor', () => {
+    it('ept lishould accst of zone retention logs in constructor', () => {
         let dataset = [
             new AssetZoneHistoryLog(1, 1, 1, new Date(), new Date(), 5), 
             new AssetZoneHistoryLog(2, 2, 2, new Date(), new Date(), 5)
@@ -32,7 +32,7 @@ describe('ZoneRetentionTimeManager', () => {
                 new AssetZoneHistoryLog(4, 2, 1, new Date(), new Date(), 5),
                 new AssetZoneHistoryLog(5, 2, 1, new Date(), new Date(), 5),
             ],
-            expectedAssetIds: [1],
+            expectedAssetIds: [2],
         },
         {
             description: 'should return asset ids given two logs with unique ids',
