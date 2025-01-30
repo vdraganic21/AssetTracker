@@ -149,7 +149,7 @@ describe('ZoneRetentionTimeManager', () => {
             expectedMaxRetentionTime: 5.3,
         },
         {
-            description: 'should return max retention timegiven dataset with multiple logs',
+            description: 'should return max retention time given dataset with multiple logs',
             dataset: [
                 new AssetZoneHistoryLog(1, 3, 1, new Date(), new Date(), 5),
                 new AssetZoneHistoryLog(1, 3, 1, new Date(), new Date(), 5),
@@ -182,5 +182,62 @@ describe('ZoneRetentionTimeManager', () => {
         let manager = new ZoneRetentionTimeManager(dataset);
         let assetRetentionTime = manager.getMaxRetentionTime();
         expect(assetRetentionTime).toEqual(expectedMaxRetentionTime);
+    });
+
+    it.each([
+        {
+            description: 'should return 0 for min retention time given empty dataset',
+            dataset: [
+            ],
+            expectedMinRetentionTime: 0,
+        },
+        {
+            description: 'should return min retention time if getting time from dataset with single log',
+            dataset: [
+                new AssetZoneHistoryLog(1, 3, 1, new Date(), new Date(), 5),
+            ],
+            expectedMinRetentionTime: 5,
+        },
+        {
+            description: 'should return decimal min retention time if getting time from dataset with single log',
+            dataset: [
+                new AssetZoneHistoryLog(1, 3, 1, new Date(), new Date(), 5.3),
+            ],
+            expectedMinRetentionTime: 5.3,
+        },
+        {
+            description: 'should return min retention time given dataset with multiple logs',
+            dataset: [
+                new AssetZoneHistoryLog(1, 3, 1, new Date(), new Date(), 5),
+                new AssetZoneHistoryLog(1, 3, 1, new Date(), new Date(), 5),
+                new AssetZoneHistoryLog(1, 3, 1, new Date(), new Date(), 5.3),
+            ],
+            expectedMinRetentionTime: 15.3,
+        },
+        {
+            description: 'should return min retention time given dataset with multiple logs',
+            dataset: [
+                new AssetZoneHistoryLog(1, 3, 1, new Date(), new Date(), 5),
+                new AssetZoneHistoryLog(1, 3, 1, new Date(), new Date(), 5),
+                new AssetZoneHistoryLog(1, 3, 1, new Date(), new Date(), 5.3),
+            ],
+            expectedMinRetentionTime: 15.3,
+        },
+        {
+            description: 'should return min retention time given dataset with multiple logs with different asset ids',
+            dataset: [
+                new AssetZoneHistoryLog(1, 3, 1, new Date(), new Date(), 1),
+                new AssetZoneHistoryLog(1, 1, 1, new Date(), new Date(), 2.1),
+                new AssetZoneHistoryLog(1, 3, 1, new Date(), new Date(), 3),
+                new AssetZoneHistoryLog(1, 4, 1, new Date(), new Date(), 4),
+                new AssetZoneHistoryLog(1, 3, 1, new Date(), new Date(), 5),
+                new AssetZoneHistoryLog(1, 4, 1, new Date(), new Date(), 6),
+            ],
+            expectedMinRetentionTime: 2.1,
+        },
+    ])('$description', ({ dataset, expectedMinRetentionTime }) => {
+        let manager = new ZoneRetentionTimeManager(dataset);
+        let assetRetentionTime = manager.getMinRetentionTime();
+        expect(assetRetentionTime).toEqual(expectedMinRetentionTime);
     });
 });
