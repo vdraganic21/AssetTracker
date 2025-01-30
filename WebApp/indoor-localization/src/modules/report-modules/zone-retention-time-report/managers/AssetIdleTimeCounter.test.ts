@@ -2,7 +2,7 @@ import { AssetPositionHistoryLog } from "../../../../entities/AssetPositionHisto
 import { Point } from "../../../../entities/Point";
 import AssetIdleTimeCounter from "./AssetIdleTimeCounter";
 
-describe('ZoneRetentionTimeManager', () => {
+describe('AssetIdleTimeCounter', () => {
     it('should be instanced when given dataset', () => {
         let dataset = [
             new AssetPositionHistoryLog(1, 1, 1, new Point(0, 0), new Date()), 
