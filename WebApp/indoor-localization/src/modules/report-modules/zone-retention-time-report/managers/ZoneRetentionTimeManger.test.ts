@@ -240,4 +240,63 @@ describe('ZoneRetentionTimeManager', () => {
         let assetRetentionTime = manager.getMinRetentionTime();
         expect(assetRetentionTime).toEqual(expectedMinRetentionTime);
     });
+
+    it.each([
+        {
+            description: 'should return 0 for average retention time given empty dataset',
+            dataset: [
+            ],
+            expectedAvgRetentionTime: 0,
+        },
+        {
+            description: 'should return average retention time if getting time from dataset with single log',
+            dataset: [
+                new AssetZoneHistoryLog(1, 3, 1, new Date(), new Date(), 5),
+            ],
+            expectedAvgRetentionTime: 5,
+        },
+        {
+            description: 'should return decimal average retention time if getting time from dataset with single log',
+            dataset: [
+                new AssetZoneHistoryLog(1, 3, 1, new Date(), new Date(), 5.3),
+            ],
+            expectedAvgRetentionTime: 5.3,
+        },
+        {
+            description: 'should return average retention time given dataset with multiple logs',
+            dataset: [
+                new AssetZoneHistoryLog(1, 3, 1, new Date(), new Date(), 3),
+                new AssetZoneHistoryLog(1, 3, 1, new Date(), new Date(), 5),
+                new AssetZoneHistoryLog(1, 3, 1, new Date(), new Date(), 7),
+            ],
+            expectedAvgRetentionTime: 5,
+        },
+        {
+            description: 'should return decimal average retention time given dataset with multiple logs',
+            dataset: [
+                new AssetZoneHistoryLog(1, 3, 1, new Date(), new Date(), 5),
+                new AssetZoneHistoryLog(1, 3, 1, new Date(), new Date(), 6),
+            ],
+            expectedAvgRetentionTime: 5.5,
+        },
+        {
+            description: 'should return average retention time given dataset with multiple logs with different asset ids',
+            dataset: [
+                new AssetZoneHistoryLog(1, 1, 1, new Date(), new Date(), 1),
+                new AssetZoneHistoryLog(1, 2, 1, new Date(), new Date(), 2),
+                new AssetZoneHistoryLog(1, 3, 1, new Date(), new Date(), 3),
+                new AssetZoneHistoryLog(1, 1, 1, new Date(), new Date(), 2),
+                new AssetZoneHistoryLog(1, 2, 1, new Date(), new Date(), 3),
+                new AssetZoneHistoryLog(1, 3, 1, new Date(), new Date(), 4),
+                new AssetZoneHistoryLog(1, 1, 1, new Date(), new Date(), 3),
+                new AssetZoneHistoryLog(1, 2, 1, new Date(), new Date(), 4),
+                new AssetZoneHistoryLog(1, 3, 1, new Date(), new Date(), 5),
+            ],
+            expectedAvgRetentionTime: 3,
+        },
+    ])('$description', ({ dataset, expectedAvgRetentionTime }) => {
+        let manager = new ZoneRetentionTimeManager(dataset);
+        let assetRetentionTime = manager.getAvgRetentionTime();
+        expect(assetRetentionTime).toEqual(expectedAvgRetentionTime);
+    });
 });
