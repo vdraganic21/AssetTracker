@@ -12,6 +12,7 @@ namespace AssetDataSimulator
 {
     public class AssetSimulator
     {
+        private readonly string _apiBaseUrl = "https://localhost:7018";
         public List<Asset> Assets { get; }
         public List<Floorplan> Floorplans { get; }
         public IAssetDataLoader RestLoader { get; private set; }
@@ -20,7 +21,7 @@ namespace AssetDataSimulator
         {
             Assets = assets;
             Floorplans = floorplans;
-            RestLoader = loader;
+            RestLoader = loader ?? new RestApiAssetLoader(_apiBaseUrl);
         }
 
         public async Task<List<string>> SimulateNextStep(double speed)
@@ -31,7 +32,23 @@ namespace AssetDataSimulator
             {
                 asset.MoveTowardNextPosition(speed);
 
-                await SendAssetDataToRestService(asset);
+                try 
+                {
+                    await SendAssetDataToRestService(asset);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error sending asset data: {ex.Message}");
+                }
+
+                try 
+                {
+                    await SendPositionHistoryToRestService(asset);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error sending position history: {ex.Message}");
+                }
 
                 var floorplanName = GetFloorplanForAsset(asset);
                 result.Add($"{{\"asset_id\":{asset.AssetId},\"x\":{asset.X.ToString(CultureInfo.InvariantCulture)},\"y\":{asset.Y.ToString(CultureInfo.InvariantCulture)},\"floorplan\":\"{floorplanName}\",\"status\":\"active\",\"timestamp\":\"{DateTime.UtcNow:yyyy-MM-ddTHH:mm:ss.fffZ}\"}}");
@@ -46,9 +63,9 @@ namespace AssetDataSimulator
             return floorplan?.Name ?? "Unknown";
         }
 
-        private static async Task SendAssetDataToRestService(Asset asset)
+        private async Task SendAssetDataToRestService(Asset asset)
         {
-            using (var httpClient = new HttpClient())
+            if (RestLoader is RestApiAssetLoader restLoader)
             {
                 var assetData = new AssetData
                 {
@@ -63,7 +80,7 @@ namespace AssetDataSimulator
                 var json = JsonSerializer.Serialize(assetData);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                var response = await httpClient.PutAsync($"https://localhost:7018/assets/{asset.AssetId}", content);
+                var response = await restLoader.SendRequestAsync(HttpMethod.Put, $"assets/{asset.AssetId}", content);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -72,6 +89,35 @@ namespace AssetDataSimulator
                 else
                 {
                     Console.WriteLine($"Failed to send data for Asset ID: {asset.AssetId}. Status Code: {response.StatusCode}");
+                }
+            }
+        }
+
+        private async Task SendPositionHistoryToRestService(Asset asset)
+        {
+            if (RestLoader is RestApiAssetLoader restLoader)
+            {
+                var positionHistory = new
+                {
+                    AssetId = asset.AssetId,
+                    FloorMapId = asset.FloorplanId,
+                    Timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+                    X = asset.X,
+                    Y = asset.Y
+                };
+
+                var json = JsonSerializer.Serialize(positionHistory);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await restLoader.SendRequestAsync(HttpMethod.Post, "assetPositionHistory", content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"Successfully sent position history for Asset ID: {asset.AssetId}");
+                }
+                else
+                {
+                    Console.WriteLine($"Failed to send position history for Asset ID: {asset.AssetId}. Status Code: {response.StatusCode}");
                 }
             }
         }
