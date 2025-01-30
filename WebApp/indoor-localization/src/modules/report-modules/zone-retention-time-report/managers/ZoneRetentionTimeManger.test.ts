@@ -126,4 +126,61 @@ describe('ZoneRetentionTimeManager', () => {
         let assetRetentionTime = manager.getAssetRetentionTime(id);
         expect(assetRetentionTime).toEqual(expectedRetentionTime);
     });
+
+    it.each([
+        {
+            description: 'should return 0 for max retention time given empty dataset',
+            dataset: [
+            ],
+            expectedMaxRetentionTime: 0,
+        },
+        {
+            description: 'should return max retention time if getting time from dataset with single log',
+            dataset: [
+                new AssetZoneHistoryLog(1, 3, 1, new Date(), new Date(), 5),
+            ],
+            expectedMaxRetentionTime: 5,
+        },
+        {
+            description: 'should return decimal max retention time if getting time from dataset with single log',
+            dataset: [
+                new AssetZoneHistoryLog(1, 3, 1, new Date(), new Date(), 5.3),
+            ],
+            expectedMaxRetentionTime: 5.3,
+        },
+        {
+            description: 'should return max retention timegiven dataset with multiple logs',
+            dataset: [
+                new AssetZoneHistoryLog(1, 3, 1, new Date(), new Date(), 5),
+                new AssetZoneHistoryLog(1, 3, 1, new Date(), new Date(), 5),
+                new AssetZoneHistoryLog(1, 3, 1, new Date(), new Date(), 5.3),
+            ],
+            expectedMaxRetentionTime: 15.3,
+        },
+        {
+            description: 'should return max retention time given dataset with multiple logs',
+            dataset: [
+                new AssetZoneHistoryLog(1, 3, 1, new Date(), new Date(), 5),
+                new AssetZoneHistoryLog(1, 3, 1, new Date(), new Date(), 5),
+                new AssetZoneHistoryLog(1, 3, 1, new Date(), new Date(), 5.3),
+            ],
+            expectedMaxRetentionTime: 15.3,
+        },
+        {
+            description: 'should return max retention time given dataset with multiple logs with different asset ids',
+            dataset: [
+                new AssetZoneHistoryLog(1, 3, 1, new Date(), new Date(), 5),
+                new AssetZoneHistoryLog(1, 1, 1, new Date(), new Date(), 5),
+                new AssetZoneHistoryLog(1, 3, 1, new Date(), new Date(), 5),
+                new AssetZoneHistoryLog(1, 4, 1, new Date(), new Date(), 55),
+                new AssetZoneHistoryLog(1, 3, 1, new Date(), new Date(), 5.3),
+                new AssetZoneHistoryLog(1, 4, 1, new Date(), new Date(), 1),
+            ],
+            expectedMaxRetentionTime: 56,
+        },
+    ])('$description', ({ dataset, expectedMaxRetentionTime }) => {
+        let manager = new ZoneRetentionTimeManager(dataset);
+        let assetRetentionTime = manager.getMaxRetentionTime();
+        expect(assetRetentionTime).toEqual(expectedMaxRetentionTime);
+    });
 });
