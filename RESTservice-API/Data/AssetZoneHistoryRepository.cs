@@ -65,33 +65,55 @@ namespace RESTservice_API.Data
             return await GetEntryWithRelatedData(entry.Id);
         }
 
-        public async Task<IEnumerable<AssetZoneHistoryDTO>> GetAssetZoneHistoryAsync(int assetId, int? zoneId = null)
+        public async Task<IEnumerable<AssetZoneHistoryDTO>> GetAssetZoneHistoryAsync(AssetZoneHistoryQueryParams queryParams)
         {
-            var query = _context.AssetZoneHistory
-                .Include(azh => azh.Asset)
-                .Include(azh => azh.Zone)
-                .Where(azh => azh.AssetId == assetId);
+            var query = _context.AssetZoneHistory.AsQueryable();
 
-            if (zoneId.HasValue)
+            if (queryParams.AssetId.HasValue)
             {
-                query = query.Where(azh => azh.ZoneId == zoneId.Value);
+                query = query.Where(azh => azh.AssetId == queryParams.AssetId.Value);
             }
 
-            var entries = await query
-                .OrderByDescending(azh => azh.EnterDateTime)
-                .ToListAsync();
-
-            return entries.Select(entry => new AssetZoneHistoryDTO
+            if (queryParams.ZoneId.HasValue)
             {
-                Id = entry.Id,
-                AssetId = entry.AssetId,
-                ZoneId = entry.ZoneId,
-                EnterDateTime = entry.EnterDateTime,
-                ExitDateTime = entry.ExitDateTime,
-                RetentionTime = entry.RetentionTime,
-                AssetName = entry.Asset?.Name,
-                ZoneName = entry.Zone?.Name
-            });
+                query = query.Where(azh => azh.ZoneId == queryParams.ZoneId.Value);
+            }
+
+            if (queryParams.StartTime.HasValue)
+            {
+                query = query.Where(azh => azh.EnterDateTime >= queryParams.StartTime.Value);
+            }
+
+            if (queryParams.EndTime.HasValue)
+            {
+                query = query.Where(azh => azh.ExitDateTime <= queryParams.EndTime.Value);
+            }
+
+            if (queryParams.MinRetentionTime.HasValue)
+            {
+                query = query.Where(azh => azh.RetentionTime >= queryParams.MinRetentionTime.Value);
+            }
+
+            if (queryParams.MaxRetentionTime.HasValue)
+            {
+                query = query.Where(azh => azh.RetentionTime <= queryParams.MaxRetentionTime.Value);
+            }
+
+            var results = await query.Include(azh => azh.Asset)
+                             .Include(azh => azh.Zone)
+                             .Select(azh => new AssetZoneHistoryDTO
+                             {
+                                 Id = azh.Id,
+                                 AssetId = azh.AssetId,
+                                 ZoneId = azh.ZoneId,
+                                 EnterDateTime = azh.EnterDateTime,
+                                 ExitDateTime = azh.ExitDateTime,
+                                 RetentionTime = azh.RetentionTime,
+                                 AssetName = azh.Asset.Name,
+                                 ZoneName = azh.Zone.Name
+                             }).ToListAsync();
+
+            return results;
         }
 
         private async Task<AssetZoneHistoryDTO> GetEntryWithRelatedData(int id)

@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using RESTservice_API.Models;
+using RESTservice_API.Interfaces;
+using System.Threading.Tasks;
+using RESTservice_API.Models.DTOs;
 
 namespace RESTservice_API.Data
 {
@@ -20,9 +23,56 @@ namespace RESTservice_API.Data
             _floorMaps = new List<FloorMap>(_mockFloorMaps);
         }
 
-        public IEnumerable<FloorMap> GetAllFloorMaps()
+        public Task<FloorMapDetailsDTO> GetFloorMapDetailsAsync(int id)
         {
-            return _floorMaps;
+            var floorMap = _floorMaps.FirstOrDefault(f => f.Id == id);
+            if (floorMap == null)
+                return Task.FromResult<FloorMapDetailsDTO>(null);
+
+            // Mock data for assets
+            var assets = new List<Asset>
+            {
+                new Asset { Id = 1, Name = "Asset 1", X = 100, Y = 200 },
+                new Asset { Id = 2, Name = "Asset 2", X = 150, Y = 250 }
+            };
+
+            // Mock data for zones
+            var zones = new List<Zone>
+            {
+                new Zone { Id = 1, Name = "Zone 1", Points = "0,0;100,0;100,100;0,100" },
+                new Zone { Id = 2, Name = "Zone 2", Points = "100,100;200,100;200,200;100,200" }
+            };
+
+            return Task.FromResult(new FloorMapDetailsDTO
+            {
+                Id = floorMap.Id,
+                Name = floorMap.Name,
+                ImageBase64 = floorMap.ImageBase64,
+                Assets = assets,
+                Zones = zones
+            });
+        }
+
+        public Task<IEnumerable<FloorMapDetailsDTO>> GetAllFloorMaps()
+        {
+            var floorMaps = _floorMaps.Select(floorMap => new FloorMapDetailsDTO
+            {
+                Id = floorMap.Id,
+                Name = floorMap.Name,
+                ImageBase64 = floorMap.ImageBase64,
+                Assets = new List<Asset>
+                {
+                    new Asset { Id = 1, Name = "Mock Asset 1", X = 100, Y = 200 },
+                    new Asset { Id = 2, Name = "Mock Asset 2", X = 150, Y = 250 }
+                },
+                Zones = new List<Zone>
+                {
+                    new Zone { Id = 1, Name = "Mock Zone 1", Points = "0,0;100,0;100,100;0,100" },
+                    new Zone { Id = 2, Name = "Mock Zone 2", Points = "100,100;200,100;200,200;100,200" }
+                }
+            });
+
+            return Task.FromResult(floorMaps);
         }
 
         public FloorMap GetFloorMapById(int id)

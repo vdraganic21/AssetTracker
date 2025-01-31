@@ -7,6 +7,6 @@ namespace RESTservice_API.Interfaces
     {
         Task<AssetZoneHistoryDTO> CreateZoneEntryAsync(int assetId, int zoneId, DateTime enterTime);
         Task<AssetZoneHistoryDTO?> RecordZoneExitAsync(int assetId, int zoneId, DateTime exitTime);
-        Task<IEnumerable<AssetZoneHistoryDTO>> GetAssetZoneHistoryAsync(int assetId, int? zoneId = null);
+        Task<IEnumerable<AssetZoneHistoryDTO>> GetAssetZoneHistoryAsync(AssetZoneHistoryQueryParams queryParams);
     }
 }

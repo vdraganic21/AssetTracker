@@ -1,5 +1,6 @@
 using RESTservice_API.Interfaces;
 using RESTservice_API.Models;
+using RESTservice_API.Models.DTOs;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
@@ -56,7 +57,13 @@ namespace RESTservice_API.Services
         private async Task<bool> WasAssetInZone(int assetId, int zoneId)
         {
             // Get the most recent history entry for this asset and zone
-            var history = (await _assetZoneHistoryRepository.GetAssetZoneHistoryAsync(assetId, zoneId))
+            var queryParams = new AssetZoneHistoryQueryParams
+            {
+                AssetId = assetId,
+                ZoneId = zoneId
+            };
+
+            var history = (await _assetZoneHistoryRepository.GetAssetZoneHistoryAsync(queryParams))
                 .OrderByDescending(h => h.EnterDateTime)
                 .FirstOrDefault();
 

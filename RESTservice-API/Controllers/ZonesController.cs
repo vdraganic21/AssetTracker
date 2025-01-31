@@ -4,7 +4,7 @@ using RESTservice_API.Models;
 
 namespace RESTservice_API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("zones")]
     [ApiController]
     public class ZonesController : ControllerBase
     {

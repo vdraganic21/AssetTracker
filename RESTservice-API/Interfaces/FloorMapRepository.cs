@@ -1,7 +1,10 @@
 using RESTservice_API.Models;
-using RESTservice_API.Data;
+using RESTservice_API.Models.DTOs;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using RESTservice_API.Interfaces;
+using RESTservice_API.Data;
 
 public class FloorMapRepository : IFloorMapRepository
 {
@@ -12,9 +15,51 @@ public class FloorMapRepository : IFloorMapRepository
         _context = context;
     }
 
-    public IEnumerable<FloorMap> GetAllFloorMaps()
+    public async Task<IEnumerable<FloorMapDetailsDTO>> GetAllFloorMaps()
     {
-        return _context.FloorMaps.ToList();
+        var floorMaps = await _context.FloorMaps
+            .Include(f => f.Assets)
+            .Include(f => f.Zones)
+            .ToListAsync();
+
+        return floorMaps.Select(floorMap => new FloorMapDetailsDTO
+        {
+            Id = floorMap.Id,
+            Name = floorMap.Name,
+            ImageBase64 = floorMap.ImageBase64,
+            Assets = floorMap.Assets?.ToList(),
+            Zones = floorMap.Zones?.Select(z => new Zone 
+            { 
+                Id = z.Id, 
+                Name = z.Name, 
+                Points = z.Points 
+            }).ToList()
+        });
+    }
+
+    public async Task<FloorMapDetailsDTO> GetFloorMapDetailsAsync(int id)
+    {
+        var floorMap = await _context.FloorMaps
+            .Include(f => f.Assets)
+            .Include(f => f.Zones)
+            .FirstOrDefaultAsync(f => f.Id == id);
+
+        if (floorMap == null)
+            return null;
+
+        return new FloorMapDetailsDTO
+        {
+            Id = floorMap.Id,
+            Name = floorMap.Name,
+            ImageBase64 = floorMap.ImageBase64,
+            Assets = floorMap.Assets?.ToList(),
+            Zones = floorMap.Zones?.Select(z => new Zone 
+            { 
+                Id = z.Id, 
+                Name = z.Name, 
+                Points = z.Points 
+            }).ToList()
+        };
     }
 
     public FloorMap GetFloorMapById(int id)
