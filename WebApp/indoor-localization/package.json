@@ -17,7 +17,6 @@
     "@synergy-design-system/tokens": "^2.13.0",
     "konva": "^9.3.18",
     "react": "^19.0.0",
-    "react-datepicker": "^7.5.0",
     "react-dom": "^19.0.0",
     "react-konva": "^19.0.1",
     "react-router-dom": "^6.28.0",

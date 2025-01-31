@@ -1,6 +1,4 @@
 import { useState } from "react";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import "./ZoneRetentionTimeReport.css";
 import {
   SynButton,
@@ -122,12 +120,7 @@ function ZoneRetentionTimeReport() {
             </div>
             <div className="input-group">
               <span className="input-label">Retention Threshold</span>
-              <TimePicker
-                value={threshold}
-                onChange={handleThresholdChange}
-                hourOptions={hourOptions}
-                minuteOptions={minuteOptions}
-              ></TimePicker>
+              <div>picker module here</div>
             </div>
           </div>
           <div>
@@ -149,39 +142,12 @@ function ZoneRetentionTimeReport() {
             </SynSelect>
             <span className="input-label">From</span>
             <div className="picker-row">
-              <TimePicker
-                value={threshold}
-                onChange={handleThresholdChange}
-                hourOptions={hourOptions}
-                minuteOptions={minuteOptions}
-              ></TimePicker>
-              <DatePicker
-                selected={customRange.to}
-                onChange={(date) =>
-                  setCustomRange({ ...customRange, to: date })
-                }
-                placeholderText="Select Date"
-                className="date-picker"
-              />
+              <div>picker module here</div>
             </div>
             <span className="input-label">To</span>
             <div className="picker-row">
-              <TimePicker
-                value={threshold}
-                onChange={handleThresholdChange}
-                hourOptions={hourOptions}
-                minuteOptions={minuteOptions}
-              ></TimePicker>
-              <div className="date-picker">
-                <DatePicker
-                  selected={customRange.to}
-                  onChange={(date) =>
-                    setCustomRange({ ...customRange, to: date })
-                  }
-                  placeholderText="Select Date"
-                  className="date-picker"
-                />
-              </div>
+              <div>picker module here</div>
+              <div className="date-picker"></div>
             </div>
           </div>
           <div className="button-group">
