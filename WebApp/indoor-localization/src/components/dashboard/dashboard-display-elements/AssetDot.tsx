@@ -13,13 +13,12 @@ function AssetDot({
 	id: number;
 }) {
 	const dotWidth = 15 / scale;
-	const isHighlighted = HighlightedAssetService.getHighlightedAssetId() === id;
 
 	return (
 		<Circle
 			fill={"#0ca2eb"}
-			width={isHighlighted ? dotWidth * 1.5 : dotWidth}
-			height={isHighlighted ? dotWidth * 1.5 : dotWidth}
+			width={dotWidth}
+			height={dotWidth}
 			x={x}
 			y={y}
 			onClick={() => {

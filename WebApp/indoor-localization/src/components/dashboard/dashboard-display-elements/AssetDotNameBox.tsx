@@ -30,9 +30,9 @@ function AssetDotNameBox({
 				y={y - rectHeight - yOffset}
 				width={rectWidth}
 				height={rectHeight}
-				fill={"white"}
+				fill={isHighlighted ? "#0ca2eb" : "white"}
 				stroke={borderColor}
-				strokeWidth={isHighlighted ? 4 / scale : 2 / scale}
+				strokeWidth={2 / scale}
 				cornerRadius={99 / scale}
 				onClick={() => {
 					HighlightedAssetService.setHighlightedAssetId(id);
@@ -48,7 +48,7 @@ function AssetDotNameBox({
 				align="center"
 				verticalAlign="middle"
 				fontSize={textFontSize}
-				fill={"black"}
+				fill={isHighlighted ? "white" : "black"}
 				padding={0}
 				margin={0}
 				offsetY={yOffset}
