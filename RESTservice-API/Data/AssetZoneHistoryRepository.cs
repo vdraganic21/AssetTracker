@@ -79,14 +79,24 @@ namespace RESTservice_API.Data
                 query = query.Where(azh => azh.ZoneId == queryParams.ZoneId.Value);
             }
 
-            if (queryParams.StartTime.HasValue)
+            if (queryParams.EntryStartTime.HasValue)
             {
-                query = query.Where(azh => azh.EnterDateTime >= queryParams.StartTime.Value);
+                query = query.Where(azh => azh.EnterDateTime >= queryParams.EntryStartTime.Value);
             }
 
-            if (queryParams.EndTime.HasValue)
+            if (queryParams.EntryEndTime.HasValue)
             {
-                query = query.Where(azh => azh.ExitDateTime <= queryParams.EndTime.Value);
+                query = query.Where(azh => azh.EnterDateTime <= queryParams.EntryEndTime.Value);
+            }
+
+            if (queryParams.ExitStartTime.HasValue)
+            {
+                query = query.Where(azh => azh.ExitDateTime.HasValue && azh.ExitDateTime >= queryParams.ExitStartTime.Value);
+            }
+
+            if (queryParams.ExitEndTime.HasValue)
+            {
+                query = query.Where(azh => azh.ExitDateTime.HasValue && azh.ExitDateTime <= queryParams.ExitEndTime.Value);
             }
 
             if (queryParams.MinRetentionTime.HasValue)
