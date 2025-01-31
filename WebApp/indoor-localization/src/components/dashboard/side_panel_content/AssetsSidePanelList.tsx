@@ -1,4 +1,4 @@
-import { SynDivider } from "@synergy-design-system/react";
+import { SynDivider, SynIcon } from "@synergy-design-system/react";
 import { Asset } from "../../../entities/Asset";
 import "./SidePanelList.css";
 
@@ -15,9 +15,11 @@ function AssetsSidePanelList({ assets }: { assets: Asset[] }) {
 			<SynDivider />
 			{assets.map((asset, index) => (
 				<>
-					<p className="side-panel-item-list" key={index}>
-						{asset.name}
-					</p>
+					<div className="side-panel-item-list">
+						<p key={index}>{asset.name}</p>
+						<SynIcon library="fa" name="far-eye"></SynIcon>
+					</div>
+
 					<SynDivider />
 				</>
 			))}
