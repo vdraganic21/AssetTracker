@@ -15,6 +15,7 @@
     "@synergy-design-system/react": "^2.11.8",
     "@synergy-design-system/styles": "^1.4.0",
     "@synergy-design-system/tokens": "^2.13.0",
+    "axios": "^1.7.9",
     "konva": "^9.3.18",
     "react": "^19.0.0",
     "react-datepicker": "^7.5.0",
