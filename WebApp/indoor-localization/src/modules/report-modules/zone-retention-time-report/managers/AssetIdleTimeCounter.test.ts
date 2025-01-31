@@ -96,7 +96,7 @@ describe('AssetIdleTimeCounter', () => {
                 new AssetPositionHistoryLog(4, 1, 1, new Point(2, 3), new Date(2024, 0, 30, 14, 33, 0)), 
 
             ],
-            expectedAssetIdleTime: 1,
+            expectedAssetIdleTime: 60,
         },
         {
             description: 'should return idle time if dataset has idle time',
@@ -109,7 +109,7 @@ describe('AssetIdleTimeCounter', () => {
                 new AssetPositionHistoryLog(6, 1, 1, new Point(5, 5), new Date(2024, 0, 30, 14, 35, 0)), 
                 new AssetPositionHistoryLog(7, 1, 1, new Point(5, 3), new Date(2024, 0, 30, 14, 36, 0)), 
             ],
-            expectedAssetIdleTime: 3,
+            expectedAssetIdleTime: 180,
         },
         {
             description: 'should return decimal idle time if dataset has idle time',
@@ -120,7 +120,7 @@ describe('AssetIdleTimeCounter', () => {
                 new AssetPositionHistoryLog(4, 1, 1, new Point(2, 3), new Date(2024, 0, 30, 14, 33, 0)), 
 
             ],
-            expectedAssetIdleTime: 1.5,
+            expectedAssetIdleTime: 90,
         },        
     ])('$description', ({ dataset, expectedAssetIdleTime }) => {
         let manager = new AssetIdleTimeCounter(dataset);
@@ -172,7 +172,7 @@ describe('AssetIdleTimeCounter', () => {
                 new AssetPositionHistoryLog(6, 1, 1, new Point(1, 5), new Date(2024, 0, 30, 14, 35, 0)), 
             ],
             id: 1,
-            expectedFacilityIdleTime: 1,
+            expectedFacilityIdleTime: 60,
         }, 
         {
             description: 'should return idle time if dataset has idle time for facility',
@@ -185,7 +185,7 @@ describe('AssetIdleTimeCounter', () => {
                 new AssetPositionHistoryLog(6, 1, 1, new Point(1, 5), new Date(2024, 0, 30, 14, 35, 0)), 
             ],
             id: 1,
-            expectedFacilityIdleTime: 3,
+            expectedFacilityIdleTime: 180,
         },    
         {
             description: 'should return decimal idle time if dataset has idle time for facility',
@@ -198,7 +198,7 @@ describe('AssetIdleTimeCounter', () => {
                 new AssetPositionHistoryLog(6, 1, 1, new Point(1, 5), new Date(2024, 0, 30, 14, 35, 0)), 
             ],
             id: 1,
-            expectedFacilityIdleTime: 2.5,
+            expectedFacilityIdleTime: 150,
         },     
     ])('$description', ({ dataset, id, expectedFacilityIdleTime }) => {
         let manager = new AssetIdleTimeCounter(dataset);
