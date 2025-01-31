@@ -49,6 +49,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.8"
+  custom_report_module:
+    dependency: "direct main"
+    description:
+      path: "../modules/report_asset_idle_time_module"
+      relative: true
+    source: path
+    version: "1.0.0+1"
   fake_async:
     dependency: transitive
     description:
@@ -163,6 +170,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.9.0"
+  report_module_core:
+    dependency: "direct main"
+    description:
+      path: "../modules/report_module_core"
+      relative: true
+    source: path
+    version: "1.0.0+1"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -249,5 +263,5 @@ packages:
     source: hosted
     version: "1.1.0"
 sdks:
-  dart: ">=3.5.4 <4.0.0"
+  dart: ">=3.6.0 <4.0.0"
   flutter: ">=3.18.0-18.0.pre.54"

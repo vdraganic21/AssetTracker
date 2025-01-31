@@ -10,7 +10,7 @@ import 'package:custom_report_module/reports/asset_idle_time_report.dart';
 import 'domain/entities/facility.dart';
 
 void main() {
-  List<Asset> assets = AssetService.getAll();
+  Future<List<Asset>> assets = AssetService.getAll();
   ReportModulesService.registerModules([
     AssetIdleTimeReportModule(),
     // more modules here
