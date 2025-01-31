@@ -14,6 +14,11 @@ dependencies:
   cupertino_icons: ^1.0.8
   google_nav_bar: ^5.0.7
   http: ^1.2.2
+  custom_report_module:
+    path: ../modules/report_asset_idle_time_module
+  report_module_core:
+    path: ../modules/report_module_core
+
 
 dev_dependencies:
   flutter_test:
