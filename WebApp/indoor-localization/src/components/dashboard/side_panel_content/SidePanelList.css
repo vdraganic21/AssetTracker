@@ -1,6 +1,8 @@
 .side-panel-item-list{
     padding: var(--syn-spacing-medium);
     padding-left: var(--syn-spacing-x-large);
+    display: flex;
+    justify-content: space-between;
 }
 
 .no-items-message{

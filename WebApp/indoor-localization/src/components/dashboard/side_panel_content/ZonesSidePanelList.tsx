@@ -1,4 +1,4 @@
-import { SynDivider } from "@synergy-design-system/react";
+import { SynDivider, SynIcon } from "@synergy-design-system/react";
 import { Zone } from "../../../entities/Zone";
 import "./SidePanelList.css";
 
@@ -15,9 +15,10 @@ function ZonesSidePanelList({ zones }: { zones: Zone[] }) {
 			<SynDivider />
 			{zones.map((zone, index) => (
 				<>
-					<p className="side-panel-item-list" key={index}>
-						{zone.name}
-					</p>
+					<div className="side-panel-item-list">
+						<p key={index}>{zone.name}</p>
+						<SynIcon library="fa" name="far-eye"></SynIcon>
+					</div>
 					<SynDivider />
 				</>
 			))}
