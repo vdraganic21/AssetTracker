@@ -3,10 +3,12 @@ import SelectedFacilityService from "../../services/SelectedFacilityService";
 import DashboardSidePanel from "./DashboardSidePanel";
 import FloorMapDisplay from "./FloorMapDisplay";
 import FullPageNotification from "../common/FullPageNotification";
+import HighlightedAssetService from "../../services/HighlightedAssetService";
 
 function Dashboard() {
 	const selectedFacility = SelectedFacilityService.getSelectedFacility();
 	const navigate = useNavigate();
+	HighlightedAssetService.removeHighlightedAssetId();
 
 	if (!selectedFacility) {
 		return (
