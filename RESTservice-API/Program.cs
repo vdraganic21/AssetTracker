@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using RESTservice_API.Data;
 using RESTservice_API.Interfaces;
+using RESTservice_API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,10 @@ builder.Services.AddScoped<IAssetRepository, AssetRepository>();
 builder.Services.AddScoped<IPositionHistoryRepository, PositionHistoryRepository>();
 builder.Services.AddScoped<IFloorMapRepository, FloorMapRepository>();
 builder.Services.AddScoped<IZoneRepository, ZoneRepository>();
+builder.Services.AddScoped<IAssetZoneHistoryRepository, AssetZoneHistoryRepository>();
+
+// Register services
+builder.Services.AddScoped<AssetZoneTrackingService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

@@ -9,6 +9,7 @@ namespace RESTservice_API.Data
         public DbSet<PositionHistory> PositionHistories { get; set; }
         public DbSet<Zone> Zones { get; set; }
         public DbSet<FloorMap> FloorMaps { get; set; }
+        public DbSet<AssetZoneHistory> AssetZoneHistory { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options) { }
@@ -45,6 +46,15 @@ namespace RESTservice_API.Data
             modelBuilder.Entity<PositionHistory>().Property(ph => ph.X).HasColumnName("x");
             modelBuilder.Entity<PositionHistory>().Property(ph => ph.Y).HasColumnName("y");
             modelBuilder.Entity<PositionHistory>().Property(ph => ph.Timestamp).HasColumnName("datetime");
+
+            // Configure AssetZoneHistory
+            modelBuilder.Entity<AssetZoneHistory>().ToTable("assetzonehistory");
+            modelBuilder.Entity<AssetZoneHistory>().Property(azh => azh.Id).HasColumnName("id");
+            modelBuilder.Entity<AssetZoneHistory>().Property(azh => azh.AssetId).HasColumnName("assetid");
+            modelBuilder.Entity<AssetZoneHistory>().Property(azh => azh.ZoneId).HasColumnName("zoneid");
+            modelBuilder.Entity<AssetZoneHistory>().Property(azh => azh.EnterDateTime).HasColumnName("enterdatetime");
+            modelBuilder.Entity<AssetZoneHistory>().Property(azh => azh.ExitDateTime).HasColumnName("exitdatetime");
+            modelBuilder.Entity<AssetZoneHistory>().Property(azh => azh.RetentionTime).HasColumnName("retentiontime");
         }
     }
 }
