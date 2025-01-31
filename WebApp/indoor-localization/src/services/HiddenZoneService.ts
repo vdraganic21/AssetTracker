@@ -1,6 +1,11 @@
 import CookieService from "./CookieService";
 
 export default class HiddenZoneService {
+    static IsZoneHidden(zoneId: number) {
+        const hiddenZones = this.GetHiddenZones();
+        return hiddenZones.includes(zoneId);
+    }
+
     static ToggleZone(zoneId: number) {
         const hiddenZones = this.GetHiddenZones();
         const index = hiddenZones.indexOf(zoneId);

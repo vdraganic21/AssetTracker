@@ -1,6 +1,11 @@
 import CookieService from "./CookieService";
 
 export default class HiddenAssetsService {
+    static IsAssetHidden(assetId: number) {
+        const hiddenAssets = this.GetHiddenAssets();
+        return hiddenAssets.includes(assetId);
+    }
+
     static ToggleAsset(assetId: number) {
         const hiddenAssets = this.GetHiddenAssets();
         const index = hiddenAssets.indexOf(assetId);
