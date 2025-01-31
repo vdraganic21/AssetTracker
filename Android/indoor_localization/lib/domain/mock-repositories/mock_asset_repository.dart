@@ -5,12 +5,12 @@ class MockAssetRepository implements IAssetRepository {
   final List<Asset> _assets = [];
 
   @override
-  Asset? get(int id) {
+  Future<Asset?> get(int id) async {
     return _assets.firstWhere((asset) => asset.id == id);
   }
 
   @override
-  List<Asset> getAll() {
+  Future<List<Asset>> getAll() async {
     return _assets;
   }
 

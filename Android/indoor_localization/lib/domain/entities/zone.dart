@@ -4,26 +4,26 @@ import 'package:indoor_localization/domain/services/zone_service.dart';
 
 import 'asset.dart';
 import 'facility.dart';
-import 'point.dart';
-
 class Zone {
   int id;
   String name;
-  List<Point> points;
+  int x;
+  int y;
   int parentFacilityId;
   List<int> containedAssetsIds;
 
   Zone({
     required this.id,
     required this.name,
-    required this.points,
+    required this.x,
+    required this.y,
     required this.parentFacilityId,
     required this.containedAssetsIds,
   });
 
-  Facility? getParentFacility() {
-    updateData();
-    return FacilityService.get(parentFacilityId);
+  Future<Facility?> getParentFacility() async {
+    await updateData();
+    return await FacilityService.get(parentFacilityId);
   }
 
   List<Asset> getAssets() {
@@ -40,13 +40,14 @@ class Zone {
     return containedAssetsIds.contains(asset.id);
   }
 
-  void updateData() {
-    final updatedData = ZoneService.get(id);
+  Future<void> updateData() async {
+    final updatedData = await ZoneService.get(id);
     if (updatedData != null) {
       containedAssetsIds = updatedData.containedAssetsIds;
       name = updatedData.name;
       parentFacilityId = updatedData.parentFacilityId;
-      points = updatedData.points;
+      x = updatedData.x;
+      y = updatedData.y;
     }
   }
 }

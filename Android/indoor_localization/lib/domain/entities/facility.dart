@@ -1,8 +1,8 @@
-import 'package:indoor_localization/domain/entities/Asset.dart';
+import 'package:indoor_localization/domain/entities/asset.dart';
 import 'package:indoor_localization/domain/entities/zone.dart';
 import 'package:indoor_localization/domain/services/asset_service.dart';
-import 'package:indoor_localization/domain/services/facility_service.dart';
 import 'package:indoor_localization/domain/services/zone_service.dart';
+import 'package:indoor_localization/domain/services/facility_service.dart';
 
 class Facility {
   int id;
@@ -15,8 +15,10 @@ class Facility {
     required this.id,
     required this.name,
     required this.imageBase64,
-  })  : containedAssetsIds = [],
-        containedZonesIds = [];
+    List<int>? containedAssetsIds,
+    List<int>? containedZonesIds,
+  })  : containedAssetsIds = containedAssetsIds ?? [],
+        containedZonesIds = containedZonesIds ?? [];
 
   List<Asset> getAssets() {
     updateData();
@@ -41,13 +43,37 @@ class Facility {
     return containedAssetsIds.contains(asset.id);
   }
 
-  void updateData() {
-    final updatedData = FacilityService.get(id);
+  Future<void> updateData() async {
+    final updatedData = await FacilityService.get(id);
     if (updatedData != null) {
       containedAssetsIds = updatedData.containedAssetsIds;
       containedZonesIds = updatedData.containedZonesIds;
       imageBase64 = updatedData.imageBase64;
       name = updatedData.name;
     }
+  }
+
+
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'imageBase64': imageBase64,
+      'containedAssetsIds': containedAssetsIds,
+      'containedZonesIds': containedZonesIds,
+    };
+  }
+
+  factory Facility.fromJson(Map<String, dynamic> json) {
+    final rawBase64 = json['imageBase64'] as String? ?? '';
+    final cleanedBase64 = rawBase64.replaceFirst(RegExp(r'data:image/[^;]+;base64,'), '');
+    return Facility(
+      id: json['id'] ?? 0,
+      name: json['name'] ?? 'Unknown',
+      imageBase64: cleanedBase64,
+      containedAssetsIds: (json['containedAssetsIds'] as List?)?.map((e) => e as int).toList() ?? [],
+      containedZonesIds: (json['containedZonesIds'] as List?)?.map((e) => e as int).toList() ?? [],
+    );
   }
 }
