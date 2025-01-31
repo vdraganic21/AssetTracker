@@ -3,6 +3,10 @@
     padding-left: var(--syn-spacing-x-large);
 }
 
+.side-panel-facility-list{
+    padding: var(--syn-spacing-medium);
+}
+
 .no-items-message{
     font-size: var(--syn-font-size-x-medium);
     text-align: center;

@@ -32,7 +32,7 @@ function FacilitiesSidePanel() {
 				onSynInput={handleSearch}
 			/>
 			<SynDivider />
-			<div className="scrollable-list">
+			<div className="scrollable-list side-panel-facility-list">
 				<FacilityCardContainer facilities={filteredFacilities} />
 			</div>
 		</>
