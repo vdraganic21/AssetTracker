@@ -13,16 +13,6 @@ describe('AssetIdleTimeStatsManager', () => {
         expect(manager).not.toBeNull();
     });
 
-    it('should be instanced when given dataset', () => {
-        let dataset = [
-            new AssetPositionHistoryLog(1, 1, 1, new Point(0, 0), new Date(2024, 0, 30, 14, 30, 0)), 
-            new AssetPositionHistoryLog(2, 1, 1, new Point(0, 0), new Date(2024, 0, 30, 14, 30, 0)), 
-        ];
-        let manager = new AssetIdleTimeStatsManager(dataset);
-        
-        expect(manager).not.toBeNull();
-    });
-
     it.each([
         {
             description: 'should return 0 given empty dataset',
@@ -50,7 +40,7 @@ describe('AssetIdleTimeStatsManager', () => {
                 new AssetPositionHistoryLog(1, 1, 1, new Point(0, 0), new Date(2024, 0, 30, 14, 30, 0)), 
                 new AssetPositionHistoryLog(2, 1, 1, new Point(0, 0), new Date(2024, 0, 30, 14, 35, 0)), 
             ],
-            expectedMinIdleTime: 5
+            expectedMinIdleTime: 300
         },
         {
             description: 'should return smallest idle time for multiple different logs',
@@ -63,7 +53,7 @@ describe('AssetIdleTimeStatsManager', () => {
                 new AssetPositionHistoryLog(6, 2, 2, new Point(0, 0), new Date(2024, 0, 30, 14, 42, 0)), 
 
             ],
-            expectedMinIdleTime: 2
+            expectedMinIdleTime: 120
         },
     ])('$description', ({ dataset, expectedMinIdleTime }) => {
         let manager = new AssetIdleTimeStatsManager(dataset);
@@ -98,7 +88,7 @@ describe('AssetIdleTimeStatsManager', () => {
                 new AssetPositionHistoryLog(1, 1, 1, new Point(0, 0), new Date(2024, 0, 30, 14, 30, 0)), 
                 new AssetPositionHistoryLog(2, 1, 1, new Point(0, 0), new Date(2024, 0, 30, 14, 35, 0)), 
             ],
-            expectedMaxIdleTime: 5,
+            expectedMaxIdleTime: 300,
         },
         {
             description: 'should return largest idle time for multiple logs',
@@ -110,7 +100,7 @@ describe('AssetIdleTimeStatsManager', () => {
                 new AssetPositionHistoryLog(5, 2, 2, new Point(0, 0), new Date(2024, 0, 30, 14, 41, 0)), 
                 new AssetPositionHistoryLog(6, 2, 2, new Point(0, 0), new Date(2024, 0, 30, 14, 42, 0)), 
             ],
-            expectedMaxIdleTime: 10,
+            expectedMaxIdleTime: 600,
         },
     ])('$description', ({ dataset, expectedMaxIdleTime }) => {
         let manager = new AssetIdleTimeStatsManager(dataset);
@@ -145,7 +135,7 @@ describe('AssetIdleTimeStatsManager', () => {
                 new AssetPositionHistoryLog(1, 1, 1, new Point(0, 0), new Date(2024, 0, 30, 14, 30, 0)), 
                 new AssetPositionHistoryLog(2, 1, 1, new Point(0, 0), new Date(2024, 0, 30, 14, 35, 0)), 
             ],
-            expectedAvgIdleTime: 5,
+            expectedAvgIdleTime: 300,
         },
         {
             description: 'should return average idle time for multiple logs',
@@ -157,7 +147,7 @@ describe('AssetIdleTimeStatsManager', () => {
                 new AssetPositionHistoryLog(5, 2, 2, new Point(0, 0), new Date(2024, 0, 30, 14, 41, 0)), 
                 new AssetPositionHistoryLog(6, 2, 2, new Point(0, 0), new Date(2024, 0, 30, 14, 42, 0)), 
             ],
-            expectedAvgIdleTime: 6,
+            expectedAvgIdleTime: 360,
         },
     ])('$description', ({ dataset, expectedAvgIdleTime }) => {
         let manager = new AssetIdleTimeStatsManager(dataset);
