@@ -1,16 +1,21 @@
 using Microsoft.AspNetCore.Mvc;
 using RESTservice_API.Data;
 using RESTservice_API.Models;
+using RESTservice_API.Services;
 
 [ApiController]
 [Route("assetPositionHistory")]
 public class PositionHistoryController : ControllerBase
 {
     private readonly IPositionHistoryRepository _repository;
+    private readonly AssetZoneTrackingService _zoneTrackingService;
 
-    public PositionHistoryController(IPositionHistoryRepository repository)
+    public PositionHistoryController(
+        IPositionHistoryRepository repository,
+        AssetZoneTrackingService zoneTrackingService)
     {
         _repository = repository;
+        _zoneTrackingService = zoneTrackingService;
     }
 
     [HttpGet]
@@ -29,11 +34,14 @@ public class PositionHistoryController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult CreatePositionHistory([FromBody] PositionHistory positionHistory)
+    public async Task<IActionResult> CreatePositionHistory([FromBody] PositionHistory positionHistory)
     {
         try
         {
             _repository.AddPositionHistory(positionHistory);
+            
+            await _zoneTrackingService.ProcessPositionUpdate(positionHistory);
+            
             return CreatedAtAction(nameof(GetPositionHistories), new { id = positionHistory.Id }, positionHistory);
         }
         catch (Exception ex)
