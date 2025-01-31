@@ -27,7 +27,7 @@ function AssetsSidePanelList({ assets }: { assets: Asset[] }) {
 			<SynDivider />
 			{assets.map((asset, index) => (
 				<div key={index} className="side-panel-item-list">
-					<p>{asset.name}</p>
+					<p className="unselectable">{asset.name}</p>
 					<SynIcon
 						library="fa"
 						name={

@@ -27,7 +27,7 @@ function ZonesSidePanelList({ zones }: { zones: Zone[] }) {
 			<SynDivider />
 			{zones.map((zone, index) => (
 				<div key={index} className="side-panel-item-list">
-					<p>{zone.name}</p>
+					<p className="unselectable">{zone.name}</p>
 					<SynIcon
 						library="fa"
 						name={
