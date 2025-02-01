@@ -2,7 +2,7 @@ import { AssetZoneHistoryLog } from "../../../../entities/AssetZoneHistoryLog";
 import ZoneRetentionTimeManager from "./ZoneRetentionTimeManager";
 
 describe('ZoneRetentionTimeManager', () => {
-    it('ept lishould accst of zone retention logs in constructor', () => {
+    it('should be instanced when given dataset', () => {
         let dataset = [
             new AssetZoneHistoryLog(1, 1, 1, new Date(), new Date(), 5), 
             new AssetZoneHistoryLog(2, 2, 2, new Date(), new Date(), 5)
