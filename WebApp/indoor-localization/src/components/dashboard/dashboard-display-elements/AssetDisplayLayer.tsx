@@ -18,7 +18,7 @@ function AssetDisplayLayer({
 		<>
 			<Layer scale={{ x: scale, y: scale }}>
 				{assets.map((asset, index) => {
-					const assetPosition = asset.GetPosition();
+					const assetPosition = asset.position;
 					return (
 						<AssetDot
 							key={index}
@@ -31,7 +31,7 @@ function AssetDisplayLayer({
 			</Layer>
 			<Layer scale={{ x: scale, y: scale }}>
 				{assets.map((asset, index) => {
-					const assetPosition = asset.GetPosition();
+					const assetPosition = asset.position;
 					return (
 						<AssetDotNameBox
 							key={index}
