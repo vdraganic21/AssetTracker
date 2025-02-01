@@ -17,6 +17,15 @@ namespace AiR_Simulator.DataAccess
         public string Name { get; set; }
         public string ImageBase64 { get; set; }
         public List<AssetJsonObject> Assets { get; set; }
+        public List<ZoneJsonObject> Zones { get; set; }
+    }
+
+    public class ZoneJsonObject
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public int FloorMapId { get; set; }
+        public string Points { get; set; }
     }
 
     public class AssetJsonObject
