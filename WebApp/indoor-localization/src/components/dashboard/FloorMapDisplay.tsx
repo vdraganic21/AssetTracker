@@ -20,7 +20,7 @@ function FloorMapDisplay({ facility }: { facility: Facility }) {
 	const [image] = useImage(facility.imageBase64);
 	const [imageScale, setImageScale] = useState(1);
 	const [isGridVisible, setIsGridVisible] = useState(false);
-	const [isZonesVisible, setZonesVisible] = useState(false);
+	const [isZonesVisible, setZonesVisible] = useState(true);
 	const scale = imageScale * (zoomLevel / 100);
 	const refreshIntervalMillis = 500;
 
