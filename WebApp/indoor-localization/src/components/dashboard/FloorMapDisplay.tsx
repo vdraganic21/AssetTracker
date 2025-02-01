@@ -8,11 +8,13 @@ import Grid from "./dashboard-display-elements/Grid";
 import { Facility } from "../../entities/Facility";
 import AssetDispalyLayer from "./dashboard-display-elements/AssetDisplayLayer";
 import ZonesDisplayLayer from "./dashboard-display-elements/ZonesDisplayLayer";
+import { Zone } from "../../entities/Zone";
+import { Asset } from "../../entities/Asset";
 
 function FloorMapDisplay({ facility }: { facility: Facility }) {
 	const stageRef = useRef<Konva.Stage>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
-	const [assets, setAssets] = useState(facility.GetAssets());
+	const [assets, setAssets] = useState<Asset[]>([]);
 
 	const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
 	const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
@@ -25,8 +27,8 @@ function FloorMapDisplay({ facility }: { facility: Facility }) {
 	const refreshIntervalMillis = 500;
 
 	useEffect(() => {
-		const interval = setInterval(() => {
-			const updatedAssets = facility.GetAssets();
+		const interval = setInterval(async () => {
+			const updatedAssets = await facility.GetAssets();
 			setAssets(updatedAssets);
 		}, refreshIntervalMillis);
 
@@ -44,6 +46,17 @@ function FloorMapDisplay({ facility }: { facility: Facility }) {
 			setImageScale(initialImageScale);
 		}
 	}, [image, stageSize]);
+
+	const [zones, setZones] = useState<Zone[]>([]);
+
+	useEffect(() => {
+		const fetchZones = async () => {
+			const fetchedZones = await facility.GetZones();
+			setZones(fetchedZones);
+		};
+
+		fetchZones();
+	}, [facility]);
 
 	const resizeStage = () => {
 		if (containerRef.current) {
@@ -155,7 +168,7 @@ function FloorMapDisplay({ facility }: { facility: Facility }) {
 					</Layer>
 					{isZonesVisible && (
 						<ZonesDisplayLayer
-							zones={facility.GetZones()}
+							zones={zones}
 							scale={scale}
 							x={(stageSize.width - imageSize.width * imageScale) / 2}
 							y={
