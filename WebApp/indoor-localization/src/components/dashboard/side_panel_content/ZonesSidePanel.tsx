@@ -3,17 +3,29 @@ import { useEffect, useState } from "react";
 import { SynInputEvent } from "@synergy-design-system/react/components/checkbox.js";
 import ZonesSidePanelList from "./ZonesSidePanelList";
 import SelectedFacilityService from "../../../services/SelectedFacilityService";
+import { Zone } from "../../../entities/Zone";
 
 function ZonesSidePanel() {
-	const zones = SelectedFacilityService.getSelectedFacility()?.GetZones() || [];
-
+	const [zones, setZones] = useState<Zone[]>([]);
 	const [searchTerm, setSearchTerm] = useState("");
-	const [filteredZones, setFilteredZones] = useState(zones);
+	const [filteredZones, setFilteredZones] = useState<Zone[]>([]);
 
 	const handleSearch = (event: SynInputEvent) => {
 		const term = (event.target as HTMLInputElement).value;
 		setSearchTerm(term);
 	};
+
+	const fetchZones = async () => {
+		const facility = await SelectedFacilityService.getSelectedFacility();
+		if (facility) {
+			const fetchedZones = await facility.GetZones();
+			setZones(fetchedZones);
+		}
+	};
+
+	useEffect(() => {
+		fetchZones();
+	}, []);
 
 	useEffect(() => {
 		let filtered = zones.filter((zone) =>
@@ -23,7 +35,7 @@ function ZonesSidePanel() {
 		filtered = filtered.sort((a, b) => a.name.localeCompare(b.name));
 
 		setFilteredZones(filtered);
-	}, [searchTerm]);
+	}, [searchTerm, zones]);
 
 	return (
 		<>
