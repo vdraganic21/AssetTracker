@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:indoor_localization/presentation/dashboard_page/grid_button.dart';
-import '../../config/app_colors.dart';
-import '../facilities_page/facilities_page.dart';
-import '../assets_page/assets_page.dart';
-import '../reports_page/reports_page.dart';
-import 'floor_map_widget.dart';
-import '../../domain/entities/asset.dart';
-import '../../domain/entities/facility.dart';
+import 'package:indoor_localization/config/app_colors.dart';
+import 'package:indoor_localization/presentation/facilities_page/facilities_page.dart';
+import 'package:indoor_localization/presentation/assets_page/assets_page.dart';
+import 'package:indoor_localization/presentation/reports_page/reports_page.dart';
+import 'package:indoor_localization/presentation/dashboard_page/floor_map_widget.dart';
+import 'package:indoor_localization/domain/entities/asset.dart';
+import 'package:indoor_localization/domain/entities/facility.dart';
 import 'package:indoor_localization/presentation/dashboard_page/refresh_button.dart';
+import 'package:indoor_localization/presentation/dashboard_page/facility_selector_button.dart';
 
 class DashboardPage extends StatefulWidget {
   final List<Asset> assets;
@@ -100,17 +101,75 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 }
 
-class DashboardContent extends StatelessWidget {
+class DashboardContent extends StatefulWidget {
+  @override
+  State<DashboardContent> createState() => _DashboardContentState();
+}
+
+class _DashboardContentState extends State<DashboardContent> {
+  Facility? _selectedFacility;
+  final GlobalKey<FloorMapWidgetState> _floorMapKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final dashboardPage = context.findAncestorWidgetOfExactType<DashboardPage>();
+      final facilities = dashboardPage?.facilities ?? [];
+      if (facilities.isNotEmpty && _selectedFacility == null) {
+        setState(() {
+          _selectedFacility = facilities.first;
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final dashboardPage = context.findAncestorWidgetOfExactType<DashboardPage>();
+    final facilities = dashboardPage?.facilities ?? [];
+    final assets = dashboardPage?.assets ?? [];
+
     return Stack(
       children: [
-        FloorMapWidget(), // Main content
-        RefreshButton(),
-        GridButton()
+        if (_selectedFacility != null)
+          FloorMapWidget(
+            key: _floorMapKey,
+            facility: _selectedFacility!,
+            assets: assets.where((asset) => asset.floorMapId == _selectedFacility!.id).toList(),
+          ),
+        Positioned(
+          top: 16,
+          right: 16,
+          child: GridButton(
+            onPressed: () {
+              _floorMapKey.currentState?.toggleGrid();
+            },
+          ),
+        ),
+        Positioned(
+          bottom: 16,
+          left: 16,
+          child: RefreshButton(
+            onPressed: () {
+              _floorMapKey.currentState?.resetScale();
+            },
+          ),
+        ),
+        Positioned(
+          bottom: 16,
+          right: 16,
+          child: FacilitySelectorButton(
+            selectedFacility: _selectedFacility,
+            facilities: facilities,
+            onFacilityChanged: (facility) {
+              setState(() {
+                _selectedFacility = facility;
+              });
+            },
+          ),
+        ),
       ],
     );
   }
 }
-
-
