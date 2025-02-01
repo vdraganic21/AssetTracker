@@ -169,7 +169,7 @@ function ZoneRetentionTimeReport() {
                     min="0"
                     max="59"
                     value={minutes}
-                    onFocus={handleMinutesChange}
+                    onFocus={handleFocusMinutes}
                     onChange={(e) => handleMinutesChange(e)}
                   />
                 </div>
