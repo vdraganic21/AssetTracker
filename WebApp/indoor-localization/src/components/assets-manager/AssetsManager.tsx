@@ -16,8 +16,6 @@ import {
 } from "@synergy-design-system/react/components/checkbox.js";
 import { useNavigate } from "react-router-dom";
 
-const assets = AssetService.GetAll();
-
 const sortOptions = [
 	{ name: "Name - asc", value: "nameAsc" },
 	{ name: "Name - desc", value: "nameDesc" },
@@ -30,13 +28,20 @@ const sortOptions = [
 function AssetsManager() {
 	const navigate = useNavigate();
 	const [searchTerm, setSearchTerm] = useState("");
-	const [sortedAssets, setSortedAssets] = useState(assets);
+	const [sortedAssets, setSortedAssets] = useState<any[]>([]);
 	const [filterIndex, setFilterIndex] = useState(0);
+
+	useEffect(() => {
+		const fetchAssets = async () => {
+			const assets = await AssetService.GetAll();
+			applyFilterAndSort(searchTerm, filterIndex, assets || []);
+		};
+		fetchAssets();
+	}, []);
 
 	const handleSearch = (event: SynInputEvent) => {
 		const term = (event.target as HTMLInputElement).value;
 		setSearchTerm(term);
-
 		applyFilterAndSort(term, filterIndex);
 	};
 
@@ -46,18 +51,29 @@ function AssetsManager() {
 
 	const handleFilterChange = (event: SynChangeEvent) => {
 		const selectedValue = (event.target as HTMLInputElement).value;
-
 		const selectedIndex = sortOptions.findIndex(
 			(option) => option.value === selectedValue
 		);
 		setFilterIndex(selectedIndex);
-
 		applyFilterAndSort(searchTerm, selectedIndex);
 	};
 
-	const applyFilterAndSort = (term: string, sortIndex: number) => {
+	const applyFilterAndSort = async (
+		term: string,
+		sortIndex: number,
+		assetsData: any[] = []
+	) => {
+		const assets = assetsData.length ? assetsData : await AssetService.GetAll();
 		let filteredAssets = assets.filter((asset) =>
 			asset.name.toLowerCase().includes(term.toLowerCase())
+		);
+
+		filteredAssets = await Promise.all(
+			filteredAssets.map(async (asset) => ({
+				...asset,
+				facilityName: (await asset.GetCurrentFacility())?.name ?? "-",
+				zoneName: (await asset.GetCurrentZones())[0]?.name ?? "-",
+			}))
 		);
 
 		switch (sortOptions[sortIndex]?.value) {
@@ -68,36 +84,20 @@ function AssetsManager() {
 				filteredAssets.sort((a, b) => b.name.localeCompare(a.name));
 				break;
 			case "facilityAsc":
-				filteredAssets.sort(
-					(a, b) =>
-						a
-							.GetCurrentFacility()
-							?.name?.localeCompare(b.GetCurrentFacility()?.name || "") || 0
+				filteredAssets.sort((a, b) =>
+					a.facilityName.localeCompare(b.facilityName)
 				);
 				break;
 			case "facilityDesc":
-				filteredAssets.sort(
-					(a, b) =>
-						b
-							.GetCurrentFacility()
-							?.name?.localeCompare(a.GetCurrentFacility()?.name || "") || 0
+				filteredAssets.sort((a, b) =>
+					b.facilityName.localeCompare(a.facilityName)
 				);
 				break;
 			case "zoneAsc":
-				filteredAssets.sort(
-					(a, b) =>
-						a
-							.GetCurrentFacility()
-							?.name?.localeCompare(b.GetCurrentFacility()?.name || "") || 0
-				);
+				filteredAssets.sort((a, b) => a.zoneName.localeCompare(b.zoneName));
 				break;
 			case "zoneDesc":
-				filteredAssets.sort(
-					(a, b) =>
-						b
-							.GetCurrentFacility()
-							?.name?.localeCompare(a.GetCurrentFacility()?.name || "") || 0
-				);
+				filteredAssets.sort((a, b) => b.zoneName.localeCompare(a.zoneName));
 				break;
 			default:
 				break;
@@ -105,10 +105,6 @@ function AssetsManager() {
 
 		setSortedAssets(filteredAssets);
 	};
-
-	useEffect(() => {
-		applyFilterAndSort(searchTerm, filterIndex);
-	}, []);
 
 	return (
 		<>
