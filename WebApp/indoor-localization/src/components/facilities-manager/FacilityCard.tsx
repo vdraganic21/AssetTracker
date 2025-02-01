@@ -6,15 +6,15 @@ import SelectedFacilityService from "../../services/SelectedFacilityService";
 
 function FacilityCard({ facility }: { facility: Facility }) {
 	const navigate = useNavigate();
-	const handleClick = () => {
-		SelectedFacilityService.setSelectedFacilityId(facility.id);
+	const handleClick = async () => {
+		await SelectedFacilityService.setSelectedFacilityId(facility.id);
 		navigate("/");
 	};
 
 	return (
 		<div className="facility-card">
 			<div className="facility-card-image unselectable" onClick={handleClick}>
-				<img src={facility.imageBase64} alt={facility.name + "floor map"} />
+				<img src={facility.imageBase64} alt={facility.name + " floor map"} />
 			</div>
 			<div className="facility-card-title unselectable" onClick={handleClick}>
 				{facility.name}

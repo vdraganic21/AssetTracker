@@ -12,13 +12,19 @@ function Dashboard() {
 	);
 	const navigate = useNavigate();
 
-	useEffect(() => {
-		const fetchSelectedFacility = async () => {
-			const facility = await SelectedFacilityService.getSelectedFacility();
-			setSelectedFacility(facility);
-		};
+	const fetchSelectedFacility = async () => {
+		const facility = await SelectedFacilityService.getSelectedFacility();
+		setSelectedFacility(facility);
+	};
 
+	useEffect(() => {
 		fetchSelectedFacility();
+
+		const intervalId = setInterval(() => {
+			fetchSelectedFacility();
+		}, 500);
+
+		return () => clearInterval(intervalId);
 	}, []);
 
 	if (!selectedFacility) {
@@ -36,8 +42,8 @@ function Dashboard() {
 
 	return (
 		<div className="content">
-			<DashboardSidePanel></DashboardSidePanel>
-			<FloorMapDisplay facility={selectedFacility}></FloorMapDisplay>
+			<DashboardSidePanel />
+			<FloorMapDisplay facility={selectedFacility} />
 		</div>
 	);
 }
