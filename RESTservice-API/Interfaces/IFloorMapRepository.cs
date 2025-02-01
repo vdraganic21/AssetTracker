@@ -1,11 +1,13 @@
 using RESTservice_API.Models;
+using RESTservice_API.Models.DTOs;
 
-namespace RESTservice_API.Data
+namespace RESTservice_API.Interfaces
 {
     public interface IFloorMapRepository
     {
-        IEnumerable<FloorMap> GetAllFloorMaps();
+        Task<IEnumerable<FloorMapDetailsDTO>> GetAllFloorMaps();
         FloorMap GetFloorMapById(int id);
+        Task<FloorMapDetailsDTO> GetFloorMapDetailsAsync(int id);
         void AddFloorMap(FloorMap floorMap);
         void UpdateFloorMap(FloorMap floorMap);
         void DeleteFloorMap(int id);

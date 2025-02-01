@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
-using RESTservice_API.Interfaces;
 using RESTservice_API.Models;
+using RESTservice_API.Interfaces;
+using RESTservice_API.Models.DTOs;
 
 namespace RESTservice_API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("assetZoneHistory")]
     [ApiController]
     public class AssetZoneHistoryController : ControllerBase
     {
@@ -15,51 +16,52 @@ namespace RESTservice_API.Controllers
             _assetZoneHistoryRepository = assetZoneHistoryRepository;
         }
 
-        [HttpPost("entry")]
-        public async Task<ActionResult<AssetZoneHistory>> RecordZoneEntry([FromBody] AssetZoneEntry entry)
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<AssetZoneHistoryDTO>>> GetHistory(
+            [FromQuery] int? assetId = null,
+            [FromQuery] int? zoneId = null,
+            [FromQuery] string? entryStartTime = null,
+            [FromQuery] string? entryEndTime = null,
+            [FromQuery] string? exitStartTime = null,
+            [FromQuery] string? exitEndTime = null,
+            [FromQuery] int? minRetentionTime = null,
+            [FromQuery] int? maxRetentionTime = null)
         {
-            var result = await _assetZoneHistoryRepository.CreateZoneEntryAsync(
-                entry.AssetId,
-                entry.ZoneId,
-                entry.EnterTime
-            );
-            return Ok(result);
-        }
+            var queryParams = new AssetZoneHistoryQueryParams
+            {
+                AssetId = assetId,
+                ZoneId = zoneId,
+                MinRetentionTime = minRetentionTime,
+                MaxRetentionTime = maxRetentionTime
+            };
 
-        [HttpPost("exit")]
-        public async Task<ActionResult<AssetZoneHistory>> RecordZoneExit([FromBody] AssetZoneExit exit)
-        {
-            var result = await _assetZoneHistoryRepository.RecordZoneExitAsync(
-                exit.AssetId,
-                exit.ZoneId,
-                exit.ExitTime
-            );
+            // Parse datetime strings with flexible formats and convert to UTC
+            if (!string.IsNullOrEmpty(entryStartTime) && 
+                DateTimeOffset.TryParse(entryStartTime, out var parsedEntryStartTime))
+            {
+                queryParams.EntryStartTime = parsedEntryStartTime.UtcDateTime;
+            }
 
-            if (result == null)
-                return NotFound();
+            if (!string.IsNullOrEmpty(entryEndTime) && 
+                DateTimeOffset.TryParse(entryEndTime, out var parsedEntryEndTime))
+            {
+                queryParams.EntryEndTime = parsedEntryEndTime.UtcDateTime;
+            }
 
-            return Ok(result);
-        }
+            if (!string.IsNullOrEmpty(exitStartTime) && 
+                DateTimeOffset.TryParse(exitStartTime, out var parsedExitStartTime))
+            {
+                queryParams.ExitStartTime = parsedExitStartTime.UtcDateTime;
+            }
 
-        [HttpGet("{assetId}")]
-        public async Task<ActionResult<IEnumerable<AssetZoneHistory>>> GetAssetHistory(int assetId, [FromQuery] int? zoneId = null)
-        {
-            var history = await _assetZoneHistoryRepository.GetAssetZoneHistoryAsync(assetId, zoneId);
+            if (!string.IsNullOrEmpty(exitEndTime) && 
+                DateTimeOffset.TryParse(exitEndTime, out var parsedExitEndTime))
+            {
+                queryParams.ExitEndTime = parsedExitEndTime.UtcDateTime;
+            }
+
+            var history = await _assetZoneHistoryRepository.GetAssetZoneHistoryAsync(queryParams);
             return Ok(history);
         }
-    }
-
-    public class AssetZoneEntry
-    {
-        public int AssetId { get; set; }
-        public int ZoneId { get; set; }
-        public DateTime EnterTime { get; set; }
-    }
-
-    public class AssetZoneExit
-    {
-        public int AssetId { get; set; }
-        public int ZoneId { get; set; }
-        public DateTime ExitTime { get; set; }
     }
 }

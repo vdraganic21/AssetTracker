@@ -1,16 +1,22 @@
 using Microsoft.AspNetCore.Mvc;
 using RESTservice_API.Data;
 using RESTservice_API.Models;
+using RESTservice_API.Services;
+using RESTservice_API.Models.DTOs;
 
 [ApiController]
 [Route("assets")]
 public class AssetsController : ControllerBase
 {
     private readonly IAssetRepository _repository;
+    private readonly AssetZoneTrackingService _zoneTrackingService;
 
-    public AssetsController(IAssetRepository repository)
+    public AssetsController(
+        IAssetRepository repository,
+        AssetZoneTrackingService zoneTrackingService)
     {
         _repository = repository;
+        _zoneTrackingService = zoneTrackingService;
     }
 
     [HttpGet]
@@ -66,17 +72,32 @@ public class AssetsController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public IActionResult UpdateAsset(int id, [FromBody] Asset updatedAsset)
+    public async Task<IActionResult> UpdateAsset(int id, [FromBody] Asset updatedAsset)
     {
         try
         {
             var asset = _repository.GetAssetById(id);
             if (asset == null) return NotFound($"Asset with ID {id} not found.");
 
+            // Create a position history entry for zone tracking
+            var positionUpdate = new PositionHistory
+            {
+                AssetId = id,
+                X = updatedAsset.X,
+                Y = updatedAsset.Y,
+                FloorMapId = updatedAsset.FloorMapId,
+                Timestamp = DateTime.UtcNow
+            };
+
+            // Process zone tracking
+            await _zoneTrackingService.ProcessPositionUpdate(positionUpdate);
+
+            // Update asset properties
             asset.Name = updatedAsset.Name;
             asset.X = updatedAsset.X;
             asset.Y = updatedAsset.Y;
             asset.Active = updatedAsset.Active;
+            asset.FloorMapId = updatedAsset.FloorMapId;
 
             _repository.SaveChanges();
             return Ok(asset);

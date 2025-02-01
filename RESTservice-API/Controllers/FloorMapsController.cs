@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using RESTservice_API.Models;
 using RESTservice_API.Data;
+using RESTservice_API.Interfaces;
 
 namespace RESTservice_API.Controllers
 {
@@ -17,16 +19,16 @@ namespace RESTservice_API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetFloorMaps()
+        public async Task<IActionResult> GetFloorMaps()
         {
-            var floorMaps = _repository.GetAllFloorMaps();
+            var floorMaps = await _repository.GetAllFloorMaps();
             return Ok(floorMaps);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetFloorMapById(int id)
+        public async Task<IActionResult> GetFloorMapById(int id)
         {
-            var floorMap = _repository.GetFloorMapById(id);
+            var floorMap = await _repository.GetFloorMapDetailsAsync(id);
             if (floorMap == null) return NotFound();
             return Ok(floorMap);
         }
