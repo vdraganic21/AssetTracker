@@ -41,16 +41,16 @@ function ZoneRetentionTimeReport() {
 
       switch (timeSpan) {
         case "lastDay":
-          calculatedFrom = now.subtract(1, "days"); // Go back exactly 1 day
+          calculatedFrom = now.subtract(1, "days");
           break;
         case "lastWeek":
-          calculatedFrom = now.subtract(7, "days"); // Go back exactly 7 days
+          calculatedFrom = now.subtract(7, "days");
           break;
         case "lastMonth":
-          calculatedFrom = now.subtract(30, "days"); // Go back exactly 30 days
+          calculatedFrom = now.subtract(30, "days");
           break;
         default:
-          calculatedFrom = now.subtract(30, "days"); // Default to last month
+          calculatedFrom = now.subtract(30, "days");
       }
 
       setCustomRange({
@@ -62,12 +62,22 @@ function ZoneRetentionTimeReport() {
     }
   }, [timeSpan]);
 
-  const handleHoursChange = (value: number) => {
-    if (value >= 0 && value <= 999) setHours(value);
+  const handleHoursChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setHours(value === "" ? NaN : Math.max(0, Math.min(999, Number(value))));
   };
 
-  const handleMinutesChange = (value: number) => {
-    if (value >= 0 && value <= 59) setMinutes(value);
+  const handleMinutesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setMinutes(value === "" ? NaN : Math.max(0, Math.min(59, Number(value))));
+  };
+
+  const handleFocusHours = () => {
+    if (hours === 0) setHours(NaN);
+  };
+
+  const handleFocusMinutes = () => {
+    if (minutes === 0) setMinutes(NaN);
   };
 
   const resetInputs = () => {
@@ -148,7 +158,8 @@ function ZoneRetentionTimeReport() {
                     min="0"
                     max="999"
                     value={hours}
-                    onChange={(e) => handleHoursChange(Number(e.target.value))}
+                    onFocus={handleFocusHours}
+                    onChange={handleHoursChange}
                   />
                 </div>
                 <div className="number-input">
@@ -158,9 +169,8 @@ function ZoneRetentionTimeReport() {
                     min="0"
                     max="59"
                     value={minutes}
-                    onChange={(e) =>
-                      handleMinutesChange(Number(e.target.value))
-                    }
+                    onFocus={handleMinutesChange}
+                    onChange={(e) => handleMinutesChange(e)}
                   />
                 </div>
               </div>
