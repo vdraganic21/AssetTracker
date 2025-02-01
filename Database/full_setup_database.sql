@@ -7,7 +7,7 @@
 CREATE TABLE FloorMaps (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    image VARCHAR(500000)
+    image VARCHAR(5000000)
 );
 
 CREATE TABLE Assets (
