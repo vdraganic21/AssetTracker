@@ -2,8 +2,8 @@ import CookieService from "./CookieService";
 import { FacilityService } from "./FacilityService";
 
 export default class SelectedFacilityService {
-    private static getSelectedFaciltiyDefault() {
-		let selectedFacility = FacilityService.GetAll()[0];
+    private static async getSelectedFaciltiyDefault() {
+		let selectedFacility = (await FacilityService.GetAll())[0];
 		if (!selectedFacility) {
 			CookieService.delete("selectedFacility");
 			return null;
