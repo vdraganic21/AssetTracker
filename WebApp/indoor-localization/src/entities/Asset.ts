@@ -1,7 +1,9 @@
 import { AssetService } from "../services/AssetService";
 import { FacilityService } from "../services/FacilityService";
+import { ZoneService } from "../services/ZoneService";
 import { Facility } from "./Facility";
 import { Point } from "./Point";
+import { Zone } from "./Zone";
 
 export class Asset {
     id: number;
@@ -9,6 +11,7 @@ export class Asset {
     parentFacilityId: number;
     position: Point;
     isActive: boolean;
+    currentZonesIds: number[] = [];
   
     constructor(
       id: number,
@@ -24,23 +27,29 @@ export class Asset {
       this.isActive = isActive;
     }
   
-    GetCurrentFacility(): Facility | null{
-      this.UpdateData();
-      return FacilityService.Get(this.id);
+    async GetCurrentFacility(): Promise<Facility | null>{
+      await this.UpdateData();
+      return await FacilityService.Get(this.id);
     }
   
-    GetPosition(): Point {
-      this.UpdateData();
+    async GetPosition(): Promise<Point> {
+      await this.UpdateData();
       return this.position;
     }
   
-    IsActive(): boolean {
-      this.UpdateData();
+    async IsActive(): Promise<boolean> {
+      await this.UpdateData();
       return this.isActive;
     }
+
+    async GetCurrentZones(): Promise<Zone[]> {
+      await this.UpdateData();
+      const zones = await Promise.all(this.currentZonesIds.map(zoneId => ZoneService.Get(zoneId)));
+      return zones.filter(zone => zone !== null) as Zone[];
+    }
   
-    UpdateData(): void {
-      const updatedData = AssetService.Get(this.id);
+    async UpdateData(): Promise<void> {
+      const updatedData = await AssetService.Get(this.id);
       if (!updatedData) return;
       this.isActive = updatedData.isActive;
       this.name = updatedData.name;
