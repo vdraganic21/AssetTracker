@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./ZoneRetentionTimeReport.css";
 import {
   SynButton,
@@ -10,13 +10,18 @@ import "../../../components/common/Report.css";
 import DataComparisonReportWidget from "../../../components/common/DataComparisonReportWidget";
 import ReportExportButtonGroup from "../../../components/common/ReportExportButtonGroup";
 import SummaryList from "../../../components/common/SummaryList";
-import TimePicker from "../../../components/common/TimePicker";
+import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
+import "dayjs/locale/en-gb";
+import { SynChangeEvent } from "@synergy-design-system/react/components/checkbox.js";
 
 function ZoneRetentionTimeReport() {
   const [facility, setFacility] = useState("");
   const [zone, setZone] = useState("");
-  const [threshold, setThreshold] = useState("00:00");
-  const [timeSpan, setTimeSpan] = useState("custom");
+  const [hours, setHours] = useState(0);
+  const [minutes, setMinutes] = useState(0);
+  const [timeSpan, setTimeSpan] = useState("lastMonth");
   const [customRange, setCustomRange] = useState<{
     from: Date | null;
     fromTime: string;
@@ -29,42 +34,57 @@ function ZoneRetentionTimeReport() {
     toTime: "00:00",
   });
 
-  const generateDigitOptions = (max: number, step: number = 1): string[] => {
-    const options: string[] = [];
-    for (let i = 0; i <= max; i += step) {
-      options.push(i.toString().padStart(2, "0"));
+  useEffect(() => {
+    if (timeSpan !== "custom") {
+      const now = dayjs();
+      let calculatedFrom;
+
+      switch (timeSpan) {
+        case "lastDay":
+          calculatedFrom = now.subtract(1, "days"); // Go back exactly 1 day
+          break;
+        case "lastWeek":
+          calculatedFrom = now.subtract(7, "days"); // Go back exactly 7 days
+          break;
+        case "lastMonth":
+          calculatedFrom = now.subtract(30, "days"); // Go back exactly 30 days
+          break;
+        default:
+          calculatedFrom = now.subtract(30, "days"); // Default to last month
+      }
+
+      setCustomRange({
+        from: calculatedFrom.toDate(),
+        fromTime: calculatedFrom.format("HH:mm"),
+        to: now.toDate(),
+        toTime: now.format("HH:mm"),
+      });
     }
-    return options;
+  }, [timeSpan]);
+
+  const handleHoursChange = (value: number) => {
+    if (value >= 0 && value <= 999) setHours(value);
   };
 
-  interface ThresholdChangeParams {
-    value: string;
-    isHour: boolean;
-  }
-
-  const handleThresholdChange = ({ value, isHour }: ThresholdChangeParams) => {
-    const currentTime = threshold.split(":");
-    const newTime = isHour
-      ? `${value}:${currentTime[1]}`
-      : `${currentTime[0]}:${value}`;
-    setThreshold(newTime);
+  const handleMinutesChange = (value: number) => {
+    if (value >= 0 && value <= 59) setMinutes(value);
   };
 
   const resetInputs = () => {
     setFacility("");
     setZone("");
-    setThreshold("00:00");
-    setTimeSpan("custom");
+    setHours(0);
+    setMinutes(0);
+    setTimeSpan("lastMonth");
+    const now = dayjs();
+    const calculatedFrom = now.subtract(30, "days");
     setCustomRange({
-      from: null,
-      fromTime: "00:00",
-      to: null,
-      toTime: "00:00",
+      from: calculatedFrom.toDate(),
+      fromTime: calculatedFrom.format("HH:mm"),
+      to: now.toDate(),
+      toTime: now.format("HH:mm"),
     });
   };
-
-  const hourOptions = generateDigitOptions(23);
-  const minuteOptions = generateDigitOptions(59, 5);
 
   const summaryData = [
     { note: "Zone 1 has the highest activity level (24 hrs)", icon: "🔥" },
@@ -99,10 +119,10 @@ function ZoneRetentionTimeReport() {
                 }
                 className="sort-select"
               >
-                <SynOption value="">Select a Facility</SynOption>{" "}
-                <SynOption value="Facility 1">Facility 1</SynOption>
-                <SynOption value="Facility 2">Facility 2</SynOption>
-                <SynOption value="Facility 3">Facility 3</SynOption>{" "}
+                <SynOption value="">Select a Facility</SynOption>
+                <SynOption value="Facility_1">Facility 1</SynOption>
+                <SynOption value="Facility_2">Facility 2</SynOption>
+                <SynOption value="Facility_3">Facility 3</SynOption>
               </SynSelect>
             </div>
             <div className="input-group">
@@ -112,15 +132,38 @@ function ZoneRetentionTimeReport() {
                 onChange={(e) => setZone((e.target as HTMLSelectElement).value)}
                 className="sort-select"
               >
-                <SynOption value="">Select a Zone</SynOption>{" "}
-                <SynOption value="Zone 1">Zone 1</SynOption>
-                <SynOption value="Zone 2">Zone 2</SynOption>
-                <SynOption value="Zone 3">Zone 3</SynOption>{" "}
+                <SynOption value="">Select a Zone</SynOption>
+                <SynOption value="Zone_1">Zone 1</SynOption>
+                <SynOption value="Zone_2">Zone 2</SynOption>
+                <SynOption value="Zone_3">Zone 3</SynOption>
               </SynSelect>
             </div>
             <div className="input-group">
               <span className="input-label">Retention Threshold</span>
-              <div>picker module here</div>
+              <div className="picker-row">
+                <div className="number-input">
+                  <span className="number-input-label">Hours:</span>
+                  <input
+                    type="number"
+                    min="0"
+                    max="999"
+                    value={hours}
+                    onChange={(e) => handleHoursChange(Number(e.target.value))}
+                  />
+                </div>
+                <div className="number-input">
+                  <span className="number-input-label">Minutes:</span>
+                  <input
+                    type="number"
+                    min="0"
+                    max="59"
+                    value={minutes}
+                    onChange={(e) =>
+                      handleMinutesChange(Number(e.target.value))
+                    }
+                  />
+                </div>
+              </div>
             </div>
           </div>
           <div>
@@ -130,9 +173,10 @@ function ZoneRetentionTimeReport() {
             <span className="input-label">Time Span</span>
             <SynSelect
               value={timeSpan}
-              onChange={(e) =>
-                setTimeSpan((e.target as HTMLSelectElement).value)
-              }
+              onSynChange={(e: SynChangeEvent) => {
+                setTimeSpan((e.target as HTMLInputElement).value);
+                console.log((e.target as HTMLInputElement).value);
+              }}
               className="sort-select"
             >
               <SynOption value="lastDay">Last Day</SynOption>
@@ -142,12 +186,57 @@ function ZoneRetentionTimeReport() {
             </SynSelect>
             <span className="input-label">From</span>
             <div className="picker-row">
-              <div>picker module here</div>
+              <LocalizationProvider
+                dateAdapter={AdapterDayjs}
+                adapterLocale={navigator.language}
+              >
+                <DateTimePicker
+                  className="date-picker"
+                  label="Select Date & Time"
+                  ampm={false}
+                  value={customRange.from ? dayjs(customRange.from) : null}
+                  onChange={(newValue) => {
+                    setCustomRange({
+                      ...customRange,
+                      from: newValue?.toDate() || null,
+                    });
+                    setTimeSpan("custom");
+                  }}
+                  format="DD/MM/YYYY HH:mm"
+                  slotProps={{
+                    textField: {
+                      className: "date-picker-input",
+                    },
+                  }}
+                />
+              </LocalizationProvider>
             </div>
             <span className="input-label">To</span>
             <div className="picker-row">
-              <div>picker module here</div>
-              <div className="date-picker"></div>
+              <LocalizationProvider
+                dateAdapter={AdapterDayjs}
+                adapterLocale={navigator.language}
+              >
+                <DateTimePicker
+                  className="date-picker"
+                  label="Select Date & Time"
+                  ampm={false}
+                  value={customRange.to ? dayjs(customRange.to) : null}
+                  onChange={(newValue) => {
+                    setCustomRange({
+                      ...customRange,
+                      to: newValue?.toDate() || null,
+                    });
+                    setTimeSpan("custom");
+                  }}
+                  format="DD/MM/YYYY HH:mm"
+                  slotProps={{
+                    textField: {
+                      className: "date-picker-input",
+                    },
+                  }}
+                />
+              </LocalizationProvider>
             </div>
           </div>
           <div className="button-group">
