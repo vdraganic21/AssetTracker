@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,7 +21,7 @@ namespace AssetDataSimulator
         private static int messageIntervalMilliseconds = int.Parse(Environment.GetEnvironmentVariable("MESSAGE_INTERVAL") ?? "1000");
         private static string jsonFilePath = FindJsonFilePath();
         private static string apiBaseUrl = Environment.GetEnvironmentVariable("API_BASE_URL") ?? "https://localhost:7018";
-        private static double movementSpeed = 50.0;
+        public static double MovementSpeed = 50.0;
         public static AssetSimulator simulator;
         private static Dictionary<string, List<Asset>> floorplans;
 
@@ -44,8 +44,10 @@ namespace AssetDataSimulator
             LoadEnv();
             OutputStartMessages();
 
+            bool isGuiMode = args.Contains("--gui");
+
             Console.WriteLine("Press any key to start...");
-            if (!Console.IsInputRedirected)
+            if (!Console.IsInputRedirected && !isGuiMode)
             {
                 Console.ReadKey();
             }
@@ -75,7 +77,7 @@ namespace AssetDataSimulator
                     try
                     {
                         (assets, floorplanList) = await LoadDataFromJsonFile();
-                        usingFallback = true;
+                        usingFallback = !isGuiMode; 
                         Console.WriteLine("Successfully loaded data from local JSON file.");
                     }
                     catch (Exception jsonEx)
@@ -100,21 +102,24 @@ namespace AssetDataSimulator
                 simulator = new AssetSimulator(assets, floorplanList, usingFallback ? null : restLoader);
                 AssetsLoaded?.Invoke();
 
-                Console.WriteLine("Simulating all available floorplans...");
-
-                while (true)
+                if (!isGuiMode) 
                 {
-                    try
+                    Console.WriteLine("Simulating all available floorplans...");
+
+                    while (true)
                     {
-                        var simulatedDataList = await simulator.SimulateNextStep(movementSpeed);
-                        OutputAssetsStatusTable(simulator);
-                        await PublishUpdatesToBroker(mqttClient, mqttClient.IsConnected, simulatedDataList);
-                        await Task.Delay(messageIntervalMilliseconds);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine($"Simulation error: {ex.Message}");
+                        try
+                        {
+                            var simulatedDataList = await simulator.SimulateNextStep(MovementSpeed);
+                            OutputAssetsStatusTable(simulator);
+                            await PublishUpdatesToBroker(mqttClient, mqttClient.IsConnected, simulatedDataList);
+                            await Task.Delay(messageIntervalMilliseconds);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"Simulation error: {ex.Message}");
+                        }
                     }
                 }
             }
