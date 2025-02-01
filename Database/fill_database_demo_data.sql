@@ -54,18 +54,18 @@ INSERT INTO FloorMaps (name, image) VALUES
 DO $$
 DECLARE
     currentFloorMapId INT;
-    assetName VARCHAR(100);
+    assetCounter INT := 1;
     activeStatus BOOLEAN;
 BEGIN
     FOR currentFloorMapId IN 1..5 LOOP
         FOR i IN 1..5 LOOP
-            assetName := 'Asset ' || i;
-            activeStatus := (i % 2 = 0);
             INSERT INTO Assets (floorMapId, name, x, y, active) VALUES
-            (currentFloorMapId, assetName, i * 10, i * 10, activeStatus);
+            (currentFloorMapId, 'Asset ' || assetCounter, i * 10, i * 10, (assetCounter % 2 = 0));
+            assetCounter := assetCounter + 1;
         END LOOP;
     END LOOP;
 END $$;
+
 
 -- Insert Zones for each FloorMap
 DO $$
