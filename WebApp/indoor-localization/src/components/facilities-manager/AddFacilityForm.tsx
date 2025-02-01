@@ -67,10 +67,10 @@ function AddFacilityForm() {
 		if (!file) return;
 
 		const reader = new FileReader();
-		reader.onload = () => {
+		reader.onload = async () => {
 			const base64ImageString = reader.result as string;
 			const newFacility = new Facility(0, facilityName, base64ImageString);
-			const isAdded = FacilityService.Add(newFacility);
+			const isAdded = await FacilityService.Add(newFacility);
 			if (isAdded) navigate("/facilities");
 		};
 		reader.readAsDataURL(file);

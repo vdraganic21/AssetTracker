@@ -15,8 +15,7 @@ import {
 	SynChangeEvent,
 	SynInputEvent,
 } from "@synergy-design-system/react/components/checkbox.js";
-
-const facilities = FacilityService.GetAll();
+import { Facility } from "../../entities/Facility"; // Import the Facility type
 
 const sortOptions = [
 	{ name: "Name - asc", value: "nameAsc" },
@@ -27,14 +26,23 @@ function FacilitiesManager() {
 	const navigate = useNavigate();
 
 	const [searchTerm, setSearchTerm] = useState("");
-	const [sortedFacilities, setSortedFacilities] = useState(facilities);
+	const [facilities, setFacilities] = useState<Facility[]>([]); // Explicitly type as Facility[]
+	const [sortedFacilities, setSortedFacilities] = useState<Facility[]>([]); // Explicitly type as Facility[]
 	const [filterIndex, setFilterIndex] = useState(0);
+
+	useEffect(() => {
+		const fetchFacilities = async () => {
+			const fetchedFacilities = await FacilityService.GetAll();
+			setFacilities(fetchedFacilities);
+			applyFilterAndSort(fetchedFacilities, searchTerm, filterIndex);
+		};
+		fetchFacilities();
+	}, []);
 
 	const handleSearch = (event: SynInputEvent) => {
 		const term = (event.target as HTMLInputElement).value;
 		setSearchTerm(term);
-
-		applyFilterAndSort(term, filterIndex);
+		applyFilterAndSort(facilities, term, filterIndex);
 	};
 
 	const handleAddButtonClick = () => {
@@ -43,17 +51,19 @@ function FacilitiesManager() {
 
 	const handleFilterChange = (event: SynChangeEvent) => {
 		const selectedValue = (event.target as HTMLInputElement).value;
-
 		const selectedIndex = sortOptions.findIndex(
 			(option) => option.value === selectedValue
 		);
 		setFilterIndex(selectedIndex);
-
-		applyFilterAndSort(searchTerm, selectedIndex);
+		applyFilterAndSort(facilities, searchTerm, selectedIndex);
 	};
 
-	const applyFilterAndSort = (term: string, sortIndex: number) => {
-		let filteredFacilities = facilities.filter((facility) =>
+	const applyFilterAndSort = (
+		facilitiesList: Facility[],
+		term: string,
+		sortIndex: number
+	) => {
+		let filteredFacilities = facilitiesList.filter((facility) =>
 			facility.name.toLowerCase().includes(term.toLowerCase())
 		);
 
@@ -70,10 +80,6 @@ function FacilitiesManager() {
 
 		setSortedFacilities(filteredFacilities);
 	};
-
-	useEffect(() => {
-		applyFilterAndSort(searchTerm, filterIndex);
-	}, []);
 
 	return (
 		<>
