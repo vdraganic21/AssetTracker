@@ -26,9 +26,11 @@ namespace RESTservice_API.Data
             return _positionHistories;
         }
 
-        public PositionHistory GetPositionHistoryById(int id)
+        public IEnumerable<PositionHistory> GetPositionHistoryById(int assetId)
         {
-            return _positionHistories.FirstOrDefault(ph => ph.Id == id);
+            return _positionHistories
+                   .Where(ph => ph.AssetId == assetId)
+                   .ToList();
         }
 
         public void AddPositionHistory(PositionHistory positionHistory)

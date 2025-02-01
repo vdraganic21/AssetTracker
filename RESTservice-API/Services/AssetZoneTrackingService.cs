@@ -1,9 +1,10 @@
 using RESTservice_API.Interfaces;
 using RESTservice_API.Models;
 using RESTservice_API.Models.DTOs;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace RESTservice_API.Services
 {
@@ -32,7 +33,7 @@ namespace RESTservice_API.Services
             
             foreach (var zone in zones)
             {
-                _logger.LogInformation($"Checking zone {zone.Id} ({zone.Name}) with points: {zone.Points}");
+                _logger.LogInformation($"Checking zone {zone.Id} ({zone.Name}) with points: {string.Join(", ", zone.Points.Select(p => $"({p.X}, {p.Y})"))}");
                 bool isCurrentlyInZone = IsPointInZone(positionUpdate.X, positionUpdate.Y, zone);
                 bool wasInZone = await WasAssetInZone(positionUpdate.AssetId, zone.Id);
                 
@@ -73,45 +74,27 @@ namespace RESTservice_API.Services
 
         private bool IsPointInZone(double x, double y, Zone zone)
         {
-            try
+            if (zone.Points == null || zone.Points.Count < 3)
             {
-                var points = JsonSerializer.Deserialize<Point[]>(zone.Points);
-                if (points == null || points.Length < 3)
-                {
-                    _logger.LogWarning($"Invalid points array for zone {zone.Id}: {zone.Points}");
-                    return false;
-                }
-
-                _logger.LogInformation($"Checking point ({x}, {y}) against {points.Length} zone points");
-                bool inside = false;
-                int j = points.Length - 1;
-
-                for (int i = 0; i < points.Length; i++)
-                {
-                    if (((points[i].y > y) != (points[j].y > y)) &&
-                        (x < (points[j].x - points[i].x) * (y - points[i].y) / (points[j].y - points[i].y) + points[i].x))
-                    {
-                        inside = !inside;
-                    }
-                    j = i;
-                }
-
-                return inside;
-            }
-            catch (JsonException)
-            {
-                _logger.LogError($"Failed to deserialize points for zone {zone.Id}: {zone.Points}");
+                _logger.LogWarning($"Invalid points array for zone {zone.Id}: {zone.Points}");
                 return false;
             }
-        }
-    }
 
-    public class Point
-    {
-        [JsonPropertyName("x")]
-        public double x { get; set; }
-        
-        [JsonPropertyName("y")]
-        public double y { get; set; }
+            _logger.LogInformation($"Checking point ({x}, {y}) against {zone.Points.Count} zone points");
+            bool inside = false;
+            int j = zone.Points.Count - 1;
+
+            for (int i = 0; i < zone.Points.Count; i++)
+            {
+                if (((zone.Points[i].Y > y) != (zone.Points[j].Y > y)) &&
+                    (x < (zone.Points[j].X - zone.Points[i].X) * (y - zone.Points[i].Y) / (zone.Points[j].Y - zone.Points[i].Y) + zone.Points[i].X))
+                {
+                    inside = !inside;
+                }
+                j = i;
+            }
+
+            return inside;
+        }
     }
 }

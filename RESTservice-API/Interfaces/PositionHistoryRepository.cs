@@ -17,9 +17,11 @@ public class PositionHistoryRepository : IPositionHistoryRepository
         return _context.PositionHistories.ToList();
     }
 
-    public PositionHistory GetPositionHistoryById(int id)
+    public IEnumerable<PositionHistory> GetPositionHistoryById(int assetId)
     {
-        return _context.PositionHistories.Find(id);
+        return _context.PositionHistories
+                       .Where(ph => ph.AssetId == assetId)
+                       .ToList();
     }
 
     public void AddPositionHistory(PositionHistory positionHistory)

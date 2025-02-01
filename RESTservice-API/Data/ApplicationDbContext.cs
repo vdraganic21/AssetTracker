@@ -36,7 +36,7 @@ namespace RESTservice_API.Data
             modelBuilder.Entity<Zone>().Property(z => z.Id).HasColumnName("id");
             modelBuilder.Entity<Zone>().Property(z => z.FloorMapId).HasColumnName("floormapid");
             modelBuilder.Entity<Zone>().Property(z => z.Name).HasColumnName("name");
-            modelBuilder.Entity<Zone>().Property(z => z.Points).HasColumnName("points");
+            modelBuilder.Entity<Zone>().Property(z => z.Points).HasConversion(new PointsConverter());
 
             // Configure PositionHistories
             modelBuilder.Entity<PositionHistory>().ToTable("positionhistories");

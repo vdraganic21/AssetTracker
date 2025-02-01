@@ -6,7 +6,7 @@ namespace RESTservice_API.Data
     public interface IPositionHistoryRepository
     {
         IEnumerable<PositionHistory> GetAllPositionHistories();
-        PositionHistory GetPositionHistoryById(int id);
+        IEnumerable<PositionHistory> GetPositionHistoryById(int id);
         void AddPositionHistory(PositionHistory positionHistory);
         void DeletePositionHistory(int id);
         void ResetPositionHistories();

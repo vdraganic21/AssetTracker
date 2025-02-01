@@ -162,7 +162,6 @@ namespace RESTservice_API.Data
             [Range(-100000, 100000)]
             public double y { get; set; }
 
-            [Required]
             [StringLength(100)]
             public string floorplan { get; set; }
 
