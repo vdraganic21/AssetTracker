@@ -1,9 +1,8 @@
 import { SynIcon } from "@synergy-design-system/react";
-import { Asset } from "../../entities/Asset";
 import "./AssetsTable.css";
 import { useNavigate } from "react-router-dom";
 
-function AssetsTable({ assets }: { assets: Asset[] }) {
+function AssetsTable({ assets }: { assets: any[] }) {
 	const navigate = useNavigate();
 
 	if (assets.length == 0)
@@ -29,17 +28,15 @@ function AssetsTable({ assets }: { assets: Asset[] }) {
 				{assets.map((asset, index) => (
 					<tr className="row-bottom-border hover-row" key={index}>
 						<td>{asset.name}</td>
-						<td>{asset.GetCurrentFacility()?.name ?? "-"}</td>
-						<td>{asset.GetCurrentZones()[0]?.name ?? "-"}</td>
+						<td>{asset.facilityName}</td>
+						<td>{asset.zoneName}</td>
 						<td className="icon-cell">
 							<SynIcon
 								library="fa"
 								name="far-pen-to-square"
 								className="table-icon"
-								onClick={() => {
-									navigate(`/assets/edit/${asset.id}`);
-								}}
-							></SynIcon>
+								onClick={() => navigate(`/assets/edit/${asset.id}`)}
+							/>
 						</td>
 					</tr>
 				))}
