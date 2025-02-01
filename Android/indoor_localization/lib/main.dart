@@ -37,7 +37,6 @@ class MyApp extends StatelessWidget {
       home: FutureBuilder<List<Asset>>(
         future: AssetService.getAll(), // Fetch assets
         builder: (context, snapshot) {
-          // Handle loading, error, and data states
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Scaffold(
               body: Center(child: CircularProgressIndicator()),
@@ -56,7 +55,6 @@ class MyApp extends StatelessWidget {
             );
           }
 
-          // Once the assets data is loaded, fetch facilities
           return FutureBuilder<List<Facility>>(
             future: FacilityService.getAll(), // Fetch facilities
             builder: (context, facilitySnapshot) {
@@ -78,7 +76,6 @@ class MyApp extends StatelessWidget {
                 );
               }
 
-              // Once both assets and facilities are loaded, pass them to DashboardPage
               return DashboardPage(
                 assets: snapshot.data!,
                 facilities: facilitySnapshot.data!,
