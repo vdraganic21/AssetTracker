@@ -34,9 +34,13 @@ psql -U postgres -d asset_managment -f wipe_tables.sql
 
 ### Database setup for demo showcase
 
-Use the following scripts:
+Create database:
 psql -U postgres -f setup_database.sql
+
+Fill database with test/demo data:
 psql -U postgres -d asset_managment -f fill_database_demo_data.sql
+
+Fill floormaps tables with base64 images:
 psql -U postgres -d asset_managment -f fill_floormaps_table.sql
 
 ## Issues
