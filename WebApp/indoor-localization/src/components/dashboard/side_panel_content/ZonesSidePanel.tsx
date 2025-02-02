@@ -18,7 +18,7 @@ function ZonesSidePanel() {
 	const fetchZones = async () => {
 		const facility = await SelectedFacilityService.getSelectedFacility();
 		if (facility) {
-			const fetchedZones = await facility.GetZones();
+			const fetchedZones = facility.containedZones;
 			setZones(fetchedZones);
 		}
 	};

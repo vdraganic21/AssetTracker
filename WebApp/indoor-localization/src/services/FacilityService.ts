@@ -26,26 +26,4 @@ export class FacilityService extends EntityService {
   static async Update(facility: Facility): Promise<boolean> {
     return this.facilityRepo.Update(facility);
   }
-
-  static async GetFacilityAssets(facility: Facility): Promise<Asset[]> {
-    let assets : Asset[] = [];
-
-    for (let assetId of facility.containedAssetsIds){
-      const asset = await AssetService.Get(assetId);
-      if (asset) assets.push(asset);
-    }
-
-    return assets;
-  }
-
-  static async GetFacilityZones(facility: Facility): Promise<Zone[]> {
-    let zones : Zone[] = [];
-
-    for (let zoneId of facility.containedZonesIds){
-      const zone = await ZoneService.Get(zoneId);
-      if (zone) zones.push(zone);
-    }
-
-    return zones;
-  }
 }

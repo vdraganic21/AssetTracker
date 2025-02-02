@@ -28,7 +28,7 @@ function FloorMapDisplay({ facility }: { facility: Facility }) {
 
 	useEffect(() => {
 		const interval = setInterval(async () => {
-			const updatedAssets = await facility.GetAssets();
+			const updatedAssets = facility.containedAssets;
 			setAssets(updatedAssets);
 		}, refreshIntervalMillis);
 
@@ -51,7 +51,7 @@ function FloorMapDisplay({ facility }: { facility: Facility }) {
 
 	useEffect(() => {
 		const fetchZones = async () => {
-			const fetchedZones = await facility.GetZones();
+			const fetchedZones = facility.containedZones;
 			setZones(fetchedZones);
 		};
 

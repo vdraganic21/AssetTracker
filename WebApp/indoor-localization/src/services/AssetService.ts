@@ -27,6 +27,7 @@ export class AssetService extends EntityService {
     }
 
     static async GetAssetParentFacility(asset: Asset): Promise<Facility | null> {
+        if (asset.parentFacilityId == null) return null;
         return await FacilityService.Get(asset.parentFacilityId);
     }
 

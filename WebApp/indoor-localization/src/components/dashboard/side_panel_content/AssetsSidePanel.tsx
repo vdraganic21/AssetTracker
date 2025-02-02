@@ -13,7 +13,7 @@ function AssetsSidePanel() {
 	const fetchAssets = async () => {
 		const facility = await SelectedFacilityService.getSelectedFacility();
 		if (facility) {
-			const fetchedAssets = await facility.GetAssets();
+			const fetchedAssets = facility.containedAssets;
 			setAssets(fetchedAssets);
 		}
 	};

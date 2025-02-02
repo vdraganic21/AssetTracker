@@ -1,4 +1,7 @@
+import { Asset } from "../../entities/Asset";
 import { Facility } from "../../entities/Facility";
+import { Point } from "../../entities/Point";
+import { Zone } from "../../entities/Zone";
 import axiosInstance from "../axios/axiosConfig";
 import { IFacilityRepository } from "../repository-interfaces/IFacilityRepository";
 
@@ -8,10 +11,29 @@ export class RESTFacilityRepository implements IFacilityRepository {
         const id = data.id;
         const name = data.name;
         const imageBase64 = data.imageBase64;
-        const containedAssetsIds = data.assets || [];
-        const containedZonesIds = data.zones || [];
-        
-        return new Facility(id, name, imageBase64, containedAssetsIds, containedZonesIds);
+
+        const containedAssets : Asset[]= [];
+
+        for (let asset of data.assets) {
+            containedAssets.push(new Asset(asset.id, asset.name, asset.floorMapId, new Point(asset.x, asset.y), asset.active)
+            );
+        }
+        const containedZones : Zone[] = [];
+
+        for (let zone of data.zones) {
+            console.log(zone);
+            console.log(zone.points);
+            let points: Point[] = [];
+                for (let point of JSON.parse(zone.points)) {
+                    console.log(point);
+                    points.push(new Point(point.x, point.y));
+                }
+            console.log(points);
+            containedZones.push(new Zone(zone.id, zone.name, points, zone.floorMapId)
+            );
+        }
+    
+        return new Facility(id, name, imageBase64, containedAssets, containedZones);
     }
 
     async Get(id: number): Promise<Facility | null> {
@@ -36,7 +58,7 @@ export class RESTFacilityRepository implements IFacilityRepository {
 
     async Add(facility: Facility): Promise<boolean> {
         try {
-            const response = await axiosInstance.post(`/floormaps`, {id: facility.id, name: facility.name, imageBase64: facility.imageBase64, assets: facility.containedAssetsIds, zones: facility.containedZonesIds});
+            const response = await axiosInstance.post(`/floormaps`, {id: facility.id, name: facility.name, imageBase64: facility.imageBase64, assets: [], zones: []});
             return response.status === 201;
         } catch (error) {
             console.error("Failed to add facility:", error);
@@ -56,7 +78,7 @@ export class RESTFacilityRepository implements IFacilityRepository {
 
     async Update(updatedFacility: Facility): Promise<boolean> {
         try {
-            const response = await axiosInstance.put(`/floormaps/${updatedFacility.id}`, {id: updatedFacility.id, name: updatedFacility.name, imageBase64: updatedFacility.imageBase64, assets: updatedFacility.containedAssetsIds, zones: updatedFacility.containedZonesIds});
+            const response = await axiosInstance.put(`/floormaps/${updatedFacility.id}`, {id: updatedFacility.id, name: updatedFacility.name, imageBase64: updatedFacility.imageBase64, assets: [], zones: []});
             return response.status === 200;
         } catch (error) {
             console.error("Failed to update facility:", error);
