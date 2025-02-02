@@ -15,7 +15,8 @@ import {
 	SynChangeEvent,
 	SynInputEvent,
 } from "@synergy-design-system/react/components/checkbox.js";
-import { Facility } from "../../entities/Facility"; // Import the Facility type
+import { Facility } from "../../entities/Facility";
+import Spinner from "../common/Spinner";
 
 const sortOptions = [
 	{ name: "Name - asc", value: "nameAsc" },
@@ -26,15 +27,18 @@ function FacilitiesManager() {
 	const navigate = useNavigate();
 
 	const [searchTerm, setSearchTerm] = useState("");
-	const [facilities, setFacilities] = useState<Facility[]>([]); // Explicitly type as Facility[]
-	const [sortedFacilities, setSortedFacilities] = useState<Facility[]>([]); // Explicitly type as Facility[]
+	const [facilities, setFacilities] = useState<Facility[]>([]);
+	const [sortedFacilities, setSortedFacilities] = useState<Facility[]>([]);
 	const [filterIndex, setFilterIndex] = useState(0);
+	const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {
 		const fetchFacilities = async () => {
+			setIsLoading(true);
 			const fetchedFacilities = await FacilityService.GetAll();
 			setFacilities(fetchedFacilities);
 			applyFilterAndSort(fetchedFacilities, searchTerm, filterIndex);
+			setIsLoading(false);
 		};
 		fetchFacilities();
 	}, []);
@@ -122,6 +126,7 @@ function FacilitiesManager() {
 					</SynSelect>
 				</div>
 				<SynDivider className="content-divider" />
+				{isLoading && <Spinner text="Loading facilities." />}
 				<div className="scrollable-list">
 					<FacilityCardContainer
 						facilities={sortedFacilities}
