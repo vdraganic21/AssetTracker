@@ -71,8 +71,10 @@ function AssetsManager() {
 		filteredAssets = await Promise.all(
 			filteredAssets.map(async (asset) => ({
 				...asset,
-				facilityName: (await asset.GetCurrentFacility())?.name ?? "-",
-				zoneName: (await asset.GetCurrentZones())[0]?.name ?? "-",
+				facilityName:
+					(await AssetService.GetAssetParentFacility(asset))?.name ?? "-",
+				zoneName:
+					(await AssetService.GetAssetCurrentZones(asset))[0]?.name ?? "-",
 			}))
 		);
 
