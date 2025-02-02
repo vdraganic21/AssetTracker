@@ -21,14 +21,10 @@ export class RESTFacilityRepository implements IFacilityRepository {
         const containedZones : Zone[] = [];
 
         for (let zone of data.zones) {
-            console.log(zone);
-            console.log(zone.points);
             let points: Point[] = [];
                 for (let point of JSON.parse(zone.points)) {
-                    console.log(point);
                     points.push(new Point(point.x, point.y));
                 }
-            console.log(points);
             containedZones.push(new Zone(zone.id, zone.name, points, zone.floorMapId)
             );
         }

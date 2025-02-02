@@ -1,9 +1,5 @@
-import { Asset } from "../entities/Asset";
 import { Facility } from "../entities/Facility";
-import { Zone } from "../entities/Zone";
-import { AssetService } from "./AssetService";
 import { EntityService } from "./Service";
-import { ZoneService } from "./ZoneService";
 
 export class FacilityService extends EntityService {
 
