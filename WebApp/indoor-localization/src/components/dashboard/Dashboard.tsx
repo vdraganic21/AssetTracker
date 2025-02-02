@@ -3,12 +3,14 @@ import SelectedFacilityService from "../../services/SelectedFacilityService";
 import DashboardSidePanel from "./DashboardSidePanel";
 import FloorMapDisplay from "./FloorMapDisplay";
 import FullPageNotification from "../common/FullPageNotification";
+import HighlightedAssetService from "../../services/HighlightedAssetService";
 import HiddenAssetsService from "../../services/HiddenAssetsService";
 import HiddenZoneService from "../../services/HiddenZoneService";
 
 function Dashboard() {
 	const selectedFacility = SelectedFacilityService.getSelectedFacility();
 	const navigate = useNavigate();
+	HighlightedAssetService.removeHighlightedAssetId();
 
 	HiddenAssetsService.Refresh();
 	HiddenZoneService.Refresh();

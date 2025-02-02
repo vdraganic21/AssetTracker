@@ -28,6 +28,7 @@ function AssetDisplayLayer({
 							scale={scale}
 							x={assetPosition.x + x}
 							y={y - assetPosition.y}
+							id={asset.id}
 						/>
 					);
 				})}
@@ -44,6 +45,7 @@ function AssetDisplayLayer({
 							x={assetPosition.x + x}
 							y={y - assetPosition.y}
 							name={asset.name}
+							id={asset.id}
 						/>
 					);
 				})}

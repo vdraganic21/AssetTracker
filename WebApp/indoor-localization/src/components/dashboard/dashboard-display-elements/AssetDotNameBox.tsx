@@ -1,15 +1,18 @@
 import { Rect, Text } from "react-konva";
+import HighlightedAssetService from "../../../services/HighlightedAssetService";
 
 function AssetDotNameBox({
 	scale,
 	x,
 	y,
 	name,
+	id,
 }: {
 	scale: number;
 	x: number;
 	y: number;
 	name: string;
+	id: number;
 }) {
 	const borderColor = "#0ca2eb";
 	const textFontSize = 14 / scale;
@@ -18,6 +21,7 @@ function AssetDotNameBox({
 	const rectWidth = textWidth + 20;
 	const rectHeight = 24 / scale;
 	const yOffset = 15 / scale;
+	const isHighlighted = HighlightedAssetService.getHighlightedAssetId() === id;
 
 	return (
 		<>
@@ -26,10 +30,13 @@ function AssetDotNameBox({
 				y={y - rectHeight - yOffset}
 				width={rectWidth}
 				height={rectHeight}
-				fill={"white"}
+				fill={isHighlighted ? "#0ca2eb" : "white"}
 				stroke={borderColor}
 				strokeWidth={2 / scale}
 				cornerRadius={99 / scale}
+				onClick={() => {
+					HighlightedAssetService.setHighlightedAssetId(id);
+				}}
 			/>
 
 			<Text
@@ -41,10 +48,13 @@ function AssetDotNameBox({
 				align="center"
 				verticalAlign="middle"
 				fontSize={textFontSize}
-				fill={"black"}
+				fill={isHighlighted ? "white" : "black"}
 				padding={0}
 				margin={0}
 				offsetY={yOffset}
+				onClick={() => {
+					HighlightedAssetService.setHighlightedAssetId(id);
+				}}
 			/>
 		</>
 	);
