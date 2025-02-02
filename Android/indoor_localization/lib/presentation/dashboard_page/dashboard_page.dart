@@ -10,11 +10,19 @@ import 'package:indoor_localization/domain/entities/asset.dart';
 import 'package:indoor_localization/domain/entities/facility.dart';
 import 'package:indoor_localization/presentation/dashboard_page/refresh_button.dart';
 import 'package:indoor_localization/presentation/dashboard_page/facility_selector_button.dart';
+import 'package:indoor_localization/presentation/widgets/data_error_widget.dart';
 
 class DashboardPage extends StatefulWidget {
   final List<Asset> assets;
   final List<Facility> facilities;
-  const DashboardPage({Key? key, required this.assets, required this.facilities}) : super(key: key);
+  final Function()? onPageChange;
+
+  const DashboardPage({
+    Key? key,
+    required this.assets,
+    required this.facilities,
+    this.onPageChange,
+  }) : super(key: key);
 
   @override
   State<DashboardPage> createState() => _DashboardPageState();
@@ -22,24 +30,36 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   int _selectedIndex = 0;
-
   late List<Widget> _pages;
 
   @override
   void initState() {
     super.initState();
+    _initializePages();
+  }
 
+  @override
+  void didUpdateWidget(DashboardPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.assets != oldWidget.assets || widget.facilities != oldWidget.facilities) {
+      _initializePages();
+    }
+  }
+
+  void _initializePages() {
     _pages = [
-      DashboardContent(),
-      FacilitiesPage(facilities: widget.facilities),
-      AssetsPage(assets: widget.assets),
-      ReportsPage(),
+      DashboardContent(key: UniqueKey()),
+      FacilitiesPage(key: UniqueKey(), facilities: widget.facilities),
+      AssetsPage(key: UniqueKey(), assets: widget.assets),
+      const ReportsPage(),
     ];
   }
+
   void _navigateBottomBar(int index) {
     setState(() {
       _selectedIndex = index;
     });
+    widget.onPageChange?.call();
   }
 
   @override
@@ -102,6 +122,8 @@ class _DashboardPageState extends State<DashboardPage> {
 }
 
 class DashboardContent extends StatefulWidget {
+  const DashboardContent({Key? key}) : super(key: key);
+
   @override
   State<DashboardContent> createState() => _DashboardContentState();
 }
@@ -127,8 +149,11 @@ class _DashboardContentState extends State<DashboardContent> {
   @override
   Widget build(BuildContext context) {
     final dashboardPage = context.findAncestorWidgetOfExactType<DashboardPage>();
-    final facilities = dashboardPage?.facilities ?? [];
-    final assets = dashboardPage?.assets ?? [];
+    if (dashboardPage == null || dashboardPage.facilities.isEmpty) {
+      return const DataErrorWidget(message: 'Unable to load floor map.\nPlease try again later.');
+    }
+    final facilities = dashboardPage.facilities;
+    final assets = dashboardPage.assets ?? [];
 
     return Stack(
       children: [
