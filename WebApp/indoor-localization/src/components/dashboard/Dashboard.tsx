@@ -5,11 +5,13 @@ import FloorMapDisplay from "./FloorMapDisplay";
 import FullPageNotification from "../common/FullPageNotification";
 import { useEffect, useState } from "react";
 import { Facility } from "../../entities/Facility";
+import Spinner from "../common/Spinner";
 
 function Dashboard() {
 	const [selectedFacility, setSelectedFacility] = useState<Facility | null>(
 		null
 	);
+	const [isLoading, setIsLoading] = useState(true);
 	const navigate = useNavigate();
 
 	const fetchSelectedFacility = async () => {
@@ -17,8 +19,14 @@ function Dashboard() {
 		setSelectedFacility(facility);
 	};
 
+	const initialFacilityFetch = async () => {
+		setIsLoading(true);
+		await fetchSelectedFacility();
+		setIsLoading(false);
+	};
+
 	useEffect(() => {
-		fetchSelectedFacility();
+		initialFacilityFetch();
 
 		const intervalId = setInterval(() => {
 			fetchSelectedFacility();
@@ -26,6 +34,10 @@ function Dashboard() {
 
 		return () => clearInterval(intervalId);
 	}, []);
+
+	if (isLoading) {
+		return <Spinner text="Loading facility." />;
+	}
 
 	if (!selectedFacility) {
 		return (
