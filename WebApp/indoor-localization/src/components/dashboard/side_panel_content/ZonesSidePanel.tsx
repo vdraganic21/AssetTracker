@@ -4,11 +4,13 @@ import { SynInputEvent } from "@synergy-design-system/react/components/checkbox.
 import ZonesSidePanelList from "./ZonesSidePanelList";
 import SelectedFacilityService from "../../../services/SelectedFacilityService";
 import { Zone } from "../../../entities/Zone";
+import Spinner from "../../common/Spinner";
 
 function ZonesSidePanel() {
 	const [zones, setZones] = useState<Zone[]>([]);
 	const [searchTerm, setSearchTerm] = useState("");
 	const [filteredZones, setFilteredZones] = useState<Zone[]>([]);
+	const [isLoading, setIsLoading] = useState(false);
 
 	const handleSearch = (event: SynInputEvent) => {
 		const term = (event.target as HTMLInputElement).value;
@@ -16,11 +18,13 @@ function ZonesSidePanel() {
 	};
 
 	const fetchZones = async () => {
+		setIsLoading(true);
 		const facility = await SelectedFacilityService.getSelectedFacility();
 		if (facility) {
 			const fetchedZones = facility.containedZones;
 			setZones(fetchedZones);
 		}
+		setIsLoading(false);
 	};
 
 	useEffect(() => {
@@ -45,9 +49,13 @@ function ZonesSidePanel() {
 				value={searchTerm}
 				onSynInput={handleSearch}
 			/>
-			<div className="scrollable-list">
-				<ZonesSidePanelList zones={filteredZones} />
-			</div>
+			{isLoading ? (
+				<Spinner text="Loading assets." />
+			) : (
+				<div className="scrollable-list">
+					<ZonesSidePanelList zones={filteredZones} />
+				</div>
+			)}
 		</>
 	);
 }
