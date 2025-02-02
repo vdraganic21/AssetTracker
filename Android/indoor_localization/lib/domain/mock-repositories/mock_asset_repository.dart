@@ -11,32 +11,21 @@ class MockAssetRepository implements IAssetRepository {
 
   @override
   Future<List<Asset>> getAll() async {
-    return _assets;
+    return List.unmodifiable(_assets);
   }
 
   @override
   bool add(Asset asset) {
-    _assets.add(asset);
-    return true;
-  }
-
-  @override
-  bool delete(int id) {
-    final index = _assets.indexWhere((asset) => asset.id == id);
-    if (index != -1) {
-      _assets.removeAt(index);
-      return true;
-    }
     return false;
   }
 
   @override
-  bool update(Asset updatedAsset) {
-    final index = _assets.indexWhere((asset) => asset.id == updatedAsset.id);
-    if (index != -1) {
-      _assets[index] = updatedAsset;
-      return true;
-    }
+  bool delete(int id) {
+    return false;
+  }
+
+  @override
+  bool update(Asset updatedAsset)  {
     return false;
   }
 }
