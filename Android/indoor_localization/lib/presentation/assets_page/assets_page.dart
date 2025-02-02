@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:indoor_localization/domain/entities/asset.dart';
 import '../../presentation/common_components/dropdown_menu.dart';
 import 'asset_list_item.dart';
+import 'package:indoor_localization/presentation/widgets/data_error_widget.dart';
 
 class AssetsPage extends StatefulWidget {
   final List<Asset> assets;
@@ -23,8 +24,8 @@ class _AssetsPageState extends State<AssetsPage> {
   void initState() {
     super.initState();
     sortedAssets = List.from(widget.assets);
-    _sortAssets();
     displayedAssets = List.from(sortedAssets);
+    _sortAssets();
   }
 
   void _sortAssets() {
@@ -63,51 +64,53 @@ class _AssetsPageState extends State<AssetsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextField(
-                controller: _searchController,
-                onChanged: (value) => _filterAssets(),
-                decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(vertical: 12),
-                  hintText: 'Search...',
-                  prefixIcon: const Icon(Icons.search),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
+    return widget.assets.isEmpty 
+      ? const DataErrorWidget(message: 'Unable to load assets.\nPlease try again later.')
+      : Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextField(
+                    controller: _searchController,
+                    onChanged: (value) => _filterAssets(),
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                      hintText: 'Search...',
+                      prefixIcon: const Icon(Icons.search),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              CustomDropdown(
-                selectedValue: sortBy,
-                items: [
-                  'Name Ascending',
-                  'Name Descending',
-                  'Facility Ascending',
-                  'Facility Descending',
+                  const SizedBox(height: 8),
+                  CustomDropdown(
+                    selectedValue: sortBy,
+                    items: [
+                      'Name Ascending',
+                      'Name Descending',
+                      'Facility Ascending',
+                      'Facility Descending',
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        sortBy = value;
+                        _sortAssets();
+                      });
+                    },
+                  ),
                 ],
-                onChanged: (value) {
-                  setState(() {
-                    sortBy = value;
-                    _sortAssets();
-                  });
-                },
               ),
-            ],
-          ),
-        ),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: AssetList(assets: displayedAssets), // Use AssetList here
-          ),
-        ),
-      ],
-    );
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: AssetList(assets: displayedAssets), // Use AssetList here
+              ),
+            ),
+          ],
+        );
   }
 }

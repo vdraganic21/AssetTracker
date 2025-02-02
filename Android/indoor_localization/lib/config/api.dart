@@ -1,3 +1,3 @@
 class api {
-  static const String apiUrl = "http://localhost:5271";
+  static const String apiUrl = "https://localhost:7018";
 }

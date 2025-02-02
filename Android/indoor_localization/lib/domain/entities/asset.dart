@@ -34,7 +34,7 @@ class Asset {
       x: json['x'] ?? 0,
       y: json['y'] ?? 0,
       lastSync: DateTime.tryParse(json['lastSync'] ?? '') ?? DateTime.now(),
-      isActive: json['isActive'] ?? false,
+      isActive: json['active'] ?? false,
       currentZonesIds: (json['currentZonesIds'] as List?)?.map((e) => e as int).toList() ?? [],
     );
   }
@@ -44,10 +44,11 @@ class Asset {
     return {
       'id': id,
       'name': name,
+      'floorMapId': floorMapId,
       'x': x,
-      'y':y,
+      'y': y,
       'lastSync': lastSync.toIso8601String(),
-      'isActive': isActive,
+      'active': isActive,
       'currentZonesIds': currentZonesIds,
     };
   }

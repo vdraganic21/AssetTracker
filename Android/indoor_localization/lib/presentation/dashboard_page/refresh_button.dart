@@ -8,17 +8,13 @@ class RefreshButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      bottom: 20,
-      left: 20,
-      child: Transform.scale(
-        scale: 1.15,
-          child: FloatingActionButton(
-            onPressed: onPressed,
-            backgroundColor: AppColors.primary500,
-            child: const Icon(Icons.refresh, color: AppColors.neutral0),
-          )
-      )
+    return Transform.scale(
+      scale: 1.15,
+      child: FloatingActionButton(
+        onPressed: onPressed,
+        backgroundColor: AppColors.primary500,
+        child: const Icon(Icons.refresh, color: Colors.white),
+      ),
     );
   }
 }
