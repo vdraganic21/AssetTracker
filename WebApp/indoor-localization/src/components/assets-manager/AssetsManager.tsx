@@ -15,6 +15,7 @@ import {
 	SynInputEvent,
 } from "@synergy-design-system/react/components/checkbox.js";
 import { useNavigate } from "react-router-dom";
+import Spinner from "../common/Spinner";
 
 const sortOptions = [
 	{ name: "Name - asc", value: "nameAsc" },
@@ -30,11 +31,14 @@ function AssetsManager() {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [sortedAssets, setSortedAssets] = useState<any[]>([]);
 	const [filterIndex, setFilterIndex] = useState(0);
+	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
 		const fetchAssets = async () => {
+			setIsLoading(true);
 			const assets = await AssetService.GetAll();
-			applyFilterAndSort(searchTerm, filterIndex, assets || []);
+			await applyFilterAndSort(searchTerm, filterIndex, assets || []);
+			setIsLoading(false);
 		};
 		fetchAssets();
 	}, []);
@@ -150,9 +154,12 @@ function AssetsManager() {
 					</SynSelect>
 				</div>
 				<SynDivider className="content-divider" />
-				<div className="scrollable-list">
-					<AssetsTable assets={sortedAssets} />
-				</div>
+				{isLoading && <Spinner text="Loading assets." />}
+				{!isLoading && (
+					<div className="scrollable-list">
+						<AssetsTable assets={sortedAssets} />
+					</div>
+				)}
 			</div>
 			<Footer></Footer>
 		</>
