@@ -3,6 +3,12 @@ import FacilityCard from "./FacilityCard";
 import "./FacilityCardContainer.css";
 
 function FacilityCardContainer({ facilities }: { facilities: Facility[] }) {
+	if (facilities.length === 0) {
+		<div>
+			<p className="no-assets-message">No facilities found.</p>
+		</div>;
+	}
+
 	return (
 		<div className="facility-card-container">
 			{facilities.map((facility) => (
