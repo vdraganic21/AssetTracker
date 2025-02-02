@@ -95,23 +95,31 @@ function EditFacilityForm() {
 	const handleEdit = async () => {
 		if (!facility) return;
 
-		if (facilityName.trim() !== "") facility.name = facilityName;
-
-		if (file) {
-			const reader = new FileReader();
-			reader.onload = () => {
-				const base64ImageString = reader.result as string;
-				facility.imageBase64 = base64ImageString;
-			};
-			reader.readAsDataURL(file);
+		if (facilityName.trim() !== "") {
+			facility.name = facilityName;
 		}
 
-		let isUpdated = await FacilityService.Update(facility);
+		if (file) {
+			const base64ImageString = await new Promise<string>((resolve, reject) => {
+				const reader = new FileReader();
+				reader.onload = () => {
+					resolve(reader.result as string);
+				};
+				reader.onerror = () => {
+					reject(new Error("Failed to read the file."));
+				};
+				reader.readAsDataURL(file);
+			});
 
+			facility.imageBase64 = base64ImageString;
+		}
+
+		const isUpdated = await FacilityService.Update(facility);
 		if (isUpdated) {
 			navigate("/facilities");
 		}
 	};
+
 	const handleDelete = () => {
 		FacilityService.Delete(facilityId);
 		navigate("/facilities");
