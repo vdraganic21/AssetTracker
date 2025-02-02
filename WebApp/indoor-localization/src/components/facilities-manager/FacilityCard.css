@@ -3,8 +3,8 @@
   border: var(--syn-border-width-small) solid var(--syn-color-neutral-400);
   border-radius: var(--syn-border-radius-medium);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  margin: 16px;
-  width: 340px;
+  width: 100%;
+  max-width: 340px;
   height: 190px;
   text-align: center;
   display: flex;
@@ -29,7 +29,6 @@
   overflow: hidden;
   display: flex;
   justify-content: center;
-  width: auto;
   padding: var(--syn-spacing-x-small);
 }
 

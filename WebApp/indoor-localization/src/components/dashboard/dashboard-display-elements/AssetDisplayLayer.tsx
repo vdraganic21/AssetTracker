@@ -2,6 +2,7 @@ import { Layer } from "react-konva";
 import { Asset } from "../../../entities/Asset";
 import AssetDot from "./AssetDot";
 import AssetDotNameBox from "./AssetDotNameBox";
+import HiddenAssetsService from "../../../services/HiddenAssetsService";
 
 function AssetDisplayLayer({
 	scale,
@@ -18,6 +19,8 @@ function AssetDisplayLayer({
 		<>
 			<Layer scale={{ x: scale, y: scale }}>
 				{assets.map((asset, index) => {
+					if (HiddenAssetsService.IsAssetHidden(asset.id)) return <></>;
+
 					const assetPosition = asset.position;
 					return (
 						<AssetDot
@@ -25,12 +28,15 @@ function AssetDisplayLayer({
 							scale={scale}
 							x={assetPosition.x + x}
 							y={y - assetPosition.y}
+							id={asset.id}
 						/>
 					);
 				})}
 			</Layer>
 			<Layer scale={{ x: scale, y: scale }}>
 				{assets.map((asset, index) => {
+					if (HiddenAssetsService.IsAssetHidden(asset.id)) return <></>;
+
 					const assetPosition = asset.position;
 					return (
 						<AssetDotNameBox
@@ -39,6 +45,7 @@ function AssetDisplayLayer({
 							x={assetPosition.x + x}
 							y={y - assetPosition.y}
 							name={asset.name}
+							id={asset.id}
 						/>
 					);
 				})}

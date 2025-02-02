@@ -6,6 +6,9 @@ import FullPageNotification from "../common/FullPageNotification";
 import { useEffect, useState } from "react";
 import { Facility } from "../../entities/Facility";
 import Spinner from "../common/Spinner";
+import HighlightedAssetService from "../../services/HighlightedAssetService";
+import HiddenAssetsService from "../../services/HiddenAssetsService";
+import HiddenZoneService from "../../services/HiddenZoneService";
 
 function Dashboard() {
 	const [selectedFacility, setSelectedFacility] = useState<Facility | null>(
@@ -13,6 +16,10 @@ function Dashboard() {
 	);
 	const [isLoading, setIsLoading] = useState(true);
 	const navigate = useNavigate();
+	HighlightedAssetService.removeHighlightedAssetId();
+
+	HiddenAssetsService.Refresh();
+	HiddenZoneService.Refresh();
 
 	const fetchSelectedFacility = async () => {
 		const facility = await SelectedFacilityService.getSelectedFacility();

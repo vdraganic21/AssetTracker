@@ -1,6 +1,7 @@
 import { Layer, Line, Rect, Text } from "react-konva";
 import { Zone } from "../../../entities/Zone";
 import { Point } from "../../../entities/Point";
+import HiddenZoneService from "../../../services/HiddenZoneService";
 
 function convertPointsToCoordsList(points: Point[]) {
 	let coordsList: number[] = [];
@@ -36,6 +37,7 @@ function ZonesDisplayLayer({
 					stroke={"#007cc1BB"}
 					fill={"#0ca2eb33"}
 					strokeWidth={3}
+					visible={!HiddenZoneService.IsZoneHidden(zone.id)}
 				/>
 			))}
 
@@ -48,6 +50,7 @@ function ZonesDisplayLayer({
 						fill={"#0166a3"}
 						x={point.x + x - rectSize / scale / 2}
 						y={y - point.y - rectSize / scale / 2}
+						visible={!HiddenZoneService.IsZoneHidden(zone.id)}
 					/>
 				))
 			)}
@@ -65,6 +68,7 @@ function ZonesDisplayLayer({
 						verticalAlign="middle"
 						offsetX={-16}
 						offsetY={40}
+						visible={!HiddenZoneService.IsZoneHidden(zone.id)}
 					/>
 				);
 			})}
