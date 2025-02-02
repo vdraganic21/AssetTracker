@@ -21,7 +21,7 @@ export class RESTAssetZoneHistoryLogRepository implements IAssetZoneHistoryLogRe
 
   async GetLogs(assetZoneHistoryLogFilter: AssetZoneHistoryLogFilter): Promise<AssetZoneHistoryLog[]> {
     try {
-      const response = await axiosInstance.get(`/assetPositionHistory`, {
+      const response = await axiosInstance.get(`/assetZoneHistory`, {
         params: {
             zoneId: assetZoneHistoryLogFilter.zoneId,
             assetId: assetZoneHistoryLogFilter.assetId,
@@ -46,7 +46,7 @@ export class RESTAssetZoneHistoryLogRepository implements IAssetZoneHistoryLogRe
 
   async GetAll(): Promise<AssetZoneHistoryLog[]> {
     try {
-      const response = await axiosInstance.get(`/assetPositionHistory`);
+      const response = await axiosInstance.get(`/assetZoneHistory`);
       let logs: AssetZoneHistoryLog[] = [];
 
       for (let log of response.data) logs.push(this.ParseDataToLog(log));
