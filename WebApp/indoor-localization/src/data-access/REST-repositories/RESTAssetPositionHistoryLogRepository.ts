@@ -1,36 +1,68 @@
-import { AssetZoneHistoryLog } from "../../entities/AssetZoneHistoryLog";
-import { AssetZoneHistoryLogFilter } from "../../entities/AssetZoneHistoryLogFilter";
-import { IAssetZoneHistoryLogRepository } from "../repository-interfaces/IAssetZoneHistoryLogRepository";
+import { AssetPositionHistoryLog } from "../../entities/AssetPositionHistoryLog";
+import { AssetPositionHistoryLogFilter } from "../../entities/AssetPositionHistoryLogFilter";
+import { Point } from "../../entities/Point";
+import axiosInstance from "../axios/axiosConfig";
+import { IAssetPositionHistoryLogRepository } from "../repository-interfaces/IAssetPositionHistoryLogRepository";
 
-export class RESTAssetZoneHistoryLogRepository implements IAssetZoneHistoryLogRepository {
+export class RESTAssetPositionHistoryLogRepository implements IAssetPositionHistoryLogRepository {
+  private ParseDataToLog(data: any): AssetPositionHistoryLog {
+    return new AssetPositionHistoryLog(
+      data.id,
+      data.assetId,
+      data.floorMapId,
+      new Point(data.x, data.y),
+      new Date(data.timestamp)
+    )
+  }
 
-  Get(id: number): AssetZoneHistoryLog | null {
-    //TODO: Implement
-
+  async Get(id: number): Promise<AssetPositionHistoryLog | null> {
     return null;
   }
 
-  GetLogs(assetZoneHistoryLogFilter: AssetZoneHistoryLogFilter): AssetZoneHistoryLog[] {
-    //TODO: Implement
-    return [];
+  async GetLogs(assetPositionHistoryLogFilter: AssetPositionHistoryLogFilter): Promise<AssetPositionHistoryLog[]> {
+    try {
+      const response = await axiosInstance.get(`/assetPositionHistory`, {
+        params: {
+          floorMapId: assetPositionHistoryLogFilter.facilityId,
+          assetId: assetPositionHistoryLogFilter.assetId,
+          startDate: assetPositionHistoryLogFilter.startDate.toISOString(),
+          endDate: assetPositionHistoryLogFilter.endDate.toISOString(),
+        },
+      });
+      let logs: AssetPositionHistoryLog[] = [];
 
+      for (let log of response.data) logs.push(this.ParseDataToLog(log));
+
+      return logs;
+    } catch (error) {
+      console.error("Failed to fetch asset position history logs:", error);
+      return [];
+    }
   }
 
-  GetAll(): AssetZoneHistoryLog[] {
-    //TODO: Implement
+  async GetAll(): Promise<AssetPositionHistoryLog[]> {
+    try {
+      const response = await axiosInstance.get(`/assetPositionHistory`);
+      let logs: AssetPositionHistoryLog[] = [];
 
-    return [];
+      for (let log of response.data) logs.push(this.ParseDataToLog(log));
+
+      return logs;
+    } catch (error) {
+      console.error("Failed to fetch all asset position history logs:", error);
+      return [];
+    }
   }
 
-  Add(log: AssetZoneHistoryLog): boolean {
+  async Add(log: AssetPositionHistoryLog): Promise<boolean> {
     return false;
   }
 
-  Delete(id: number): boolean {
+  async Delete(id: number): Promise<boolean> {
     return false;
   }
 
-  Update(updatedLog: AssetZoneHistoryLog): boolean {
+  async Update(updatedLog: AssetPositionHistoryLog): Promise<boolean> {
     return false;
   }
 }
