@@ -5,11 +5,11 @@ import { IAssetZoneHistoryLogRepository } from "../repository-interfaces/IAssetZ
 export class MockAssetZoneHistoryLogRepository implements IAssetZoneHistoryLogRepository {
   private static logs: AssetZoneHistoryLog[] = [];
 
-  Get(id: number): AssetZoneHistoryLog | null {
+  async Get(id: number): Promise<AssetZoneHistoryLog | null> {
     return MockAssetZoneHistoryLogRepository.logs.find(log => log.id === id) || null;
   }
 
-  GetLogs(assetZoneHistoryLogFilter: AssetZoneHistoryLogFilter): AssetZoneHistoryLog[] {
+  async GetLogs(assetZoneHistoryLogFilter: AssetZoneHistoryLogFilter): Promise<AssetZoneHistoryLog[]> {
     return MockAssetZoneHistoryLogRepository.logs.filter(log => {
       const isZoneMatch = assetZoneHistoryLogFilter.zoneId
         ? log.zone.id === assetZoneHistoryLogFilter.zoneId
@@ -26,16 +26,16 @@ export class MockAssetZoneHistoryLogRepository implements IAssetZoneHistoryLogRe
     });
   }
 
-  GetAll(): AssetZoneHistoryLog[] {
+  async GetAll(): Promise<AssetZoneHistoryLog[]> {
     return MockAssetZoneHistoryLogRepository.logs;
   }
 
-  Add(log: AssetZoneHistoryLog): boolean {
+  async Add(log: AssetZoneHistoryLog): Promise<boolean> {
     MockAssetZoneHistoryLogRepository.logs.push(log);
     return true;
   }
 
-  Delete(id: number): boolean {
+  async Delete(id: number): Promise<boolean> {
     const index = MockAssetZoneHistoryLogRepository.logs.findIndex(log => log.id === id);
     if (index !== -1) {
       MockAssetZoneHistoryLogRepository.logs.splice(index, 1);
@@ -44,7 +44,7 @@ export class MockAssetZoneHistoryLogRepository implements IAssetZoneHistoryLogRe
     return false;
   }
 
-  Update(updatedLog: AssetZoneHistoryLog): boolean {
+  async Update(updatedLog: AssetZoneHistoryLog): Promise<boolean> {
     const index = MockAssetZoneHistoryLogRepository.logs.findIndex(log => log.id === updatedLog.id);
     if (index !== -1) {
       MockAssetZoneHistoryLogRepository.logs[index] = updatedLog;
