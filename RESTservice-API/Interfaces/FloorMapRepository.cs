@@ -78,8 +78,8 @@ public class FloorMapRepository : IFloorMapRepository
         var existingFloorMap = _context.FloorMaps.Find(floorMap.Id);
         if (existingFloorMap != null)
         {
-            existingFloorMap.Name = floorMap.Name;
-            existingFloorMap.ImageBase64 = floorMap.ImageBase64;
+            _context.FloorMaps.Attach(floorMap);
+            _context.Entry(floorMap).State = EntityState.Modified;
             SaveChanges();
         }
     }

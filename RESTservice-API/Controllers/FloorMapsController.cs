@@ -50,6 +50,7 @@ namespace RESTservice_API.Controllers
             floorMap.Name = updatedFloorMap.Name;
             floorMap.ImageBase64 = updatedFloorMap.ImageBase64;
 
+            _repository.UpdateFloorMap(floorMap);
             _repository.SaveChanges();
             return Ok(floorMap);
         }
