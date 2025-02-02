@@ -103,4 +103,26 @@ public class FloorMapRepository : IFloorMapRepository
     {
         // Database doesn't support this
     }
+
+    public IEnumerable<Asset> GetAssetsByFloorMapId(int floorMapId)
+{
+    var assets = _context.Assets
+        .Where(a => a.FloorMapId == floorMapId)
+        .ToList();
+
+    return assets;
+}
+
+    public void UpdateAssets(IEnumerable<Asset> assets)
+    {
+        foreach (var asset in assets)
+        {
+            var existingAsset = _context.Assets.Find(asset.Id);
+            if (existingAsset != null)
+            {
+                existingAsset.Active = asset.Active;
+            }
+        }
+        SaveChanges();
+    }
 }
