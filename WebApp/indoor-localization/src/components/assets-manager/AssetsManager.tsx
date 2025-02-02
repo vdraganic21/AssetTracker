@@ -29,6 +29,7 @@ const sortOptions = [
 function AssetsManager() {
 	const navigate = useNavigate();
 	const [searchTerm, setSearchTerm] = useState("");
+	const [assets, setAssets] = useState<any[]>([]);
 	const [sortedAssets, setSortedAssets] = useState<any[]>([]);
 	const [filterIndex, setFilterIndex] = useState(0);
 	const [isLoading, setIsLoading] = useState(true);
@@ -36,10 +37,23 @@ function AssetsManager() {
 	useEffect(() => {
 		const fetchAssets = async () => {
 			setIsLoading(true);
-			const assets = await AssetService.GetAll();
-			await applyFilterAndSort(searchTerm, filterIndex, assets || []);
+			const fetchedAssets = await AssetService.GetAll();
+
+			const enrichedAssets = await Promise.all(
+				fetchedAssets.map(async (asset) => ({
+					...asset,
+					facilityName:
+						(await AssetService.GetAssetParentFacility(asset))?.name ?? "-",
+					zoneName:
+						(await AssetService.GetAssetCurrentZones(asset))[0]?.name ?? "-",
+				}))
+			);
+
+			setAssets(enrichedAssets);
+			setSortedAssets(enrichedAssets);
 			setIsLoading(false);
 		};
+
 		fetchAssets();
 	}, []);
 
@@ -47,10 +61,6 @@ function AssetsManager() {
 		const term = (event.target as HTMLInputElement).value;
 		setSearchTerm(term);
 		applyFilterAndSort(term, filterIndex);
-	};
-
-	const handleAddButtonClick = () => {
-		navigate("/assets/add");
 	};
 
 	const handleFilterChange = (event: SynChangeEvent) => {
@@ -62,24 +72,9 @@ function AssetsManager() {
 		applyFilterAndSort(searchTerm, selectedIndex);
 	};
 
-	const applyFilterAndSort = async (
-		term: string,
-		sortIndex: number,
-		assetsData: any[] = []
-	) => {
-		const assets = assetsData.length ? assetsData : await AssetService.GetAll();
+	const applyFilterAndSort = (term: string, sortIndex: number) => {
 		let filteredAssets = assets.filter((asset) =>
 			asset.name.toLowerCase().includes(term.toLowerCase())
-		);
-
-		filteredAssets = await Promise.all(
-			filteredAssets.map(async (asset) => ({
-				...asset,
-				facilityName:
-					(await AssetService.GetAssetParentFacility(asset))?.name ?? "-",
-				zoneName:
-					(await AssetService.GetAssetCurrentZones(asset))[0]?.name ?? "-",
-			}))
 		);
 
 		switch (sortOptions[sortIndex]?.value) {
@@ -121,7 +116,7 @@ function AssetsManager() {
 						<SynButton
 							variant="filled"
 							className="syn-border-radius-medium"
-							onClick={handleAddButtonClick}
+							onClick={() => navigate("/assets/add")}
 						>
 							Add
 						</SynButton>
@@ -145,7 +140,7 @@ function AssetsManager() {
 							<SynOption
 								key={index}
 								tabIndex={index}
-								selected={index == filterIndex}
+								selected={index === filterIndex}
 								value={sortOption.value}
 							>
 								{sortOption.name}
@@ -161,7 +156,7 @@ function AssetsManager() {
 					</div>
 				)}
 			</div>
-			<Footer></Footer>
+			<Footer />
 		</>
 	);
 }
