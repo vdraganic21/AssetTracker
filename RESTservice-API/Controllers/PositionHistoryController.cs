@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using RESTservice_API.Data;
 using RESTservice_API.Models;
+using RESTservice_API.Models.DTOs;
 using RESTservice_API.Services;
+using System;
 
 [ApiController]
 [Route("assetPositionHistory")]
@@ -19,11 +21,23 @@ public class PositionHistoryController : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult GetPositionHistories()
+    public IActionResult GetPositionHistories(
+        [FromQuery] int? floorMapId = null,
+        [FromQuery] int? assetId = null,
+        [FromQuery] DateTime? startDate = null,
+        [FromQuery] DateTime? endDate = null)
     {
         try
         {
-            var positionHistories = _repository.GetAllPositionHistories();
+            var queryParams = new PositionHistoryQueryParams
+            {
+                FloorMapId = floorMapId,
+                AssetId = assetId,
+                StartDate = startDate,
+                EndDate = endDate
+            };
+
+            var positionHistories = _repository.GetFilteredPositionHistories(queryParams);
             return Ok(positionHistories);
         }
         catch (Exception ex)

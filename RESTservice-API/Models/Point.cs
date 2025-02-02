@@ -1,9 +1,13 @@
+using System.Text.Json.Serialization;
+
 namespace RESTservice_API.Models 
 {
     public class Point
     {
-        public int X { get; set; }
-        public int Y { get; set; }
+        [JsonPropertyName("x")]
+        public int x { get; set; }
+        
+        [JsonPropertyName("y")]
+        public int y { get; set; }
     }
 }
-

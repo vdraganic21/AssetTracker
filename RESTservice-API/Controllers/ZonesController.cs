@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using RESTservice_API.Interfaces;
 using RESTservice_API.Models;
+using RESTservice_API.Models.DTOs;
+using System.Text.Json;
 
 namespace RESTservice_API.Controllers
 {
@@ -16,67 +18,76 @@ namespace RESTservice_API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Zone>>> GetZones()
+        public async Task<ActionResult<IEnumerable<ZoneDTO>>> GetZones()
         {
             var zones = await _zoneRepository.GetAllZonesAsync();
-            return Ok(zones);
+            return Ok(zones.Select(ZoneDTO.FromZone));
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Zone>> GetZone(int id)
+        public async Task<ActionResult<ZoneDTO>> GetZone(int id)
         {
             var zone = await _zoneRepository.GetZoneByIdAsync(id);
             if (zone == null)
                 return NotFound();
 
-            return Ok(zone);
+            return Ok(ZoneDTO.FromZone(zone));
         }
 
         [HttpGet("floormap/{floorMapId}")]
-        public async Task<ActionResult<IEnumerable<Zone>>> GetZonesByFloorMap(int floorMapId)
+        public async Task<ActionResult<IEnumerable<ZoneDTO>>> GetZonesByFloorMap(int floorMapId)
         {
             var zones = await _zoneRepository.GetZonesByFloorMapIdAsync(floorMapId);
-            return Ok(zones);
+            return Ok(zones.Select(ZoneDTO.FromZone));
         }
 
         [HttpPost]
-        public async Task<ActionResult<Zone>> CreateZone(Zone zone)
+        public async Task<ActionResult<ZoneDTO>> CreateZone(ZoneDTO zoneDto)
         {
+            if (!zoneDto.Validate())
+            {
+                return BadRequest("Zone must have at least 2 points to define its boundaries.");
+            }
+
+            var zone = zoneDto.ToZone();
             var createdZone = await _zoneRepository.CreateZoneAsync(zone);
-            return CreatedAtAction(nameof(GetZone), new { id = createdZone.Id }, createdZone);
+            return CreatedAtAction(nameof(GetZone), new { id = createdZone.Id }, ZoneDTO.FromZone(createdZone));
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateZone(int id, Zone updatedZone)
+        public async Task<IActionResult> UpdateZone(int id, ZoneDTO updatedZoneDto)
         {
-            var zone = await _zoneRepository.GetZoneByIdAsync((int)id);
-            if (zone == null) return NotFound($"Zone with ID {id} not found.");
+            var zone = await _zoneRepository.GetZoneByIdAsync(id);
+            if (zone == null) 
+                return NotFound($"Zone with ID {id} not found.");
 
-            if (updatedZone.Id != default)
+            if (updatedZoneDto.Points != null)
             {
-                zone.Id = updatedZone.Id;
+                if (!updatedZoneDto.Validate())
+                {
+                    return BadRequest("Zone must have at least 2 points to define its boundaries.");
+                }
+                var pointsToUse = updatedZoneDto.Points.Length == 2 ? 
+                    JsonSerializer.Serialize(updatedZoneDto.ToZone().Points) : 
+                    JsonSerializer.Serialize(updatedZoneDto.Points);
+                zone.Points = pointsToUse;
             }
 
-            if (!string.IsNullOrEmpty(updatedZone.Name))
+            if (!string.IsNullOrEmpty(updatedZoneDto.Name))
             {
-                zone.Name = updatedZone.Name;
+                zone.Name = updatedZoneDto.Name;
             }
 
-            if (!string.IsNullOrEmpty(updatedZone.Points))
+            if (updatedZoneDto.FloorMapId != default)
             {
-                zone.Points = updatedZone.Points;
+                zone.FloorMapId = updatedZoneDto.FloorMapId;
             }
 
-            if (updatedZone.FloorMapId != default)
-            {
-                zone.FloorMapId = updatedZone.FloorMapId;
-            }
-
-            var updatedZoneResult = await _zoneRepository.UpdateZoneAsync(id, zone);
-            if (updatedZoneResult == null)
+            var updatedZone = await _zoneRepository.UpdateZoneAsync(id, zone);
+            if (updatedZone == null)
                 return NotFound();
 
-            return Ok(updatedZoneResult);
+            return Ok(ZoneDTO.FromZone(updatedZone));
         }
 
         [HttpDelete("{id}")]

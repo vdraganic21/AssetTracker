@@ -34,7 +34,7 @@ public class FloorMapRepository : IFloorMapRepository
                 Name = z.Name, 
                 Points = z.Points 
             }).ToList()
-        });
+        }).Select(dto => dto.ConvertZonesToSquares());
     }
 
     public async Task<FloorMapDetailsDTO> GetFloorMapDetailsAsync(int id)
@@ -59,7 +59,7 @@ public class FloorMapRepository : IFloorMapRepository
                 Name = z.Name, 
                 Points = z.Points 
             }).ToList()
-        };
+        }.ConvertZonesToSquares();
     }
 
     public FloorMap GetFloorMapById(int id)
