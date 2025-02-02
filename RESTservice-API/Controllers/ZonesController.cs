@@ -47,13 +47,36 @@ namespace RESTservice_API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateZone(int id, Zone zone)
+        public async Task<IActionResult> UpdateZone(int id, Zone updatedZone)
         {
-            var updatedZone = await _zoneRepository.UpdateZoneAsync(id, zone);
-            if (updatedZone == null)
+            var zone = await _zoneRepository.GetZoneByIdAsync((int)id);
+            if (zone == null) return NotFound($"Zone with ID {id} not found.");
+
+            if (updatedZone.Id != default)
+            {
+                zone.Id = updatedZone.Id;
+            }
+
+            if (!string.IsNullOrEmpty(updatedZone.Name))
+            {
+                zone.Name = updatedZone.Name;
+            }
+
+            if (!string.IsNullOrEmpty(updatedZone.Points))
+            {
+                zone.Points = updatedZone.Points;
+            }
+
+            if (updatedZone.FloorMapId != default)
+            {
+                zone.FloorMapId = updatedZone.FloorMapId;
+            }
+
+            var updatedZoneResult = await _zoneRepository.UpdateZoneAsync(id, zone);
+            if (updatedZoneResult == null)
                 return NotFound();
 
-            return Ok(updatedZone);
+            return Ok(updatedZoneResult);
         }
 
         [HttpDelete("{id}")]
