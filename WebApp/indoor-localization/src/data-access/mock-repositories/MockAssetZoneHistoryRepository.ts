@@ -25,11 +25,15 @@ export class MockAssetZoneHistoryLogRepository
         ? log.assetId === assetZoneHistoryLogFilter.assetId
         : true;
       const isEnterDateInRange =
-        log.enterDateTime >= assetZoneHistoryLogFilter.enterStartDate &&
-        log.enterDateTime <= assetZoneHistoryLogFilter.enterEndDate;
+        (!assetZoneHistoryLogFilter.enterStartDate ||
+          log.enterDateTime >= assetZoneHistoryLogFilter.enterStartDate) &&
+        (!assetZoneHistoryLogFilter.enterEndDate ||
+          log.enterDateTime <= assetZoneHistoryLogFilter.enterEndDate);
       const isExitDateInRange =
-        log.exitDateTime >= assetZoneHistoryLogFilter.exitStartDate &&
-        log.exitDateTime <= assetZoneHistoryLogFilter.exitEndDate;
+        (!assetZoneHistoryLogFilter.exitStartDate ||
+          log.exitDateTime >= assetZoneHistoryLogFilter.exitStartDate) &&
+        (!assetZoneHistoryLogFilter.exitEndDate ||
+          log.exitDateTime <= assetZoneHistoryLogFilter.exitEndDate);
 
       return (
         isZoneMatch && isAssetMatch && isEnterDateInRange && isExitDateInRange
