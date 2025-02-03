@@ -28,7 +28,15 @@ export default class SelectedFacilityService {
 
 		return selectedFacility;
 	}
+
 	static async setSelectedFacilityId(facilityId: number) {
 		CookieService.set("selectedFacility", facilityId.toString());
+	}
+
+	static async getSelectedFacilityId() {
+		const selectedFacilityId = CookieService.get("selectedFacility")
+		if (!selectedFacilityId) return -1;
+
+		return parseInt(selectedFacilityId);
 	}
 }

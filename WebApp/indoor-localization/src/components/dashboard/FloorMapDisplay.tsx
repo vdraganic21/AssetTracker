@@ -14,7 +14,6 @@ import { Asset } from "../../entities/Asset";
 function FloorMapDisplay({ facility }: { facility: Facility }) {
 	const stageRef = useRef<Konva.Stage>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
-	const [assets, setAssets] = useState<Asset[]>([]);
 
 	const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
 	const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
@@ -24,15 +23,11 @@ function FloorMapDisplay({ facility }: { facility: Facility }) {
 	const [isGridVisible, setIsGridVisible] = useState(false);
 	const [isZonesVisible, setZonesVisible] = useState(true);
 	const scale = imageScale * (zoomLevel / 100);
-	const refreshIntervalMillis = 500;
+
+	const [assets, setAssets] = useState<Asset[]>(facility.containedAssets);
 
 	useEffect(() => {
-		const interval = setInterval(async () => {
-			const updatedAssets = facility.containedAssets;
-			setAssets(updatedAssets);
-		}, refreshIntervalMillis);
-
-		return () => clearInterval(interval);
+		setAssets(facility.containedAssets);
 	}, [facility]);
 
 	useEffect(() => {

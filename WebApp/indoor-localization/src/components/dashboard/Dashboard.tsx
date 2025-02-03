@@ -1,14 +1,14 @@
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import SelectedFacilityService from "../../services/SelectedFacilityService";
 import DashboardSidePanel from "./DashboardSidePanel";
 import FloorMapDisplay from "./FloorMapDisplay";
 import FullPageNotification from "../common/FullPageNotification";
-import { useEffect, useState } from "react";
-import { Facility } from "../../entities/Facility";
 import Spinner from "../common/Spinner";
 import HighlightedAssetService from "../../services/HighlightedAssetService";
 import HiddenAssetsService from "../../services/HiddenAssetsService";
 import HiddenZoneService from "../../services/HiddenZoneService";
+import { Facility } from "../../entities/Facility";
 
 function Dashboard() {
 	const [selectedFacility, setSelectedFacility] = useState<Facility | null>(
@@ -17,7 +17,6 @@ function Dashboard() {
 	const [isLoading, setIsLoading] = useState(true);
 	const navigate = useNavigate();
 	HighlightedAssetService.removeHighlightedAssetId();
-
 	HiddenAssetsService.Refresh();
 	HiddenZoneService.Refresh();
 
@@ -33,14 +32,36 @@ function Dashboard() {
 	};
 
 	useEffect(() => {
-		initialFacilityFetch();
+		if (!selectedFacility) initialFacilityFetch();
 
-		const intervalId = setInterval(() => {
-			fetchSelectedFacility();
-		}, 500);
+		let intervalId: NodeJS.Timeout;
+		let checkIdIntervalId: NodeJS.Timeout;
 
-		return () => clearInterval(intervalId);
-	}, []);
+		const checkFacilityChange = async () => {
+			const currentFacilityId = selectedFacility?.id;
+			const newFacilityId =
+				await SelectedFacilityService.getSelectedFacilityId();
+			if (
+				currentFacilityId &&
+				newFacilityId &&
+				currentFacilityId !== newFacilityId
+			) {
+				await fetchSelectedFacility();
+			}
+		};
+
+		const startIntervals = () => {
+			checkIdIntervalId = setInterval(checkFacilityChange, 200);
+			intervalId = setInterval(fetchSelectedFacility, 30000);
+		};
+
+		startIntervals();
+
+		return () => {
+			clearInterval(intervalId);
+			clearInterval(checkIdIntervalId);
+		};
+	}, [selectedFacility]);
 
 	if (isLoading) {
 		return <Spinner text="Loading facility." />;
@@ -52,9 +73,7 @@ function Dashboard() {
 				title=""
 				message="No facilities could be found."
 				buttonLabel="Go to Facilities Manager"
-				onButtonClick={() => {
-					navigate("/facilities");
-				}}
+				onButtonClick={() => navigate("/facilities")}
 			/>
 		);
 	}
