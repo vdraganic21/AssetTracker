@@ -66,18 +66,35 @@ BEGIN
     END LOOP;
 END $$;
 
-
 -- Insert Zones for each FloorMap
 DO $$
 DECLARE
     currentFloorMapId INT;
     zoneName VARCHAR(100);
     points JSON;
+    zoneStartX INT;
+    zoneStartY INT;
+    zoneWidth INT;
+    zoneHeight INT;
 BEGIN
     FOR currentFloorMapId IN 1..5 LOOP
         FOR i IN 1..3 LOOP
+            -- Randomly determine zone size between 100x100 and 300x300
+            zoneWidth := 100 + (random() * 200)::INT;
+            zoneHeight := 100 + (random() * 200)::INT;
+            
+            -- Randomly determine zone start coordinates within 0-700 to ensure full zone fits within 1000x1000
+            zoneStartX := (random() * (1000 - zoneWidth))::INT;
+            zoneStartY := (random() * (1000 - zoneHeight))::INT;
+            
             zoneName := 'Zone ' || i || ' - Floor ' || currentFloorMapId;
-            points := '[{"x": ' || (i * 20) || ', "y": ' || (i * 20) || '}, {"x": ' || (i * 20 + 10) || ', "y": ' || (i * 20 + 10) || '}]';
+            points := json_build_array(
+                json_build_object('x', zoneStartX, 'y', zoneStartY),
+                json_build_object('x', zoneStartX + zoneWidth, 'y', zoneStartY),
+                json_build_object('x', zoneStartX + zoneWidth, 'y', zoneStartY + zoneHeight),
+                json_build_object('x', zoneStartX, 'y', zoneStartY + zoneHeight)
+            );
+            
             INSERT INTO Zones (floorMapId, name, points) VALUES
             (currentFloorMapId, zoneName, points);
         END LOOP;

@@ -43,6 +43,9 @@ psql -U postgres -d asset_managment -f fill_database_demo_data.sql
 Fill floormaps tables with base64 images:
 psql -U postgres -d asset_managment -f fill_floormaps_table.sql
 
+Alter database assets and zones to display practical data (assets and zones that appear as if they have a real function in the facilities):
+psql -U postgres -d asset_managment -f fill_finish.sql
+
 ## Issues
 
 Since we're using Base64 to store images you cannot easily use SELECT * FROM floorMaps; 
