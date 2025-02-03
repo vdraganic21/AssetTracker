@@ -18,6 +18,7 @@ export default function DateBarGraph({
 	return (
 		<div className="graph-div">
 			<BarChart
+				borderRadius={5}
 				margin={{ left: 80 }}
 				xAxis={[{ dataKey: "name", stroke: "red", scaleType: "band" }]}
 				yAxis={[
