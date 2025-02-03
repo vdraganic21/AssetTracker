@@ -488,7 +488,7 @@ namespace SimulatorControlUI
         private void InitializeAssetMovement()
         {
             assetMovementTimer = new System.Windows.Forms.Timer();
-            assetMovementTimer.Interval = 1000; // Move every second
+            assetMovementTimer.Interval = 1000;
             assetMovementTimer.Tick += AssetMovementTimer_Tick;
             assetMovementTimer.Start();
         }
