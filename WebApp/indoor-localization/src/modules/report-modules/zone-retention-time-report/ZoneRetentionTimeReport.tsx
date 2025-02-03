@@ -4,7 +4,6 @@ import { SynButton, SynOption, SynSelect } from "@synergy-design-system/react";
 import "../../../components/common/Report.css";
 import DataComparisonReportWidget from "../../../components/common/DataComparisonReportWidget";
 import ReportExportButtonGroup from "../../../components/common/ReportExportButtonGroup";
-import SummaryList from "../../../components/common/SummaryList";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
