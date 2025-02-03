@@ -13,8 +13,8 @@ function FacilityCardContainer({ facilities }: { facilities: Facility[] }) {
 
 	return (
 		<div className="facility-card-container">
-			{facilities.map((facility) => (
-				<FacilityCard facility={facility} />
+			{facilities.map((facility, index) => (
+				<FacilityCard facility={facility} key={index} />
 			))}
 		</div>
 	);
