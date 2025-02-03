@@ -5,11 +5,11 @@ import { IAssetPositionHistoryLogRepository } from "../repository-interfaces/IAs
 export class MockAssetPositionHistoryLogRepository implements IAssetPositionHistoryLogRepository {
     private static logs: AssetPositionHistoryLog[] = [];
   
-    Get(id: number): AssetPositionHistoryLog | null {
+    async Get(id: number): Promise<AssetPositionHistoryLog | null> {
       return MockAssetPositionHistoryLogRepository.logs.find(log => log.id === id) || null;
     }
 
-    GetLogs(assetPositionHistoryLogFilter: AssetPositionHistoryLogFilter): AssetPositionHistoryLog[] {
+    async GetLogs(assetPositionHistoryLogFilter: AssetPositionHistoryLogFilter): Promise<AssetPositionHistoryLog[]> {
         return MockAssetPositionHistoryLogRepository.logs.filter(log => {
           const isFacilityMatch = assetPositionHistoryLogFilter.facilityId
             ? log.facility.id === assetPositionHistoryLogFilter.facilityId
@@ -23,16 +23,16 @@ export class MockAssetPositionHistoryLogRepository implements IAssetPositionHist
         });
       }
   
-    GetAll(): AssetPositionHistoryLog[] {
+    async GetAll(): Promise<AssetPositionHistoryLog[]> {
       return MockAssetPositionHistoryLogRepository.logs;
     }
   
-    Add(log: AssetPositionHistoryLog): boolean {
+    async Add(log: AssetPositionHistoryLog): Promise<boolean> {
       MockAssetPositionHistoryLogRepository.logs.push(log);
       return true;
     }
   
-    Delete(id: number): boolean {
+    async Delete(id: number): Promise<boolean> {
       const index = MockAssetPositionHistoryLogRepository.logs.findIndex(log => log.id === id);
       if (index !== -1) {
         MockAssetPositionHistoryLogRepository.logs.splice(index, 1);
@@ -41,7 +41,7 @@ export class MockAssetPositionHistoryLogRepository implements IAssetPositionHist
       return false;
     }
   
-    Update(updatedLog: AssetPositionHistoryLog): boolean {
+    async Update(updatedLog: AssetPositionHistoryLog): Promise<boolean> {
       const index = MockAssetPositionHistoryLogRepository.logs.findIndex(log => log.id === updatedLog.id);
       if (index !== -1) {
         MockAssetPositionHistoryLogRepository.logs[index] = updatedLog;

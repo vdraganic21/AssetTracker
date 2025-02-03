@@ -3,5 +3,5 @@ import { AssetPositionHistoryLogFilter } from "../../entities/AssetPositionHisto
 import { IRepository } from "./IRepository";
 
 export interface IAssetPositionHistoryLogRepository extends IRepository<AssetPositionHistoryLog>{
-    GetLogs(assetPositionHistoryLogFilter: AssetPositionHistoryLogFilter): AssetPositionHistoryLog[]
+    GetLogs(assetPositionHistoryLogFilter: AssetPositionHistoryLogFilter): Promise<AssetPositionHistoryLog[]>
 }

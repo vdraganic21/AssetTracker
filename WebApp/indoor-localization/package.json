@@ -20,6 +20,7 @@
     "@synergy-design-system/react": "^2.11.8",
     "@synergy-design-system/styles": "^1.4.0",
     "@synergy-design-system/tokens": "^2.13.0",
+    "axios": "^1.7.9",
     "dayjs": "^1.11.13",
     "konva": "^9.3.18",
     "react": "^19.0.0",
@@ -30,6 +31,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
+    "@types/node": "^22.12.0",
     "@types/jest": "^29.5.14",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",

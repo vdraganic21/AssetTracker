@@ -28,18 +28,10 @@ function AddAssetForm() {
 		setIsFormValid(!!name.trim());
 	};
 
-	const handleAdd = () => {
-		const newAsset = new Asset(
-			0,
-			assetName,
-			0,
-			new Point(0, 0),
-			new Date(),
-			true,
-			[]
-		);
+	const handleAdd = async () => {
+		const newAsset = new Asset(0, assetName, 0, new Point(0, 0), true);
 
-		const isAdded = AssetService.Add(newAsset);
+		const isAdded = await AssetService.Add(newAsset);
 		if (isAdded) navigate("/assets");
 	};
 

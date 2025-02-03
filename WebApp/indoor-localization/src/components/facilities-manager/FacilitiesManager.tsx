@@ -15,8 +15,8 @@ import {
 	SynChangeEvent,
 	SynInputEvent,
 } from "@synergy-design-system/react/components/checkbox.js";
-
-const facilities = FacilityService.GetAll();
+import { Facility } from "../../entities/Facility";
+import Spinner from "../common/Spinner";
 
 const sortOptions = [
 	{ name: "Name - asc", value: "nameAsc" },
@@ -27,14 +27,26 @@ function FacilitiesManager() {
 	const navigate = useNavigate();
 
 	const [searchTerm, setSearchTerm] = useState("");
-	const [sortedFacilities, setSortedFacilities] = useState(facilities);
+	const [facilities, setFacilities] = useState<Facility[]>([]);
+	const [sortedFacilities, setSortedFacilities] = useState<Facility[]>([]);
 	const [filterIndex, setFilterIndex] = useState(0);
+	const [isLoading, setIsLoading] = useState(false);
+
+	useEffect(() => {
+		const fetchFacilities = async () => {
+			setIsLoading(true);
+			const fetchedFacilities = await FacilityService.GetAll();
+			setFacilities(fetchedFacilities);
+			applyFilterAndSort(fetchedFacilities, searchTerm, filterIndex);
+			setIsLoading(false);
+		};
+		fetchFacilities();
+	}, []);
 
 	const handleSearch = (event: SynInputEvent) => {
 		const term = (event.target as HTMLInputElement).value;
 		setSearchTerm(term);
-
-		applyFilterAndSort(term, filterIndex);
+		applyFilterAndSort(facilities, term, filterIndex);
 	};
 
 	const handleAddButtonClick = () => {
@@ -43,17 +55,19 @@ function FacilitiesManager() {
 
 	const handleFilterChange = (event: SynChangeEvent) => {
 		const selectedValue = (event.target as HTMLInputElement).value;
-
 		const selectedIndex = sortOptions.findIndex(
 			(option) => option.value === selectedValue
 		);
 		setFilterIndex(selectedIndex);
-
-		applyFilterAndSort(searchTerm, selectedIndex);
+		applyFilterAndSort(facilities, searchTerm, selectedIndex);
 	};
 
-	const applyFilterAndSort = (term: string, sortIndex: number) => {
-		let filteredFacilities = facilities.filter((facility) =>
+	const applyFilterAndSort = (
+		facilitiesList: Facility[],
+		term: string,
+		sortIndex: number
+	) => {
+		let filteredFacilities = facilitiesList.filter((facility) =>
 			facility.name.toLowerCase().includes(term.toLowerCase())
 		);
 
@@ -70,10 +84,6 @@ function FacilitiesManager() {
 
 		setSortedFacilities(filteredFacilities);
 	};
-
-	useEffect(() => {
-		applyFilterAndSort(searchTerm, filterIndex);
-	}, []);
 
 	return (
 		<>
@@ -116,11 +126,15 @@ function FacilitiesManager() {
 					</SynSelect>
 				</div>
 				<SynDivider className="content-divider" />
-				<div className="scrollable-list">
-					<FacilityCardContainer
-						facilities={sortedFacilities}
-					></FacilityCardContainer>
-				</div>
+				{isLoading ? (
+					<Spinner text="Loading facilities." />
+				) : (
+					<div className="scrollable-list">
+						<FacilityCardContainer
+							facilities={sortedFacilities}
+						></FacilityCardContainer>
+					</div>
+				)}
 			</div>
 			<Footer />
 		</>

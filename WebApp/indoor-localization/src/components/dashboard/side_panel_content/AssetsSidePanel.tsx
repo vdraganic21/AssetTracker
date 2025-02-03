@@ -3,13 +3,28 @@ import AssetsSidePaneList from "./AssetsSidePanelList";
 import { SynInputEvent } from "@synergy-design-system/react/components/checkbox.js";
 import { useEffect, useState } from "react";
 import SelectedFacilityService from "../../../services/SelectedFacilityService";
+import { Asset } from "../../../entities/Asset";
+import Spinner from "../../common/Spinner";
 
 function AssetsSidePanel() {
-	const assets =
-		SelectedFacilityService.getSelectedFacility()?.GetAssets() || [];
-
+	const [assets, setAssets] = useState<Asset[]>([]);
 	const [searchTerm, setSearchTerm] = useState("");
-	const [filteredAssets, setFilteredAssets] = useState(assets);
+	const [filteredAssets, setFilteredAssets] = useState<Asset[]>([]);
+	const [isLoading, setIsLoading] = useState(false);
+
+	const fetchAssets = async () => {
+		setIsLoading(true);
+		const facility = await SelectedFacilityService.getSelectedFacility();
+		if (facility) {
+			const fetchedAssets = facility.containedAssets;
+			setAssets(fetchedAssets);
+		}
+		setIsLoading(false);
+	};
+
+	useEffect(() => {
+		fetchAssets();
+	}, []);
 
 	const handleSearch = (event: SynInputEvent) => {
 		const term = (event.target as HTMLInputElement).value;
@@ -29,7 +44,7 @@ function AssetsSidePanel() {
 		filtered = filtered.sort((a, b) => a.name.localeCompare(b.name));
 
 		setFilteredAssets(filtered);
-	}, [searchTerm]);
+	}, [searchTerm, assets]);
 
 	return (
 		<>
@@ -39,9 +54,13 @@ function AssetsSidePanel() {
 				value={searchTerm}
 				onSynInput={handleSearch}
 			/>
-			<div className="scrollable-list">
-				<AssetsSidePaneList assets={filteredAssets} />
-			</div>
+			{isLoading ? (
+				<Spinner text="Loading assets." />
+			) : (
+				<div className="scrollable-list">
+					<AssetsSidePaneList assets={filteredAssets} />
+				</div>
+			)}
 		</>
 	);
 }

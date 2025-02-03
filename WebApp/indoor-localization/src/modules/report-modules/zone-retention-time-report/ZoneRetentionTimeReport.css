@@ -35,10 +35,6 @@
   position: relative;
 }
 
-.content-divider {
-  margin-bottom: 0;
-}
-
 .picker-row {
   display: flex;
   flex-direction: row;

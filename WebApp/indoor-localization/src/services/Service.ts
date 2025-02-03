@@ -9,4 +9,9 @@ export abstract class EntityService {
   protected static assetRepo: IAssetRepository = new MockAssetRepository();
   protected static zoneRepo: IZoneRepository = new MockZoneRepository();
   protected static facilityRepo: IFacilityRepository = new MockFacilityRepository();
+
+  //connect to REST API
+//  protected static assetRepo: IAssetRepository = new RESTAssetRepository();
+//  protected static zoneRepo: IZoneRepository = new RESTZoneRepository();
+//  protected static facilityRepo: IFacilityRepository = new RESTFacilityRepository();
 }
