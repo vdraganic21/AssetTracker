@@ -130,12 +130,7 @@ namespace AiR_Simulator.DataAccess
                 {
                     foreach (var assetData in assetsData.Where(a => a.Active))
                     {
-                        var positions = new List<(double X, double Y)>
-                        {
-                            (assetData.X, assetData.Y)
-                        };
-
-                        var asset = new Asset(assetData.Id, positions)
+                        var asset = new Asset(assetData.Id, new List<(double X, double Y)> { (assetData.X, assetData.Y) })
                         {
                             FloorplanId = assetData.FloorMapId
                         };
@@ -232,7 +227,7 @@ namespace AiR_Simulator.DataAccess
                     var positions = assetData.Positions?.Select(p => (p.X, p.Y)).ToList() ?? new List<(double X, double Y)>();
                     var asset = new Asset(assetData.AssetId ?? assetData.Id, positions)
                     {
-                        FloorplanId = 1
+                        FloorplanId = assetData.FloorMapId > 0 ? assetData.FloorMapId : 1
                     };
                     assets.Add(asset);
                 }

@@ -67,59 +67,93 @@ namespace AssetDataSimulator
         {
             if (RestLoader is RestApiAssetLoader restLoader)
             {
-                var assetData = new AssetData
+                var response = await restLoader.SendRequestAsync(HttpMethod.Get, $"assets/{asset.AssetId}", null);
+
+                if (!response.IsSuccessStatusCode)
                 {
-                    Id = asset.AssetId,
-                    Name = $"Asset {asset.AssetId}",
-                    FloorMapId = asset.FloorplanId,
-                    X = asset.X,
-                    Y = asset.Y,
-                    Active = true
-                };
+                    Console.WriteLine($"Failed to fetch latest asset data for Asset ID: {asset.AssetId}. Status Code: {response.StatusCode}");
+                    return;
+                }
 
-                var json = JsonSerializer.Serialize(assetData);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var jsonResponse = await response.Content.ReadAsStringAsync();
+                var latestAssetData = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonResponse);
 
-                var response = await restLoader.SendRequestAsync(HttpMethod.Put, $"assets/{asset.AssetId}", content);
-
-                if (response.IsSuccessStatusCode)
+                if (latestAssetData == null)
                 {
-                    Console.WriteLine($"Successfully sent data for Asset ID: {asset.AssetId}");
+                    Console.WriteLine($"Failed to deserialize latest asset data for Asset ID: {asset.AssetId}");
+                    return;
+                }
+
+                latestAssetData["x"] = asset.X;
+                latestAssetData["y"] = asset.Y;
+
+                var updatedJson = JsonSerializer.Serialize(latestAssetData);
+                var content = new StringContent(updatedJson, Encoding.UTF8, "application/json");
+
+                var putResponse = await restLoader.SendRequestAsync(HttpMethod.Put, $"assets/{asset.AssetId}", content);
+
+                if (putResponse.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"Successfully updated position for Asset ID: {asset.AssetId}");
                 }
                 else
                 {
-                    Console.WriteLine($"Failed to send data for Asset ID: {asset.AssetId}. Status Code: {response.StatusCode}");
+                    Console.WriteLine($"Failed to update position for Asset ID: {asset.AssetId}. Status Code: {putResponse.StatusCode}");
                 }
             }
         }
+
 
         private async Task SendPositionHistoryToRestService(Asset asset)
         {
             if (RestLoader is RestApiAssetLoader restLoader)
             {
-                var positionHistory = new
+                // Prepare position history data with precise formatting
+                var positionHistoryData = new 
                 {
                     AssetId = asset.AssetId,
                     FloorMapId = asset.FloorplanId,
-                    Timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-                    X = asset.X,
-                    Y = asset.Y
+                    DateTime = DateTime.UtcNow,
+                    X = Math.Round(asset.X, 2),
+                    Y = Math.Round(asset.Y, 2)
                 };
 
-                var json = JsonSerializer.Serialize(positionHistory);
+                var json = JsonSerializer.Serialize(positionHistoryData, new JsonSerializerOptions 
+                { 
+                    WriteIndented = true,
+                    PropertyNamingPolicy = null // Use exact property names
+                });
+                
+                Console.WriteLine($"Sending position history for Asset ID {asset.AssetId}:");
+                Console.WriteLine(json);
+
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                var response = await restLoader.SendRequestAsync(HttpMethod.Post, "assetPositionHistory", content);
+                try 
+                {
+                    var postResponse = await restLoader.SendRequestAsync(HttpMethod.Post, "assetPositionHistory", content);
 
-                if (response.IsSuccessStatusCode)
-                {
-                    Console.WriteLine($"Successfully sent position history for Asset ID: {asset.AssetId}");
+                    if (postResponse.IsSuccessStatusCode)
+                    {
+                        Console.WriteLine($"Successfully sent updated position history for Asset ID: {asset.AssetId}");
+                    }
+                    else
+                    {
+                        var responseBody = await postResponse.Content.ReadAsStringAsync();
+                        Console.WriteLine($"Failed to send position history for Asset ID: {asset.AssetId}");
+                        Console.WriteLine($"Status Code: {postResponse.StatusCode}");
+                        Console.WriteLine($"Response Body: {responseBody}");
+                        Console.WriteLine($"Request Payload: {json}");
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    Console.WriteLine($"Failed to send position history for Asset ID: {asset.AssetId}. Status Code: {response.StatusCode}");
+                    Console.WriteLine($"Exception when sending position history for Asset ID: {asset.AssetId}");
+                    Console.WriteLine($"Exception Message: {ex.Message}");
+                    Console.WriteLine($"Exception StackTrace: {ex.StackTrace}");
                 }
             }
         }
+
     }
 }
