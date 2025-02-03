@@ -50,6 +50,7 @@ namespace RESTservice_API.Controllers
             floorMap.Name = updatedFloorMap.Name;
             floorMap.ImageBase64 = updatedFloorMap.ImageBase64;
 
+            _repository.UpdateFloorMap(floorMap);
             _repository.SaveChanges();
             return Ok(floorMap);
         }
@@ -60,6 +61,12 @@ namespace RESTservice_API.Controllers
             var floorMap = _repository.GetFloorMapById(id);
             if (floorMap == null) return NotFound();
 
+            var assets = _repository.GetAssetsByFloorMapId(id);
+            foreach (var asset in assets)
+            {
+                asset.Active = false;
+            }
+            _repository.UpdateAssets(assets);
             _repository.DeleteFloorMap(id);
             _repository.SaveChanges();
             return NoContent();

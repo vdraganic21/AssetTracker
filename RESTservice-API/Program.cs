@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using RESTservice_API.Data;
 using RESTservice_API.Interfaces;
 using RESTservice_API.Services;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,7 +42,14 @@ builder.Services.AddScoped<IFloorMapRepository, FloorMapRepository>();
 builder.Services.AddScoped<IZoneRepository, ZoneRepository>();
 builder.Services.AddScoped<IAssetZoneHistoryRepository, AssetZoneHistoryRepository>();
 
-builder.Services.AddControllers();
+// Configure JSON serialization
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = null;
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

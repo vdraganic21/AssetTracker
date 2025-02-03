@@ -26,16 +26,16 @@ namespace RESTservice_API.Services
         public async Task ProcessPositionUpdate(PositionHistory positionUpdate)
         {
             _logger.LogInformation($"Processing position update for asset {positionUpdate.AssetId} at ({positionUpdate.X}, {positionUpdate.Y})");
-            
+
             var zones = await _zoneRepository.GetZonesByFloorMapIdAsync(positionUpdate.FloorMapId);
             _logger.LogInformation($"Found {zones.Count()} zones for floor map {positionUpdate.FloorMapId}");
-            
+
             foreach (var zone in zones)
             {
                 _logger.LogInformation($"Checking zone {zone.Id} ({zone.Name}) with points: {zone.Points}");
                 bool isCurrentlyInZone = IsPointInZone(positionUpdate.X, positionUpdate.Y, zone);
                 bool wasInZone = await WasAssetInZone(positionUpdate.AssetId, zone.Id);
-                
+
                 _logger.LogInformation($"Asset {positionUpdate.AssetId} is {(isCurrentlyInZone ? "inside" : "outside")} zone {zone.Id} " +
                                      $"and was {(wasInZone ? "inside" : "outside")} before");
 
@@ -110,7 +110,7 @@ namespace RESTservice_API.Services
     {
         [JsonPropertyName("x")]
         public double x { get; set; }
-        
+
         [JsonPropertyName("y")]
         public double y { get; set; }
     }

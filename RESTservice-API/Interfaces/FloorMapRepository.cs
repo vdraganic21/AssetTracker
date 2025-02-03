@@ -34,7 +34,7 @@ public class FloorMapRepository : IFloorMapRepository
                 Name = z.Name, 
                 Points = z.Points 
             }).ToList()
-        });
+        }).Select(dto => dto.ConvertZonesToSquares());
     }
 
     public async Task<FloorMapDetailsDTO> GetFloorMapDetailsAsync(int id)
@@ -59,7 +59,7 @@ public class FloorMapRepository : IFloorMapRepository
                 Name = z.Name, 
                 Points = z.Points 
             }).ToList()
-        };
+        }.ConvertZonesToSquares();
     }
 
     public FloorMap GetFloorMapById(int id)
@@ -78,8 +78,8 @@ public class FloorMapRepository : IFloorMapRepository
         var existingFloorMap = _context.FloorMaps.Find(floorMap.Id);
         if (existingFloorMap != null)
         {
-            existingFloorMap.Name = floorMap.Name;
-            existingFloorMap.ImageBase64 = floorMap.ImageBase64;
+            _context.FloorMaps.Attach(floorMap);
+            _context.Entry(floorMap).State = EntityState.Modified;
             SaveChanges();
         }
     }
@@ -102,5 +102,27 @@ public class FloorMapRepository : IFloorMapRepository
     public void ResetFloorMaps()
     {
         // Database doesn't support this
+    }
+
+    public IEnumerable<Asset> GetAssetsByFloorMapId(int floorMapId)
+{
+    var assets = _context.Assets
+        .Where(a => a.FloorMapId == floorMapId)
+        .ToList();
+
+    return assets;
+}
+
+    public void UpdateAssets(IEnumerable<Asset> assets)
+    {
+        foreach (var asset in assets)
+        {
+            var existingAsset = _context.Assets.Find(asset.Id);
+            if (existingAsset != null)
+            {
+                existingAsset.Active = asset.Active;
+            }
+        }
+        SaveChanges();
     }
 }

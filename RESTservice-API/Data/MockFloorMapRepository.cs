@@ -112,5 +112,20 @@ namespace RESTservice_API.Data
         public void ResetFloorMaps() {
             _floorMaps = new List<FloorMap>(_mockFloorMaps);
         }
+
+        public IEnumerable<Asset> GetAssetsByFloorMapId(int floorMapId)
+        {
+            var assets = _mockFloorMaps
+                .Where(f => f.Id == floorMapId)
+                .SelectMany(f => f.Assets)
+                .ToList();
+
+            return assets;
+        }
+
+        public void UpdateAssets(IEnumerable<Asset> assets)
+        {
+            // Simulate updating assets (no-op for mock)
+        }
     }
 }

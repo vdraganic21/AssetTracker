@@ -79,25 +79,45 @@ public class AssetsController : ControllerBase
             var asset = _repository.GetAssetById(id);
             if (asset == null) return NotFound($"Asset with ID {id} not found.");
 
-            // Create a position history entry for zone tracking
-            var positionUpdate = new PositionHistory
+            bool positionChanged = false;
+
+            if (!string.IsNullOrEmpty(updatedAsset.Name))
+                asset.Name = updatedAsset.Name;
+
+            if (updatedAsset.X != default)
             {
-                AssetId = id,
-                X = updatedAsset.X,
-                Y = updatedAsset.Y,
-                FloorMapId = updatedAsset.FloorMapId,
-                Timestamp = DateTime.UtcNow
-            };
+                asset.X = updatedAsset.X;
+                positionChanged = true;
+            }
 
-            // Process zone tracking
-            await _zoneTrackingService.ProcessPositionUpdate(positionUpdate);
+            if (updatedAsset.Y != default)
+            {
+                asset.Y = updatedAsset.Y;
+                positionChanged = true;
+            }
 
-            // Update asset properties
-            asset.Name = updatedAsset.Name;
-            asset.X = updatedAsset.X;
-            asset.Y = updatedAsset.Y;
-            asset.Active = updatedAsset.Active;
-            asset.FloorMapId = updatedAsset.FloorMapId;
+            if (updatedAsset.FloorMapId != default)
+            {
+                asset.FloorMapId = updatedAsset.FloorMapId;
+                positionChanged = true;
+            }
+
+            if (updatedAsset.Active != asset.Active)
+                asset.Active = updatedAsset.Active;
+
+            if (positionChanged)
+            {
+                var positionUpdate = new PositionHistory
+                {
+                    AssetId = id,
+                    X = asset.X,
+                    Y = asset.Y,
+                    FloorMapId = asset.FloorMapId ?? 0,
+                    Timestamp = DateTime.UtcNow
+                };
+
+                await _zoneTrackingService.ProcessPositionUpdate(positionUpdate);
+            }
 
             _repository.SaveChanges();
             return Ok(asset);

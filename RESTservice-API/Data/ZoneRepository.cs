@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using RESTservice_API.Interfaces;
 using RESTservice_API.Models;
+using System.Text.Json;
 
 namespace RESTservice_API.Data
 {
@@ -32,6 +33,8 @@ namespace RESTservice_API.Data
 
         public async Task<Zone> CreateZoneAsync(Zone zone)
         {
+            var pointsList = JsonSerializer.Deserialize<List<Point>>(zone.Points);
+            zone.Points = JsonSerializer.Serialize(pointsList);
             _context.Zones.Add(zone);
             await _context.SaveChangesAsync();
             return zone;
