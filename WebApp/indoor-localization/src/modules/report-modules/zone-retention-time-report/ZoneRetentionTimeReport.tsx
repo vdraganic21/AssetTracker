@@ -151,24 +151,6 @@ function ZoneRetentionTimeReport() {
     });
   };
 
-  const summaryData = [
-    { note: "Zone 1 has the highest activity level (24 hrs)", icon: "🔥" },
-    { note: "Zone 4 has the lowest activity level (2 hrs)", icon: "❄️" },
-    { note: "Zone 5 has no recorded activity", icon: "⚠️" },
-    { note: "Zone 1 has the highest activity level (24 hrs)", icon: "🔥" },
-    { note: "Zone 4 has the lowest activity level (2 hrs)", icon: "❄️" },
-    { note: "Zone 5 has no recorded activity", icon: "⚠️" },
-    { note: "Zone 1 has the highest activity level (24 hrs)", icon: "🔥" },
-    { note: "Zone 4 has the lowest activity level (2 hrs)", icon: "❄️" },
-    { note: "Zone 5 has no recorded activity", icon: "⚠️" },
-    { note: "Zone 1 has the highest activity level (24 hrs)", icon: "🔥" },
-    { note: "Zone 4 has the lowest activity level (2 hrs)", icon: "❄️" },
-    { note: "Zone 5 has no recorded activity", icon: "⚠️" },
-    { note: "Zone 1 has the highest activity level (24 hrs)", icon: "🔥" },
-    { note: "Zone 4 has the lowest activity level (2 hrs)", icon: "❄️" },
-    { note: "Zone 5 has no recorded activity", icon: "⚠️" },
-  ];
-
   return (
     <div className="report-row report-padding">
       <div className="report-column">
@@ -357,9 +339,6 @@ function ZoneRetentionTimeReport() {
               APPLY
             </SynButton>
           </div>
-        </div>
-        <div className="content-border take-space">
-          <SummaryList summaryItems={summaryData} />
         </div>
         <div className="zone-export-buttons content-border">
           <ReportExportButtonGroup />
