@@ -14,6 +14,7 @@ namespace SimulatorControlUI
         private Asset selectedAsset;
         private Floorplan selectedFloorplan;
         private System.Windows.Forms.Timer refreshTimer;
+        private System.Windows.Forms.Timer assetMovementTimer;
 
         private const float MapScale = 10f;
         private const float AssetRadius = 5f;
@@ -24,6 +25,7 @@ namespace SimulatorControlUI
             InitializeComponent();
             StartSimulator();
             StartAutoRefresh();
+            InitializeAssetMovement();
 
             MapPictureBox.Paint += MapPictureBox_Paint;
         }
@@ -97,14 +99,81 @@ namespace SimulatorControlUI
 
                 foreach (var floorplan in simulatorInstance.Floorplans)
                 {
+                    SetFloorplanBackground(floorplan);
                     FloorplanSelectorComboBox.Items.Add(floorplan.Name);
                 }
 
-                if (simulatorInstance.Floorplans.Count > 0)
+                if (FloorplanSelectorComboBox.Items.Count > 0)
                 {
                     FloorplanSelectorComboBox.SelectedIndex = 0;
                     selectedFloorplan = simulatorInstance.Floorplans[0];
+                    
+                    if (!string.IsNullOrEmpty(selectedFloorplan.ImageBase64))
+                    {
+                        SetFloorplanBackgroundImage(selectedFloorplan.ImageBase64);
+                    }
                 }
+                else
+                {
+                    MessageBox.Show("No floorplans could be loaded.");
+                }
+            }
+        }
+
+        private void SetFloorplanBackground(Floorplan floorplan)
+        {
+            if (!string.IsNullOrEmpty(floorplan.ImageBase64))
+            {
+                try
+                {
+                    string base64Data = floorplan.ImageBase64;
+                    if (base64Data.Contains(","))
+                    {
+                        base64Data = base64Data.Split(',')[1];
+                    }
+                    
+                    byte[] imageBytes = Convert.FromBase64String(base64Data);
+                    using (var ms = new MemoryStream(imageBytes))
+                    {
+                        Image backgroundImage = Image.FromStream(ms);
+                        Console.WriteLine($"Successfully loaded background for {floorplan.Name}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Failed to load background for {floorplan.Name}: {ex.Message}");
+                }
+            }
+        }
+
+        private void SetFloorplanBackgroundImage(string base64Image)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(base64Image))
+                {
+                    Console.WriteLine("Empty base64 image received");
+                    MapPictureBox.BackgroundImage = null;
+                    return;
+                }
+
+                if (base64Image.Contains(","))
+                {
+                    base64Image = base64Image.Split(',')[1];
+                }
+                
+                byte[] imageBytes = Convert.FromBase64String(base64Image);
+                using (var ms = new MemoryStream(imageBytes))
+                {
+                    MapPictureBox.BackgroundImage = Image.FromStream(ms);
+                    MapPictureBox.BackgroundImageLayout = ImageLayout.Stretch;
+                    Console.WriteLine("Successfully set background image");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to set background image: {ex.Message}");
+                MapPictureBox.BackgroundImage = null;
             }
         }
 
@@ -337,7 +406,10 @@ namespace SimulatorControlUI
 
                 if (selectedFloorplan != null)
                 {
-                    SetFloorplanBackground(selectedFloorplanName);
+                    if (!string.IsNullOrEmpty(selectedFloorplan.ImageBase64))
+                    {
+                        SetFloorplanBackgroundImage(selectedFloorplan.ImageBase64);
+                    }
 
                     PopulateAssetListForSelectedFloorplan();
 
@@ -350,24 +422,24 @@ namespace SimulatorControlUI
             }
         }
 
-        private void SetFloorplanBackground(string floorplanName)
+        private void SetFloorplanBackground(string floorplan)
         {
             if (ProgramSimulator.simulator?.RestLoader is RestApiAssetLoader restLoader)
             {
-                Console.WriteLine($"Getting floorplan data for: {floorplanName}");
-                var floorplanData = restLoader.GetFloorplanData(floorplanName);
+                Console.WriteLine($"Getting floorplan data for: {floorplan}");
+                var floorplanData = restLoader.GetFloorplanData(floorplan);
                 
                 if (floorplanData == null)
                 {
                     Console.WriteLine("FloorplanData is null");
-                    MessageBox.Show($"No floorplan data found for '{floorplanName}'");
+                    MessageBox.Show($"No floorplan data found for '{floorplan}'");
                     return;
                 }
 
                 if (string.IsNullOrEmpty(floorplanData.ImageBase64))
                 {
                     Console.WriteLine("ImageBase64 is null or empty");
-                    MessageBox.Show($"No image data found for floorplan '{floorplanName}'");
+                    MessageBox.Show($"No image data found for floorplan '{floorplan}'");
                     return;
                 }
 
@@ -391,7 +463,7 @@ namespace SimulatorControlUI
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Failed to load base64 image: {ex.Message}");
-                    MessageBox.Show($"Failed to load image for floorplan '{floorplanName}': {ex.Message}");
+                    MessageBox.Show($"Failed to load image for floorplan '{floorplan}': {ex.Message}");
                 }
             }
             else
@@ -413,5 +485,28 @@ namespace SimulatorControlUI
             }
         }
 
+        private void InitializeAssetMovement()
+        {
+            assetMovementTimer = new System.Windows.Forms.Timer();
+            assetMovementTimer.Interval = 1000; // Move every second
+            assetMovementTimer.Tick += AssetMovementTimer_Tick;
+            assetMovementTimer.Start();
+        }
+
+        private async void AssetMovementTimer_Tick(object sender, EventArgs e)
+        {
+            if (ProgramSimulator.simulator != null)
+            {
+                try 
+                {
+                    await ProgramSimulator.simulator.SimulateNextStep(ProgramSimulator.MovementSpeed);
+                    MapPictureBox.Invalidate();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error in asset movement: {ex.Message}");
+                }
+            }
+        }
     }
 }

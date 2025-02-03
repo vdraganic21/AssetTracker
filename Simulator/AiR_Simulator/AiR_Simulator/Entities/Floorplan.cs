@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,10 +11,12 @@ namespace AiR_Simulator.Entities
         public int FloorplanId { get; set; }
         public string Name { get; set; }
         public List<Asset> Assets { get; set; }
+        public string ImageBase64 { get; set; }
 
         public Floorplan(string name) 
         { 
             Name = name;
+            Assets = new List<Asset>();
         }
     }
 }
