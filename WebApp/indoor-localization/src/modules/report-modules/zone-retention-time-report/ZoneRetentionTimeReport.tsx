@@ -1,11 +1,6 @@
 import { useState, useEffect } from "react";
 import "./ZoneRetentionTimeReport.css";
-import {
-	SynButton,
-	SynDivider,
-	SynOption,
-	SynSelect,
-} from "@synergy-design-system/react";
+import { SynButton, SynOption, SynSelect } from "@synergy-design-system/react";
 import "../../../components/common/Report.css";
 import DataComparisonReportWidget from "../../../components/common/DataComparisonReportWidget";
 import ReportExportButtonGroup from "../../../components/common/ReportExportButtonGroup";
@@ -15,10 +10,18 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import "dayjs/locale/en-gb";
 import { SynChangeEvent } from "@synergy-design-system/react/components/checkbox.js";
+import { Facility } from "../../../entities/Facility";
+import { Zone } from "../../../entities/Zone";
 
 function ZoneRetentionTimeReport() {
-	const [facility, setFacility] = useState("");
-	const [zone, setZone] = useState("");
+	const [selectedFacility, setSelectedFacility] = useState<Facility | null>(
+		null
+	);
+	const [selectedZone, setSelectedZone] = useState<Zone | null>(null);
+	const [facilities, setFacilities] = useState<Facility[]>([]);
+	const [selectedFacilityZones, setSelectedFacilityZones] = useState<Zone[]>(
+		[]
+	);
 	const [hours, setHours] = useState(0);
 	const [minutes, setMinutes] = useState(0);
 	const [timeSpan, setTimeSpan] = useState("lastMonth");
@@ -81,8 +84,11 @@ function ZoneRetentionTimeReport() {
 	};
 
 	const resetInputs = () => {
-		setFacility("");
-		setZone("");
+		//handle if there are no facilities or zones
+		//put dash in select element
+		//block generating
+		setSelectedFacility(facilities[0]);
+		setSelectedZone(selectedFacilityZones[0]);
 		setHours(0);
 		setMinutes(0);
 		setTimeSpan("lastMonth");
@@ -123,30 +129,26 @@ function ZoneRetentionTimeReport() {
 						<div className="input-group">
 							<span className="input-label">Facility</span>
 							<SynSelect
-								value={facility}
-								onChange={(e) =>
-									setFacility((e.target as HTMLSelectElement).value)
-								}
-								className="sort-select"
+								//value={facilities}
+								onChange={(e) => {
+									{
+										//selectedFacilityIndex = e.target as HTMLSelectElement).value
+										//setFacility(facilities[selectedFacilityIndex])
+									}
+								}}
+								//className="sort-select"
 							>
-								<SynOption value="">Select a Facility</SynOption>
-								<SynOption value="Facility_1">Facility 1</SynOption>
-								<SynOption value="Facility_2">Facility 2</SynOption>
-								<SynOption value="Facility_3">Facility 3</SynOption>
+								{/* for facility in facilities*
+								<SynOption value={index}>{facility.name}</SynOption>*/}
 							</SynSelect>
 						</div>
 						<div className="input-group">
 							<span className="input-label">Zone</span>
 							<SynSelect
-								value={zone}
-								onChange={(e) => setZone((e.target as HTMLSelectElement).value)}
-								className="sort-select"
-							>
-								<SynOption value="">Select a Zone</SynOption>
-								<SynOption value="Zone_1">Zone 1</SynOption>
-								<SynOption value="Zone_2">Zone 2</SynOption>
-								<SynOption value="Zone_3">Zone 3</SynOption>
-							</SynSelect>
+							//value={zones}
+							//onChange={(e) => setZone((e.target as HTMLSelectElement).value)}
+							//className="sort-select"
+							></SynSelect>
 						</div>
 						<div className="input-group">
 							<span className="input-label">Retention Threshold</span>
