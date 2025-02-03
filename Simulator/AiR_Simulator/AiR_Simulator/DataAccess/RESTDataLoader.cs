@@ -33,7 +33,7 @@ namespace AiR_Simulator.DataAccess
         public int? AssetId { get; set; }  // For JSON file
         public int Id { get; set; }        // For REST API
         public string Name { get; set; }
-        public int FloorMapId { get; set; }
+        public int? FloorMapId { get; set; }
         public double X { get; set; }
         public double Y { get; set; }
         public bool Active { get; set; }
@@ -74,78 +74,214 @@ namespace AiR_Simulator.DataAccess
 
         public async Task<(List<Asset> Assets, List<Floorplan> Floorplans)> LoadDataAsync()
         {
+            var assets = new List<Asset>();
+            var floorplans = new List<Floorplan>();
+
             try
             {
-                var assets = new List<Asset>();
-                var floorplans = new List<Floorplan>();
+                Console.WriteLine($"Starting LoadDataAsync at {DateTime.Now}");
+                Console.WriteLine($"Base URL: {_baseUrl}");
 
-                Console.WriteLine($"Loading floorplans from {_baseUrl}/floormaps...");
-                var floorplansResponse = await _httpClient.GetAsync($"{_baseUrl}/floormaps");
-                floorplansResponse.EnsureSuccessStatusCode();
-                var floorplansJson = await floorplansResponse.Content.ReadAsStringAsync();
+                Console.WriteLine($"HttpClient Timeout: {_httpClient.Timeout}");
+                Console.WriteLine($"HttpClient BaseAddress: {_httpClient.BaseAddress}");
 
-                Console.WriteLine($"Loading assets from {_baseUrl}/assets...");
-                var assetsResponse = await _httpClient.GetAsync($"{_baseUrl}/assets");
-                assetsResponse.EnsureSuccessStatusCode();
-                var assetsJson = await assetsResponse.Content.ReadAsStringAsync();
+                HttpResponseMessage floorplansResponse = null;
+                HttpResponseMessage assetsResponse = null;
+                string floorplansJson = null;
+                string assetsJson = null;
+
+                try 
+                {
+                    Console.WriteLine("Attempting to fetch floorplans...");
+                    floorplansResponse = await _httpClient.GetAsync($"{_baseUrl}/floormaps");
+                    floorplansResponse.EnsureSuccessStatusCode();
+                    floorplansJson = await floorplansResponse.Content.ReadAsStringAsync();
+                    
+                    Console.WriteLine("Attempting to fetch assets...");
+                    assetsResponse = await _httpClient.GetAsync($"{_baseUrl}/assets");
+                    assetsResponse.EnsureSuccessStatusCode();
+                    assetsJson = await assetsResponse.Content.ReadAsStringAsync();
+                }
+                catch (HttpRequestException httpEx)
+                {
+                    Console.WriteLine($"HTTP Request Error: {httpEx.Message}");
+                    Console.WriteLine($"Floorplans Response: {floorplansResponse?.StatusCode}");
+                    Console.WriteLine($"Assets Response: {assetsResponse?.StatusCode}");
+                    throw;
+                }
+
+                Console.WriteLine($"Floorplans JSON Length: {floorplansJson?.Length ?? 0}");
+                Console.WriteLine($"Assets JSON Length: {assetsJson?.Length ?? 0}");
+                
+                if (string.IsNullOrWhiteSpace(floorplansJson))
+                {
+                    Console.WriteLine("WARNING: Floorplans JSON is empty or null!");
+                    floorplansJson = "[]";
+                }
+
+                if (string.IsNullOrWhiteSpace(assetsJson))
+                {
+                    Console.WriteLine("WARNING: Assets JSON is empty or null!");
+                    assetsJson = "[]";
+                }
 
                 var options = new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true,
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    AllowTrailingCommas = true,
+                    ReadCommentHandling = JsonCommentHandling.Skip,
+                    WriteIndented = true
                 };
 
-                _floorplansData = JsonSerializer.Deserialize<List<FloorplanJsonObject>>(floorplansJson, options);
-                var assetsData = JsonSerializer.Deserialize<List<AssetJsonObject>>(assetsJson, options);
+                List<FloorplanJsonObject> floorplanData = null;
+                List<AssetJsonObject> assetData = null;
 
-                var truncatedFloorplans = _floorplansData.Select(fp => new
+                try 
                 {
-                    fp.Id,
-                    fp.Name,
-                    ImageBase64 = fp.ImageBase64?.Substring(0, Math.Min(20, fp.ImageBase64.Length)) + "...",
-                    fp.Assets
-                }).ToList();
-                Console.WriteLine($"Floorplans: {JsonSerializer.Serialize(truncatedFloorplans)}");
-                Console.WriteLine($"Assets: {assetsJson}");
-
-                if (_floorplansData == null || _floorplansData.Count == 0)
-                {
-                    _floorplansData = new List<FloorplanJsonObject>
+                    Console.WriteLine("Attempting to deserialize floorplans...");
+                    Console.WriteLine($"First 500 chars of floorplans JSON: {floorplansJson.Substring(0, Math.Min(500, floorplansJson.Length))}");
+                    
+                    try 
                     {
-                        new FloorplanJsonObject { Id = 1, Name = "Floor 1" }
-                    };
+                        floorplanData = JsonSerializer.Deserialize<List<FloorplanJsonObject>>(floorplansJson, options);
+                    }
+                    catch (JsonException)
+                    {
+                        var alternativeOptions = new JsonSerializerOptions
+                        {
+                            PropertyNameCaseInsensitive = true,
+                            PropertyNamingPolicy = null,
+                            AllowTrailingCommas = true,
+                            ReadCommentHandling = JsonCommentHandling.Skip
+                        };
+                        
+                        floorplanData = JsonSerializer.Deserialize<List<FloorplanJsonObject>>(floorplansJson, alternativeOptions);
+                    }
+                    
+                    Console.WriteLine($"Deserialized {floorplanData?.Count ?? 0} floorplans");
+                    
+                    if (floorplanData != null)
+                    {
+                        foreach (var fp in floorplanData)
+                        {
+                            Console.WriteLine($"Floorplan Details:");
+                            Console.WriteLine($"  ID: {fp.Id}");
+                            Console.WriteLine($"  Name: {fp.Name}");
+                            Console.WriteLine($"  Image Base64 Length: {fp.ImageBase64?.Length ?? 0}");
+                            Console.WriteLine($"  Assets Count: {fp.Assets?.Count ?? 0}");
+                            Console.WriteLine($"  Zones Count: {fp.Zones?.Count ?? 0}");
+                        }
+                    }
+                }
+                catch (JsonException jsonEx)
+                {
+                    Console.WriteLine($"CRITICAL JSON Deserialization Error for Floorplans: {jsonEx.Message}");
+                    Console.WriteLine($"Full JSON Content: {floorplansJson}");
+                    Console.WriteLine($"Path: {jsonEx.Path}");
+                    Console.WriteLine($"LineNumber: {jsonEx.LineNumber}");
+                    Console.WriteLine($"BytePositionInLine: {jsonEx.BytePositionInLine}");
+                    
+                    try 
+                    {
+                        floorplansJson = floorplansJson.Trim();
+                        
+                        if (!floorplansJson.StartsWith("[") || !floorplansJson.EndsWith("]"))
+                        {
+                            Console.WriteLine("JSON does not appear to be a valid array. Attempting to fix...");
+                            floorplansJson = $"[{floorplansJson}]";
+                        }
+                        
+                        floorplanData = JsonSerializer.Deserialize<List<FloorplanJsonObject>>(floorplansJson, options);
+                    }
+                    catch (Exception fallbackEx)
+                    {
+                        Console.WriteLine($"FALLBACK Parsing Failed: {fallbackEx.Message}");
+                        
+                        floorplanData = new List<FloorplanJsonObject>
+                        {
+                            new FloorplanJsonObject 
+                            { 
+                                Id = 1, 
+                                Name = "Default Floorplan", 
+                                ImageBase64 = null,
+                                Assets = new List<AssetJsonObject>(),
+                                Zones = new List<ZoneJsonObject>()
+                            }
+                        };
+                    }
                 }
 
-                foreach (var floorplanData in _floorplansData)
+                try 
                 {
-                    var floorplan = new Floorplan(floorplanData.Name ?? "Floor 1")
+                    Console.WriteLine("Attempting to deserialize assets...");
+                    Console.WriteLine($"First 500 chars of assets JSON: {assetsJson.Substring(0, Math.Min(500, assetsJson.Length))}");
+                    
+                    assetData = JsonSerializer.Deserialize<List<AssetJsonObject>>(assetsJson, options);
+                    
+                    Console.WriteLine($"Deserialized {assetData?.Count ?? 0} assets");
+                    if (assetData != null)
                     {
-                        FloorplanId = floorplanData.Id > 0 ? floorplanData.Id : 1,
-                        Assets = new List<Asset>()
+                        foreach (var asset in assetData)
+                        {
+                            Console.WriteLine($"Asset - ID: {asset.Id}, FloorMapId: {asset.FloorMapId}, Active: {asset.Active}, X: {asset.X}, Y: {asset.Y}");
+                        }
+                    }
+                }
+                catch (JsonException jsonEx)
+                {
+                    Console.WriteLine($"JSON Deserialization Error for Assets: {jsonEx.Message}");
+                    Console.WriteLine($"Path: {jsonEx.Path}");
+                    Console.WriteLine($"LineNumber: {jsonEx.LineNumber}");
+                    Console.WriteLine($"BytePositionInLine: {jsonEx.BytePositionInLine}");
+                    throw;
+                }
+
+                floorplanData ??= new List<FloorplanJsonObject> 
+                { 
+                    new FloorplanJsonObject { Id = 1, Name = "Default Floor" } 
+                };
+
+                foreach (var fp in floorplanData)
+                {
+                    var floorplan = new Floorplan(fp.Name ?? $"Floor {fp.Id}")
+                    {
+                        FloorplanId = fp.Id,
+                        ImageBase64 = fp.ImageBase64
                     };
+
                     floorplans.Add(floorplan);
                 }
 
-                if (assetsData != null)
+                if (assetData != null)
                 {
-                    foreach (var assetData in assetsData.Where(a => a.Active))
+                    foreach (var assetItem in assetData.Where(a => a.Active))
                     {
-                        var asset = new Asset(assetData.Id, new List<(double X, double Y)> { (assetData.X, assetData.Y) })
+                        if (!assetItem.FloorMapId.HasValue)
                         {
-                            FloorplanId = assetData.FloorMapId
+                            Console.WriteLine($"WARNING: Asset {assetItem.Id} ({assetItem.Name}) has no FloorMapId. Assigning default.");
+                        }
+
+                        var asset = new Asset(assetItem.Id, new List<(double X, double Y)> { (assetItem.X, assetItem.Y) })
+                        {
+                            FloorplanId = assetItem.FloorMapId ?? 1
                         };
 
-                        Console.WriteLine($"Created asset {asset.AssetId}:");
-                        Console.WriteLine($"  Position: ({asset.X}, {asset.Y})");
-                        Console.WriteLine($"  FloorplanId: {asset.FloorplanId}");
-                        Console.WriteLine($"  Has positions: {asset.Positions?.Count > 0}");
-                        Console.WriteLine($"  IsManualControl: {asset.IsManualControl}");
                         assets.Add(asset);
 
-                        var floorplan = floorplans.FirstOrDefault(f => f.FloorplanId == assetData.FloorMapId);
-                        if (floorplan != null)
+                        var matchingFloorplan = floorplans.FirstOrDefault(f => f.FloorplanId == asset.FloorplanId);
+                        if (matchingFloorplan != null)
                         {
-                            floorplan.Assets.Add(asset);
+                            matchingFloorplan.Assets.Add(asset);
+                        }
+                        else
+                        {
+                            Console.WriteLine($"WARNING: No matching floorplan found for asset {asset.AssetId} with FloorMapId {asset.FloorplanId}. Using first available floorplan.");
+                            
+                            if (floorplans.Any())
+                            {
+                                floorplans.First().Assets.Add(asset);
+                            }
                         }
                     }
                 }
@@ -185,13 +321,45 @@ namespace AiR_Simulator.DataAccess
                     Console.WriteLine($"Warning: Could not load paths from JSON: {ex.Message}");
                 }
 
-                Console.WriteLine($"Successfully loaded {assets.Count} assets from REST API");
+                Console.WriteLine($"Final Summary:");
+                Console.WriteLine($"Total Floorplans: {floorplans.Count}");
+                Console.WriteLine($"Total Assets: {assets.Count}");
+                foreach (var floorplan in floorplans)
+                {
+                    Console.WriteLine($"Floorplan {floorplan.FloorplanId} ({floorplan.Name}): {floorplan.Assets.Count} assets");
+                }
+
                 return (assets, floorplans);
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error processing API response: {ex.Message}", ex);
+                Console.WriteLine($"CRITICAL ERROR in LoadDataAsync: {ex.GetType().Name}");
+                Console.WriteLine($"Message: {ex.Message}");
+                Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+                
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner Exception: {ex.InnerException.GetType().Name}");
+                    Console.WriteLine($"Inner Message: {ex.InnerException.Message}");
+                    Console.WriteLine($"Inner Stack Trace: {ex.InnerException.StackTrace}");
+                }
+
+                throw;
             }
+        }
+
+        private string CleanupJson(string json)
+        {
+            if (string.IsNullOrWhiteSpace(json)) return "[]";
+
+            json = json.Trim();
+
+            if (!json.StartsWith("[")) json = "[" + json;
+            if (!json.EndsWith("]")) json += "]";
+
+            json = System.Text.RegularExpressions.Regex.Replace(json, @",\s*]", "]");
+
+            return json;
         }
 
         public async Task<HttpResponseMessage> SendRequestAsync(HttpMethod method, string endpoint, HttpContent content = null)
@@ -227,7 +395,7 @@ namespace AiR_Simulator.DataAccess
                     var positions = assetData.Positions?.Select(p => (p.X, p.Y)).ToList() ?? new List<(double X, double Y)>();
                     var asset = new Asset(assetData.AssetId ?? assetData.Id, positions)
                     {
-                        FloorplanId = assetData.FloorMapId > 0 ? assetData.FloorMapId : 1
+                        FloorplanId = assetData.FloorMapId ?? 1
                     };
                     assets.Add(asset);
                 }

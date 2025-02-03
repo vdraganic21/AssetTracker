@@ -59,4 +59,4 @@ namespace AiR_Simulator.DataAccess
             public double Y { get; set; }
         }
     }
-} 
+}

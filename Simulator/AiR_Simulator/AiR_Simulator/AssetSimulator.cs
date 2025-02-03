@@ -30,7 +30,10 @@ namespace AssetDataSimulator
 
             foreach (var asset in Assets)
             {
-                asset.MoveTowardNextPosition(speed);
+                if (asset.Positions != null && asset.Positions.Count > 1)
+                {
+                    asset.MoveTowardNextPosition(speed);
+                }
 
                 try 
                 {
@@ -108,7 +111,6 @@ namespace AssetDataSimulator
         {
             if (RestLoader is RestApiAssetLoader restLoader)
             {
-                // Prepare position history data with precise formatting
                 var positionHistoryData = new 
                 {
                     AssetId = asset.AssetId,
@@ -121,7 +123,7 @@ namespace AssetDataSimulator
                 var json = JsonSerializer.Serialize(positionHistoryData, new JsonSerializerOptions 
                 { 
                     WriteIndented = true,
-                    PropertyNamingPolicy = null // Use exact property names
+                    PropertyNamingPolicy = null
                 });
                 
                 Console.WriteLine($"Sending position history for Asset ID {asset.AssetId}:");
