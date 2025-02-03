@@ -26,17 +26,10 @@ function ZoneRetentionTimeReport() {
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [timeSpan, setTimeSpan] = useState("lastMonth");
-  const [customRange, setCustomRange] = useState<{
-    from: Date | null;
-    fromTime: string;
-    to: Date | null;
-    toTime: string;
-  }>({
-    from: null,
-    fromTime: "00:00",
-    to: null,
-    toTime: "00:00",
-  });
+  const [fromDate, setFromDate] = useState<dayjs.Dayjs | null>(
+    dayjs().subtract(30, "days")
+  );
+  const [toDate, setToDate] = useState<dayjs.Dayjs | null>(dayjs());
 
   useEffect(() => {
     let isInitialized = false;
@@ -97,13 +90,8 @@ function ZoneRetentionTimeReport() {
         default:
           calculatedFrom = now.subtract(30, "days");
       }
-
-      setCustomRange({
-        from: calculatedFrom.toDate(),
-        fromTime: calculatedFrom.format("HH:mm"),
-        to: now.toDate(),
-        toTime: now.format("HH:mm"),
-      });
+      setToDate(dayjs());
+      setFromDate(calculatedFrom);
     }
   }, [timeSpan]);
 
@@ -137,17 +125,11 @@ function ZoneRetentionTimeReport() {
       setSelectedFacility(null);
       setSelectedZone(null);
     }
-
     setHours(0);
     setMinutes(0);
     setTimeSpan("lastMonth");
-    const now = dayjs();
-    setCustomRange({
-      from: now.subtract(30, "days").toDate(),
-      fromTime: "00:00",
-      to: now.toDate(),
-      toTime: now.format("HH:mm"),
-    });
+    setToDate(dayjs());
+    setFromDate(dayjs().subtract(30, "days"));
   };
 
   return (
@@ -249,7 +231,6 @@ function ZoneRetentionTimeReport() {
               value={timeSpan}
               onSynChange={(e: SynChangeEvent) => {
                 setTimeSpan((e.target as HTMLInputElement).value);
-                console.log((e.target as HTMLInputElement).value);
               }}
               className="sort-select"
             >
@@ -266,21 +247,22 @@ function ZoneRetentionTimeReport() {
               >
                 <DateTimePicker
                   className="date-picker"
-                  label="Select Date & Time"
+                  label="From"
                   ampm={false}
-                  value={customRange.from ? dayjs(customRange.from) : null}
+                  value={fromDate}
                   onChange={(newValue) => {
-                    setCustomRange({
-                      ...customRange,
-                      from: newValue?.toDate() || null,
-                    });
-                    setTimeSpan("custom");
+                    if (newValue) {
+                      setFromDate(newValue);
+                      setTimeSpan("custom");
+                      if (toDate && newValue.isAfter(toDate)) {
+                        setToDate(newValue);
+                      }
+                    }
                   }}
                   format="DD/MM/YYYY HH:mm"
+                  maxDate={toDate || dayjs()}
                   slotProps={{
-                    textField: {
-                      className: "date-picker-input",
-                    },
+                    textField: { className: "date-picker-input" },
                   }}
                 />
               </LocalizationProvider>
@@ -293,21 +275,23 @@ function ZoneRetentionTimeReport() {
               >
                 <DateTimePicker
                   className="date-picker"
-                  label="Select Date & Time"
+                  label="To"
                   ampm={false}
-                  value={customRange.to ? dayjs(customRange.to) : null}
+                  value={toDate}
                   onChange={(newValue) => {
-                    setCustomRange({
-                      ...customRange,
-                      to: newValue?.toDate() || null,
-                    });
-                    setTimeSpan("custom");
+                    if (newValue) {
+                      setToDate(newValue);
+                      setTimeSpan("custom");
+                      if (fromDate && newValue.isBefore(fromDate)) {
+                        setFromDate(newValue);
+                      }
+                    }
                   }}
                   format="DD/MM/YYYY HH:mm"
+                  minDate={fromDate || undefined}
+                  maxDate={dayjs()}
                   slotProps={{
-                    textField: {
-                      className: "date-picker-input",
-                    },
+                    textField: { className: "date-picker-input" },
                   }}
                 />
               </LocalizationProvider>
