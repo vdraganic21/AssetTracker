@@ -126,12 +126,15 @@ function FacilitiesManager() {
 					</SynSelect>
 				</div>
 				<SynDivider className="content-divider" />
-				{isLoading && <Spinner text="Loading facilities." />}
-				<div className="scrollable-list">
-					<FacilityCardContainer
-						facilities={sortedFacilities}
-					></FacilityCardContainer>
-				</div>
+				{isLoading ? (
+					<Spinner text="Loading facilities." />
+				) : (
+					<div className="scrollable-list">
+						<FacilityCardContainer
+							facilities={sortedFacilities}
+						></FacilityCardContainer>
+					</div>
+				)}
 			</div>
 			<Footer />
 		</>
