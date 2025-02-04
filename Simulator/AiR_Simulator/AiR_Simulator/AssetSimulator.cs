@@ -16,7 +16,6 @@ namespace AssetDataSimulator
         public List<Asset> Assets { get; }
         public List<Floorplan> Floorplans { get; }
         public IAssetDataLoader RestLoader { get; private set; }
-        private static int historyStoreDelay = 7; // Skips storing asset position - Set to higher values if you want less movement data in asset position histories.
         private int historyStoreCount = 0;
 
         public AssetSimulator(List<Asset> assets, List<Floorplan> floorplans, IAssetDataLoader loader)
@@ -46,8 +45,6 @@ namespace AssetDataSimulator
                     Console.WriteLine($"Error sending asset data: {ex.Message}");
                 }
 
-                if (historyStoreCount == historyStoreDelay)
-                {
                     try
                     {
                         await SendPositionHistoryToRestService(asset);
@@ -56,8 +53,6 @@ namespace AssetDataSimulator
                     {
                         Console.WriteLine($"Error sending position history: {ex.Message}");
                     }
-                    historyStoreCount = 0;
-                }
 
                 var floorplanName = GetFloorplanForAsset(asset);
                 result.Add($"{{\"asset_id\":{asset.AssetId},\"x\":{asset.X.ToString(CultureInfo.InvariantCulture)},\"y\":{asset.Y.ToString(CultureInfo.InvariantCulture)},\"floorplan\":\"{floorplanName}\",\"status\":\"active\",\"timestamp\":\"{DateTime.UtcNow:yyyy-MM-ddTHH:mm:ss.fffZ}\"}}");
