@@ -43,17 +43,17 @@ class _AssetIdleTimeReportState extends State<AssetIdleTimeReport> {
         backgroundColor:AppColors.neutral0,
         title: const Text(
           'Asset Idle Time Report',
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: AppColors.neutral1000),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.download, color: Colors.blue),
+            icon: const Icon(Icons.download, color: AppColors.primary500),
             onPressed: () {
               // Download functionality
             },
           ),
         ],
-        iconTheme: const IconThemeData(color: Colors.black),
+        iconTheme: const IconThemeData(color: AppColors.neutral1000),
       ),
       body: Column(
         children: [
@@ -86,7 +86,7 @@ class _AssetIdleTimeReportState extends State<AssetIdleTimeReport> {
                   children: [
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.blue,
+                        color: AppColors.primary500,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       padding: const EdgeInsets.all(8.0),
@@ -96,21 +96,21 @@ class _AssetIdleTimeReportState extends State<AssetIdleTimeReport> {
                           Expanded(
                             child: Text(
                               'Name',
-                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                              style: const TextStyle(color: AppColors.neutral0, fontWeight: FontWeight.bold),
                               textAlign: TextAlign.left,
                             ),
                           ),
                           Expanded(
                             child: Text(
                               'Facility',
-                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                              style: const TextStyle(color: AppColors.neutral0, fontWeight: FontWeight.bold),
                               textAlign: TextAlign.left,
                             ),
                           ),
                           Expanded(
                             child: Text(
                               'Zone',
-                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                              style: const TextStyle(color: AppColors.neutral0, fontWeight: FontWeight.bold),
                               textAlign: TextAlign.left,
                             ),
                           ),
@@ -131,7 +131,7 @@ class _AssetIdleTimeReportState extends State<AssetIdleTimeReport> {
                             child: Padding(
                               padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 8.0),
                               child: Card(
-                                color: isSelected ? Colors.lightBlue[100] : Colors.white,
+                                color: isSelected ? AppColors.primary300 : AppColors.neutral0,
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Row(
@@ -161,11 +161,11 @@ class _AssetIdleTimeReportState extends State<AssetIdleTimeReport> {
                             width: MediaQuery.of(context).size.width * 0.8,
                             height: 180,
                             child: DataComparisonReportWidget(
-                              mainData: "17min",
+                              mainData: "2h 17min",
                               mainDescription: "Viljuškar idle time last 24h",
-                              secondaryDataLeft: "15min",
+                              secondaryDataLeft: "5h 33min",
                               secondaryDescriptionLeft: "Last week",
-                              secondaryDataRight: "16min",
+                              secondaryDataRight: "3h 16min",
                               secondaryDescriptionRight: "Last month",
                             ),
                           ),
@@ -196,7 +196,7 @@ class _AssetIdleTimeReportState extends State<AssetIdleTimeReport> {
                     height: 12,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: currentPage == index ? Colors.blue : Colors.grey,
+                      color: currentPage == index ? AppColors.primary500 : AppColors.neutral300,
                     ),
                   ),
                 );
@@ -231,7 +231,7 @@ class DataComparisonReportWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey, width: 1),
+        border: Border.all(color: AppColors.neutral500, width: 1),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -244,26 +244,30 @@ class DataComparisonReportWidget extends StatelessWidget {
           SizedBox(height: 6),
           Text(
             mainDescription,
-            style: TextStyle(fontSize: 14, color: Colors.grey),
+            style: TextStyle(fontSize: 14, color: AppColors.neutral500),
           ),
           SizedBox(height: 10),
-          Divider(color: Colors.black, thickness: 1, height: 16),
+          Divider(color: AppColors.neutral300, thickness: 2, height: 16),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Adjust spacing
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(secondaryDataLeft, style: TextStyle(fontSize: 16)),
-                  Text(secondaryDescriptionLeft, style: TextStyle(fontSize: 12, color: Colors.grey)),
-                ],
+              Flexible( // Use Flexible to control spacing
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(secondaryDataLeft, style: TextStyle(fontSize: 16)),
+                    Text(secondaryDescriptionLeft, style: TextStyle(fontSize: 12, color: AppColors.neutral500)),
+                  ],
+                ),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(secondaryDataRight, style: TextStyle(fontSize: 16)),
-                  Text(secondaryDescriptionRight, style: TextStyle(fontSize: 12, color: Colors.grey)),
-                ],
+              Flexible( // Use Flexible to control spacing
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(secondaryDataRight, style: TextStyle(fontSize: 16)),
+                    Text(secondaryDescriptionRight, style: TextStyle(fontSize: 12, color: AppColors.neutral500)),
+                  ],
+                ),
               ),
             ],
           ),
@@ -272,5 +276,3 @@ class DataComparisonReportWidget extends StatelessWidget {
     );
   }
 }
-
-
