@@ -1,26 +1,22 @@
-import '../mock-repositories/mock_asset_position_history_repository.dart';
 import '../entities/asset_position_history_log.dart';
+import '../../data/repositories/asset_position_history_log_repository.dart';
+import '../../data/datasources/remote/asset_position_history_log_datasource.dart';
+import 'package:http/http.dart' as http;
 
 class AssetPositionHistoryLogService {
-  static final _logRepo = MockAssetPositionHistoryLogRepository();
+  static final _repository = AssetPositionHistoryLogRepository(
+    AssetPositionHistoryLogDataSource(http.Client())
+  );
 
   static Future<AssetPositionHistoryLog?> get(int id) async {
-    return _logRepo.get(id);
+    return _repository.get(id);
   }
 
   static Future<List<AssetPositionHistoryLog>> getAll() async {
-    return _logRepo.getAll();
+    return _repository.getAll();
   }
 
-  static Future<bool> add(AssetPositionHistoryLog log) async {
-    return _logRepo.add(log);
-  }
-
-  static Future<bool> delete(int id) async {
-    return _logRepo.delete(id);
-  }
-
-  static Future<bool> update(AssetPositionHistoryLog log) async {
-    return _logRepo.update(log);
+  static Future<List<AssetPositionHistoryLog>> getAssetPositionHistory(String assetId) async {
+    return _repository.getAssetPositionHistory(assetId);
   }
 }
