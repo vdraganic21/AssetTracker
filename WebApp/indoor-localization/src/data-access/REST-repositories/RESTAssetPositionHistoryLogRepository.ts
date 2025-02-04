@@ -21,24 +21,37 @@ export class RESTAssetPositionHistoryLogRepository implements IAssetPositionHist
 
   async GetLogs(assetPositionHistoryLogFilter: AssetPositionHistoryLogFilter): Promise<AssetPositionHistoryLog[]> {
     try {
-      const response = await axiosInstance.get(`/assetPositionHistory`, {
-        params: {
-          floorMapId: assetPositionHistoryLogFilter.facilityId,
-          assetId: assetPositionHistoryLogFilter.assetId,
-          startDate: assetPositionHistoryLogFilter.startDate.toISOString(),
-          endDate: assetPositionHistoryLogFilter.endDate.toISOString(),
-        },
-      });
-      let logs: AssetPositionHistoryLog[] = [];
+        const params: any = {};
 
-      for (let log of response.data) logs.push(this.ParseDataToLog(log));
+        if (assetPositionHistoryLogFilter.facilityId != null) {
+            params.floorMapId = assetPositionHistoryLogFilter.facilityId;
+        }
+        if (assetPositionHistoryLogFilter.assetId != null) {
+            params.assetId = assetPositionHistoryLogFilter.assetId;
+        }
+        if (assetPositionHistoryLogFilter.startDate instanceof Date) {
+            params.startDate = assetPositionHistoryLogFilter.startDate.toISOString();
+        }
+        if (assetPositionHistoryLogFilter.endDate instanceof Date) {
+            params.endDate = assetPositionHistoryLogFilter.endDate.toISOString();
+        }
 
-      return logs;
+        const response = await axiosInstance.get(`/assetPositionHistory`, {
+            params
+        });
+
+        let logs: AssetPositionHistoryLog[] = [];
+        for (let log of response.data) logs.push(this.ParseDataToLog(log));
+
+        console.log(logs);
+        console.log(params);
+        return logs;
     } catch (error) {
-      console.error("Failed to fetch asset position history logs:", error);
-      return [];
+        console.error("Failed to fetch asset position history logs:", error);
+        return [];
     }
-  }
+}
+
 
   async GetAll(): Promise<AssetPositionHistoryLog[]> {
     try {

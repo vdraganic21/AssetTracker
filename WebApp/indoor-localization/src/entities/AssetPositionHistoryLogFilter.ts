@@ -1,19 +1,18 @@
 export class AssetPositionHistoryLogFilter {
-    facilityId: number;
-    assetId: number;
-    startDate: Date;
-    endDate: Date;
-  
-    constructor(
-      facilityId: number,
-      assetId: number,
-      startDate: Date,
-      endDate: Date
-    ) {
-      this.facilityId = facilityId;
-      this.assetId = assetId;
-      this.startDate = startDate;
-      this.endDate = endDate;
-    }
+  facilityId: number | null;
+  assetId: number | null;
+  startDate: Date | null;
+  endDate: Date | null;
+
+  constructor(
+    facilityId: number | null,
+    assetId: number | null,
+    startDate: Date | null,
+    endDate: Date | null
+  ) {
+    this.facilityId = facilityId;
+    this.assetId = assetId;
+    this.startDate = startDate;
+    this.endDate = endDate;
   }
-  
+}
