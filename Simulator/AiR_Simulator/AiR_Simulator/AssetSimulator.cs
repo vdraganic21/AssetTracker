@@ -16,6 +16,8 @@ namespace AssetDataSimulator
         public List<Asset> Assets { get; }
         public List<Floorplan> Floorplans { get; }
         public IAssetDataLoader RestLoader { get; private set; }
+        private static int historyStoreDelay = 7; // Skips storing asset position - Set to higher values if you want less movement data in asset position histories.
+        private int historyStoreCount = 0;
 
         public AssetSimulator(List<Asset> assets, List<Floorplan> floorplans, IAssetDataLoader loader)
         {
@@ -27,7 +29,7 @@ namespace AssetDataSimulator
         public async Task<List<string>> SimulateNextStep(double speed)
         {
             var result = new List<string>();
-
+            historyStoreCount++;
             foreach (var asset in Assets)
             {
                 if (asset.Positions != null && asset.Positions.Count > 1)
@@ -35,7 +37,7 @@ namespace AssetDataSimulator
                     asset.MoveTowardNextPosition(speed);
                 }
 
-                try 
+                try
                 {
                     await SendAssetDataToRestService(asset);
                 }
@@ -44,13 +46,17 @@ namespace AssetDataSimulator
                     Console.WriteLine($"Error sending asset data: {ex.Message}");
                 }
 
-                try 
+                if (historyStoreCount == historyStoreDelay)
                 {
-                    await SendPositionHistoryToRestService(asset);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error sending position history: {ex.Message}");
+                    try
+                    {
+                        await SendPositionHistoryToRestService(asset);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error sending position history: {ex.Message}");
+                    }
+                    historyStoreCount = 0;
                 }
 
                 var floorplanName = GetFloorplanForAsset(asset);
