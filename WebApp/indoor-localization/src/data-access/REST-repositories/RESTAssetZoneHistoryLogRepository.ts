@@ -30,16 +30,16 @@ export class RESTAssetZoneHistoryLogRepository implements IAssetZoneHistoryLogRe
             params.assetId = assetZoneHistoryLogFilter.assetId;
         }
         if (assetZoneHistoryLogFilter.enterStartDate != null) {
-            params.enterStartDate = assetZoneHistoryLogFilter.enterStartDate.toISOString();
+            params.enterStartTime = assetZoneHistoryLogFilter.enterStartDate.toISOString();
         }
         if (assetZoneHistoryLogFilter.enterEndDate != null) {
-            params.enterEndDate = assetZoneHistoryLogFilter.enterEndDate.toISOString();
+            params.enterEndTime = assetZoneHistoryLogFilter.enterEndDate.toISOString();
         }
         if (assetZoneHistoryLogFilter.exitStartDate != null) {
-            params.exitStartDate = assetZoneHistoryLogFilter.exitStartDate.toISOString();
+            params.exitStartTime = assetZoneHistoryLogFilter.exitStartDate.toISOString();
         }
         if (assetZoneHistoryLogFilter.exitEndDate != null) {
-            params.exitEndDate = assetZoneHistoryLogFilter.exitEndDate.toISOString();
+            params.exitEndTime = assetZoneHistoryLogFilter.exitEndDate.toISOString();
         }
         if (assetZoneHistoryLogFilter.minRetentionTime != null) {
             params.minRetentionTime = assetZoneHistoryLogFilter.minRetentionTime;
