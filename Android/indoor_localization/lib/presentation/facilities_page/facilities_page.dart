@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:indoor_localization/domain/entities/facility.dart';
-import '../../presentation/common_components/dropdown_menu.dart';
+import 'package:indoor_localization/presentation/common_components/dropdown_menu.dart';
 import 'facilities_card.dart';
 import 'package:indoor_localization/presentation/widgets/data_error_widget.dart'; // Assuming DataErrorWidget is defined in this file
 
