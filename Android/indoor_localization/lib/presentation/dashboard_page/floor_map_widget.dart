@@ -141,6 +141,7 @@ class FloorMapWidgetState extends State<FloorMapWidget> {
         painter: FloorMapPainter(
           floorMap: _floorMapImage!,
           assets: _assets.isEmpty ? widget.assets : _assets,
+          zones: widget.facility.zones,
           scale: _scale,
           showGrid: _showGrid,
         ),
