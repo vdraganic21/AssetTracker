@@ -1,24 +1,23 @@
-import { axisClasses, LineChart } from "@mui/x-charts";
-import DateValueGraphPoint from "./DateValueGraphPoint";
+import { BarChart, axisClasses } from "@mui/x-charts";
+import BarData from "./BarData";
 
-type DateLineGraphProps = {
-	graphDataset: DateValueGraphPoint[];
+type DateBarGraphProps = {
+	graphDataset: BarData[];
 	yLabel: string;
 };
 
-export default function DateLineGraph({
-	graphDataset,
-	yLabel,
-}: DateLineGraphProps) {
+export default function BarGraph({ graphDataset, yLabel }: DateBarGraphProps) {
 	const dataset = graphDataset.map((point) => ({
-		date: point.date,
+		name: point.name,
 		value: point.value,
 	}));
 
 	return (
-		<LineChart
+		<BarChart
+			barLabel="value"
+			borderRadius={5}
 			margin={{ left: 80, top: 32, right: 0, bottom: 32 }}
-			xAxis={[{ scaleType: "time", dataKey: "date", stroke: "red" }]}
+			xAxis={[{ dataKey: "name", stroke: "red", scaleType: "band" }]}
 			yAxis={[
 				{
 					dataKey: "value",
