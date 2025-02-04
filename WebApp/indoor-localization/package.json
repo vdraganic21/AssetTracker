@@ -15,6 +15,7 @@
     "@emotion/styled": "^11.14.0",
     "@fontsource/open-sans": "^5.1.0",
     "@mui/material": "^6.4.2",
+    "@mui/x-charts": "^7.25.0",
     "@mui/x-date-pickers": "^7.24.1",
     "@synergy-design-system/assets": "^1.9.0",
     "@synergy-design-system/react": "^2.11.8",
@@ -31,8 +32,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
-    "@types/node": "^22.12.0",
     "@types/jest": "^29.5.14",
+    "@types/node": "^22.12.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.3",
