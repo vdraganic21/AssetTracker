@@ -1,31 +1,30 @@
 export class AssetZoneHistoryLogFilter {
-    zoneId: number;
-    assetId: number;
-    enterStartDate: Date;
-    enterEndDate: Date;
-    exitStartDate: Date;
-    exitEndDate: Date;
-    minRetentionTime: number;
-    maxRetentionTime: number;
-  
-    constructor(
-      zoneId: number,
-      assetId: number,
-      enterStartDate: Date,
-      enterEndDate: Date,
-      exitStartDate: Date,
-      exitEndDate: Date,
-      minRetentionTime: number,
-      maxRetentionTime: number
-    ) {
-      this.zoneId = zoneId;
-      this.assetId = assetId;
-      this.enterStartDate = enterStartDate;
-      this.enterEndDate = enterEndDate;
-      this.exitStartDate = exitStartDate;
-      this.exitEndDate = exitEndDate;
-      this.minRetentionTime = minRetentionTime;
-      this.maxRetentionTime = maxRetentionTime;
-    }
+  zoneId: number | null;
+  assetId: number | null;
+  enterStartDate: Date | null;
+  enterEndDate: Date | null;
+  exitStartDate: Date | null;
+  exitEndDate: Date | null;
+  minRetentionTime: number | null;
+  maxRetentionTime: number | null;
+
+  constructor(
+    zoneId: number | null,
+    assetId: number | null,
+    enterStartDate: Date | null,
+    enterEndDate: Date | null,
+    exitStartDate: Date | null,
+    exitEndDate: Date | null,
+    minRetentionTime: number | null,
+    maxRetentionTime: number | null
+  ) {
+    this.zoneId = zoneId;
+    this.assetId = assetId;
+    this.enterStartDate = enterStartDate;
+    this.enterEndDate = enterEndDate;
+    this.exitStartDate = exitStartDate;
+    this.exitEndDate = exitEndDate;
+    this.minRetentionTime = minRetentionTime;
+    this.maxRetentionTime = maxRetentionTime;
   }
-  
+}
