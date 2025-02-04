@@ -121,10 +121,7 @@ function ZoneRetentionTimeReport() {
 		if (facilities.length > 0) {
 			const facilityWithZones = facilities[0] as Facility & { zones?: Zone[] };
 			setSelectedFacility(facilityWithZones);
-			setSelectedFacilityZones(facilityWithZones.zones || []);
-			setSelectedZone(
-				facilityWithZones.zones?.length ? facilityWithZones.zones[0] : null
-			);
+
 			setAverageRetentionTime(0);
 			setMaxRetentionTime(0);
 			setMinRetentionTime(0);
