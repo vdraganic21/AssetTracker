@@ -18,6 +18,9 @@ dependencies:
     path: ../modules/report_asset_idle_time_module
   report_module_core:
     path: ../modules/report_module_core
+  zone_retention_time_report:
+    path: ../modules/zone_retention_time_report
+  fl_chart: ^0.70.2
 
 
 dev_dependencies:

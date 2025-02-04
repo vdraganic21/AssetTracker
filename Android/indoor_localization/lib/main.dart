@@ -8,12 +8,14 @@ import 'domain/services/asset_service.dart';
 import 'domain/services/facility_service.dart';
 import 'domain/entities/asset.dart';
 import 'package:custom_report_module/reports/asset_idle_time_report.dart';
+import 'package:zone_retention_time_report/reports/zone_retention_time_report.dart';
 import 'domain/entities/facility.dart';
 import 'presentation/widgets/data_error_widget.dart';
 
 void main() {
   ReportModulesService.registerModules([
     AssetIdleTimeReportModule(),
+    ZoneRetentionTimeReport(),
     // more modules here
   ]);
 
@@ -58,12 +60,12 @@ class _AppDataProviderState extends State<AppDataProvider> {
 
   Future<void> _loadData() async {
     if (_isLoading) return;  // Prevent multiple simultaneous loads
-    
+
     _isLoading = true;
     try {
       final assets = await AssetService.getAll();
       final facilities = await FacilityService.getAll();
-      
+
       if (mounted) {
         setState(() {
           _assets = assets;

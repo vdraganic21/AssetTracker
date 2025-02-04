@@ -25,7 +25,7 @@ class _LineChartWidgetState extends State<LineChartWidget> {
   }
 
   void _loadChartData() {
-    List<int> retentionTimes = [2, 4, 3, 5, 4];
+    List<int> retentionTimes = [120, 180, 150, 200, 170];
 
     List<FlSpot> spots = List.generate(retentionTimes.length, (index) {
       return FlSpot(index.toDouble(), retentionTimes[index].toDouble());
@@ -64,7 +64,7 @@ class _LineChartWidgetState extends State<LineChartWidget> {
       gridData: FlGridData(
         show: true,
         drawVerticalLine: true,
-        horizontalInterval: 1,
+        horizontalInterval: 50,
         verticalInterval: 1,
         getDrawingHorizontalLine: (_) =>
         const FlLine(color: AppColors.neutral400, strokeWidth: 1),
@@ -86,7 +86,7 @@ class _LineChartWidgetState extends State<LineChartWidget> {
         leftTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
-            interval: 1,
+            interval: 50,
             getTitlesWidget: leftTitleWidgets,
             reservedSize: 42,
           ),
@@ -98,8 +98,8 @@ class _LineChartWidgetState extends State<LineChartWidget> {
       ),
       minX: 0,
       maxX: 4,
-      minY: 1,
-      maxY: 6,
+      minY: 0,
+      maxY: 250,
       lineBarsData: [
         LineChartBarData(
           spots: retentionTimeData,
@@ -139,7 +139,7 @@ class _LineChartWidgetState extends State<LineChartWidget> {
     return SideTitleWidget(
       meta: meta,
       space: 8,
-      child: Text("${value.toInt()} h", style: style, textAlign: TextAlign.left),
+      child: Text("${value.toInt()}", style: style, textAlign: TextAlign.left),
     );
   }
 }

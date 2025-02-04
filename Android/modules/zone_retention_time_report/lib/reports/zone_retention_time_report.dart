@@ -5,13 +5,14 @@ import '../components/common/line_chart.dart';
 import '../config/app_colors.dart';
 
 int? selectedIndex;
+String? selectedFacility;
 
-class AssetIdleTimeReportModule implements ReportModule {
+class ZoneRetentionTimeReport implements ReportModule {
   @override
   String getIcon() => '../../assets/floor_map.png';
 
   @override
-  String getName() => 'Asset Idle Time';
+  String getName() => 'Zone Retention';
 
   @override
   Widget getComponent() {
@@ -31,26 +32,26 @@ class _AssetIdleTimeReportState extends State<AssetIdleTimeReport> {
   PageController _pageController = PageController(initialPage: 1);
 
   List<Map<String, String>> items = [
-    {'name': 'Viljuškar', 'facility': 'Warehouse 1', 'zone': 'Loading Bay'},
-    {'name': 'Pallet AX75', 'facility': 'Warehouse 1', 'zone': 'Storage Area'},
-    {'name': 'Pallete Y2K1', 'facility': 'Warehouse 1', 'zone': 'Loading Bay'},
+    {'name': 'Zone 1', 'facility': 'Facility 1'},
+    {'name': 'Zone 2', 'facility': 'Facility 2'},
+    {'name': 'Zone 3', 'facility': 'Facility 3'},
   ];
+
+  List<String> facilities = ['Facility 1', 'Facility 2', 'Facility 3'];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor:AppColors.neutral0,
+        backgroundColor: AppColors.neutral0,
         title: const Text(
-          'Asset Idle Time Report',
+          'Zone Retention Time Report',
           style: TextStyle(color: AppColors.neutral1000),
         ),
         actions: [
           IconButton(
             icon: const Icon(Icons.download, color: AppColors.primary500),
-            onPressed: () {
-              // Download functionality
-            },
+            onPressed: () {},
           ),
         ],
         iconTheme: const IconThemeData(color: AppColors.neutral1000),
@@ -68,22 +69,31 @@ class _AssetIdleTimeReportState extends State<AssetIdleTimeReport> {
               children: [
                 Column(
                   children: [
-                    Expanded(
-                      child: SizedBox(
-                        height: double.infinity,
-                        child: const LineChartWidget(),
-                      ),
-                    ),
-                    Expanded(
-                      child: SizedBox(
-                        height: double.infinity,
-                        child: const BarChartWidget(),
-                      ),
-                    ),
+                    Expanded(child: const LineChartWidget()),
+                    Expanded(child: const BarChartWidget()),
                   ],
                 ),
                 Column(
                   children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: DropdownButton<String>(
+                        hint: Text("Select Facility"),
+                        value: selectedFacility,
+                        isExpanded: true,
+                        items: facilities.map((String facility) {
+                          return DropdownMenuItem<String>(
+                            value: facility,
+                            child: Text(facility),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            selectedFacility = newValue;
+                          });
+                        },
+                      ),
+                    ),
                     Container(
                       decoration: BoxDecoration(
                         color: AppColors.primary500,
@@ -94,25 +104,12 @@ class _AssetIdleTimeReportState extends State<AssetIdleTimeReport> {
                       child: Row(
                         children: [
                           Expanded(
-                            child: Text(
-                              'Name',
-                              style: const TextStyle(color: AppColors.neutral0, fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.left,
-                            ),
+                            child: Text('Name',
+                                style: TextStyle(color: AppColors.neutral0, fontWeight: FontWeight.bold)),
                           ),
                           Expanded(
-                            child: Text(
-                              'Facility',
-                              style: const TextStyle(color: AppColors.neutral0, fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.left,
-                            ),
-                          ),
-                          Expanded(
-                            child: Text(
-                              'Zone',
-                              style: const TextStyle(color: AppColors.neutral0, fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.left,
-                            ),
+                            child: Text('Facility',
+                                style: TextStyle(color: AppColors.neutral0, fontWeight: FontWeight.bold)),
                           ),
                         ],
                       ),
@@ -138,7 +135,6 @@ class _AssetIdleTimeReportState extends State<AssetIdleTimeReport> {
                                     children: [
                                       Expanded(child: Text(items[index]['name']!)),
                                       Expanded(child: Text(items[index]['facility']!)),
-                                      Expanded(child: Text(items[index]['zone']!)),
                                     ],
                                   ),
                                 ),
@@ -211,35 +207,27 @@ class _AssetIdleTimeReportState extends State<AssetIdleTimeReport> {
 
 List<Map<String, String>> dataComparisonItems = [
   {
-    "mainData": "35min",
-    "mainDescription": "Viljuškar idle time last 24h",
-    "secondaryDataLeft": "17min",
+    "mainData": "1h",
+    "mainDescription": "Average retention time last 24h",
+    "secondaryDataLeft": "1h",
     "secondaryDescriptionLeft": "Last week",
-    "secondaryDataRight": "16min",
+    "secondaryDataRight": "1h",
     "secondaryDescriptionRight": "Last month",
   },
   {
-    "mainData": "1h 25min",
-    "mainDescription": "Average idle time last 24h",
-    "secondaryDataLeft": "2h 13min",
+    "mainData": "1h",
+    "mainDescription": "Maximum retention time last 24h",
+    "secondaryDataLeft": "1h",
     "secondaryDescriptionLeft": "Last week",
-    "secondaryDataRight": "5h 13min",
+    "secondaryDataRight": "6h",
     "secondaryDescriptionRight": "Last month",
   },
   {
-    "mainData": "3h 7min",
-    "mainDescription": "Max idle time last 24h",
-    "secondaryDataLeft": "2h 13min",
+    "mainData": "1h",
+    "mainDescription": "Minimum retention time last 24h",
+    "secondaryDataLeft": "1h",
     "secondaryDescriptionLeft": "Last week",
-    "secondaryDataRight": "5h 13min",
-    "secondaryDescriptionRight": "Last month",
-  },
-  {
-    "mainData": "12min",
-    "mainDescription": "Min idle time last 24h",
-    "secondaryDataLeft": "17min",
-    "secondaryDescriptionLeft": "Last week",
-    "secondaryDataRight": "16min",
+    "secondaryDataRight": "1h",
     "secondaryDescriptionRight": "Last month",
   },
 ];

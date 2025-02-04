@@ -22,10 +22,12 @@ class _BarChartState extends State<BarChartWidget> {
 
   void _loadChartData() {
     retentionTimes = {
-      1: 3,
-      2: 7,
-      3: 5,
-      4: 10,
+      1: 150,
+      2: 230,
+      3: 120,
+      4: 180,
+      5: 90,
+      6: 210,
     };
 
     setState(() {
@@ -71,7 +73,7 @@ class _BarChartState extends State<BarChartWidget> {
           gridData: FlGridData(
             show: true,
             drawVerticalLine: true,
-            horizontalInterval: 1,
+            horizontalInterval: 50,
             verticalInterval: 1,
             getDrawingHorizontalLine: (value) {
               return const FlLine(
@@ -87,7 +89,9 @@ class _BarChartState extends State<BarChartWidget> {
             },
           ),
           alignment: BarChartAlignment.spaceAround,
-          maxY: 12,
+          maxY: retentionTimes.isNotEmpty
+              ? retentionTimes.values.reduce((a, b) => a > b ? a : b) + 20
+              : 300,
         ),
       ),
     );
@@ -144,7 +148,7 @@ class _BarChartState extends State<BarChartWidget> {
           return SideTitleWidget(
             meta: meta,
             space: 8,
-            child: Text("${value.toInt()} h",
+            child: Text("${value.toInt()}",
                 style: TextStyle(
                   color: AppColors.neutral1000,
                   fontWeight: FontWeight.bold,
