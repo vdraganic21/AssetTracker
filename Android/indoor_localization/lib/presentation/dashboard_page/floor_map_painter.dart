@@ -1,4 +1,5 @@
 import 'dart:ui' as ui;
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:indoor_localization/domain/entities/asset.dart';
 import 'package:indoor_localization/config/app_colors.dart';
@@ -6,12 +7,14 @@ import 'package:indoor_localization/config/app_colors.dart';
 class FloorMapPainter extends CustomPainter {
   final ui.Image floorMap;
   final List<Asset> assets;
+  final List<Map<String, dynamic>> zones;
   final double scale;
   final bool showGrid;
 
   FloorMapPainter({
     required this.floorMap,
     required this.assets,
+    required this.zones,
     this.scale = 1.0,
     this.showGrid = false,
   });
@@ -27,6 +30,77 @@ class FloorMapPainter extends CustomPainter {
     final src = Rect.fromLTWH(0, 0, imageSize.width, imageSize.height);
     final dst = Rect.fromLTWH(offsetX, offsetY, fittedSize.width, fittedSize.height);
     canvas.drawImageRect(floorMap, src, dst, Paint());
+
+    for (final zone in zones) {
+      final points = List<Map<String, dynamic>>.from(jsonDecode(zone['points'] as String));
+      if (points.isEmpty) continue;
+
+      final path = Path();
+      final scaledPoints = points.map((point) {
+        final x = (point['x'] as num).toDouble() / imageSize.width * fittedSize.width + offsetX;
+        final y = ((imageSize.height - (point['y'] as num).toDouble()) / imageSize.height) * fittedSize.height + offsetY;
+        return Offset(x, y);
+      }).toList();
+
+      path.moveTo(scaledPoints[0].dx, scaledPoints[0].dy);
+      for (int i = 1; i < scaledPoints.length; i++) {
+        path.lineTo(scaledPoints[i].dx, scaledPoints[i].dy);
+      }
+      path.close();
+
+      final zonePaint = Paint()
+        ..color = _getZoneColor(zone['name'] as String).withOpacity(0.2)
+        ..style = PaintingStyle.fill;
+      canvas.drawPath(path, zonePaint);
+
+      final borderPaint = Paint()
+        ..color = _getZoneColor(zone['name'] as String)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.0;
+      canvas.drawPath(path, borderPaint);
+
+      final textSpan = TextSpan(
+        text: zone['name'] as String,
+        style: TextStyle(
+          color: _getZoneColor(zone['name'] as String),
+          fontSize: fittedSize.width * 0.03,
+          fontWeight: FontWeight.w700,
+          shadows: [
+            Shadow(
+              offset: Offset(-1.5, -1.5),
+              color: Colors.white,
+            ),
+            Shadow(
+              offset: Offset(1.5, -1.5),
+              color: Colors.white,
+            ),
+            Shadow(
+              offset: Offset(1.5, 1.5),
+              color: Colors.white,
+            ),
+            Shadow(
+              offset: Offset(-1.5, 1.5),
+              color: Colors.white,
+            ),
+          ],
+        ),
+      );
+
+      final textPainter = TextPainter(
+        text: textSpan,
+        textDirection: TextDirection.ltr,
+      );
+      textPainter.layout();
+
+      final center = _calculatePolygonCenter(scaledPoints);
+      textPainter.paint(
+        canvas,
+        Offset(
+          center.dx - textPainter.width / 2,
+          center.dy - textPainter.height / 2,
+        ),
+      );
+    }
 
     if (showGrid) {
       final gridPaint = Paint()
@@ -121,10 +195,32 @@ class FloorMapPainter extends CustomPainter {
     }
   }
 
+  Color _getZoneColor(String zoneName) {
+    final hash = zoneName.hashCode.abs();
+    final hue = (hash % 360).toDouble();
+    return HSLColor.fromAHSL(1.0, hue, 0.6, 0.5).toColor();
+  }
+
+  Offset _calculatePolygonCenter(List<Offset> points) {
+    double centerX = 0;
+    double centerY = 0;
+    
+    for (final point in points) {
+      centerX += point.dx;
+      centerY += point.dy;
+    }
+    
+    return Offset(
+      centerX / points.length,
+      centerY / points.length,
+    );
+  }
+
   @override
   bool shouldRepaint(covariant FloorMapPainter oldDelegate) {
     return oldDelegate.floorMap != floorMap ||
         oldDelegate.assets != assets ||
+        oldDelegate.zones != zones ||
         oldDelegate.scale != scale ||
         oldDelegate.showGrid != showGrid;
   }
