@@ -17,6 +17,7 @@ class AssetIdleTimeCounter {
       print("Asset ${dataset[i].assetId} - Idle Check: $isIdle, Time Diff: $diff sec");
 
       if (dataset[i - 1].facilityId == dataset[i].facilityId && isIdle) {
+        print("Facility Change: Prev(${dataset[i - 1].facilityId}) -> Curr(${dataset[i].facilityId})");
         totalIdleTime += diff;
       }
     }
@@ -40,6 +41,7 @@ class AssetIdleTimeCounter {
   }
 
   bool _isIdle(AssetPositionHistoryLog prevLog, AssetPositionHistoryLog currentLog) {
+    print("Checking idle: Prev(${prevLog.position.x}, ${prevLog.position.y}) vs Curr(${currentLog.position.x}, ${currentLog.position.y})");
     return prevLog.position.x == currentLog.position.x &&
         prevLog.position.y == currentLog.position.y;
   }

@@ -1,54 +1,109 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import '../../config/app_colors.dart';
+import 'package:indoor_localization/domain/entities/asset_position_history_log.dart';
+import 'package:indoor_localization/domain/services/asset_position_log_history_service.dart';
+import '../../managers/asset_idle_time_counter.dart';
 
-class _BarChart extends StatelessWidget {
-  const _BarChart();
+class BarChartWidget extends StatefulWidget {
+  const BarChartWidget();
+
+  @override
+  _BarChartState createState() => _BarChartState();
+}
+
+class _BarChartState extends State<BarChartWidget> {
+  Map<int, double> idleTimes = {};
+  List<BarChartGroupData> barGroups = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadChartData();
+  }
+
+  Future<void> _loadChartData() async {
+    List<AssetPositionHistoryLog> dataset = await AssetPositionHistoryLogService.getAll();
+    List<AssetPositionHistoryLog> filteredDataset =
+    dataset.where((log) => log.assetId == 1).toList();
+
+    final counter = AssetIdleTimeCounter(filteredDataset);
+    final facilityIds = counter.getFacilityIdsInDataset();
+
+    idleTimes.clear();
+    for (var facilityId in facilityIds) {
+      double idleTimeInSeconds = counter.getIdleTimeInFacility(facilityId);
+      idleTimes[facilityId] = idleTimeInSeconds / 3600;
+    }
+
+    setState(() {
+      barGroups = _createBarGroups(idleTimes);
+      isLoading = false;
+    });
+  }
+
+  List<BarChartGroupData> _createBarGroups(Map<int, double> idleTimes) {
+    return idleTimes.entries.map((entry) {
+      return BarChartGroupData(
+        x: entry.key,
+        barRods: [
+          BarChartRodData(
+            toY: entry.value,
+            gradient: _barsGradient,
+            width: 12,
+            borderRadius: BorderRadius.zero,
+          )
+        ],
+        showingTooltipIndicators: [0],
+      );
+    }).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Padding(
-        padding: const EdgeInsets.only(
-          right: 18,
-          left: 12,
-          top: 24,
-          bottom: 12,
-        ),
-        child: BarChart(
-          BarChartData(
-            barTouchData: barTouchData,
-            titlesData: titlesData,
-            borderData: borderData,
-            barGroups: barGroups,
-            gridData: FlGridData(
-              show: true,
-              drawVerticalLine: true,
-              horizontalInterval: 5,
-              verticalInterval: 1,
-              getDrawingHorizontalLine: (value) {
-                return const FlLine(
-                  color: AppColors.neutral400,
-                  strokeWidth: 1,
-                );
-              },
-              getDrawingVerticalLine: (value) {
-                return const FlLine(
-                  color: AppColors.neutral400,
-                  strokeWidth: 1,
-                );
-              },
-            ),
-            alignment: BarChartAlignment.spaceAround,
-            maxY: 20,
+    return isLoading
+        ? Center(child: CircularProgressIndicator())
+        : Padding(
+      padding: const EdgeInsets.only(
+        right: 18,
+        left: 12,
+        top: 24,
+        bottom: 12,
+      ),
+      child: BarChart(
+        BarChartData(
+          barTouchData: barTouchData,
+          titlesData: titlesData,
+          borderData: borderData,
+          barGroups: barGroups,
+          gridData: FlGridData(
+            show: true,
+            drawVerticalLine: true,
+            horizontalInterval: 1,
+            verticalInterval: 1,
+            getDrawingHorizontalLine: (value) {
+              return const FlLine(
+                color: AppColors.neutral400,
+                strokeWidth: 1,
+              );
+            },
+            getDrawingVerticalLine: (value) {
+              return const FlLine(
+                color: AppColors.neutral400,
+                strokeWidth: 1,
+              );
+            },
           ),
+          alignment: BarChartAlignment.spaceAround,
+          maxY: idleTimes.isNotEmpty ? idleTimes.values.reduce((a, b) => a > b ? a : b) + 1 : 5,
         ),
       ),
     );
   }
 
   BarTouchData get barTouchData => BarTouchData(
-    enabled: false,
+    enabled: true,
     touchTooltipData: BarTouchTooltipData(
       getTooltipColor: (group) => Colors.transparent,
       tooltipPadding: EdgeInsets.zero,
@@ -60,7 +115,7 @@ class _BarChart extends StatelessWidget {
           int rodIndex,
           ) {
         return BarTooltipItem(
-          rod.toY.round().toString(),
+          '${rod.toY.toStringAsFixed(2)} h',
           const TextStyle(
             color: AppColors.primary300,
             fontWeight: FontWeight.bold,
@@ -70,74 +125,42 @@ class _BarChart extends StatelessWidget {
     ),
   );
 
-  Widget getBottomTitles(double value, TitleMeta meta) {
-    final style = TextStyle(
-      color: AppColors.primary300,
-      fontWeight: FontWeight.bold,
-      fontSize: 12,
-    );
-    String text;
-    switch (value.toInt()) {
-      case 0:
-        text = 'Mn';
-        break;
-      case 1:
-        text = 'Te';
-        break;
-      case 2:
-        text = 'Wd';
-        break;
-      case 3:
-        text = 'Tu';
-        break;
-      case 4:
-        text = 'Fr';
-        break;
-      case 5:
-        text = 'St';
-        break;
-      case 6:
-        text = 'Sn';
-        break;
-      default:
-        text = '';
-        break;
-    }
-    return SideTitleWidget(
-      meta: meta,
-      space: 4,
-      child: Text(text, style: style),
-    );
-  }
-
-  Widget getLeftTitles(double value, TitleMeta meta) {
-    final style = TextStyle(
-      color: AppColors.neutral1000,
-      fontWeight: FontWeight.bold,
-      fontSize: 12,
-    );
-    String text = value.toInt().toString();
-    return SideTitleWidget(
-      meta: meta,
-      space: 8,
-      child: Text(text, style: style),
-    );
-  }
-
   FlTitlesData get titlesData => FlTitlesData(
     show: true,
     bottomTitles: AxisTitles(
       sideTitles: SideTitles(
         showTitles: true,
         reservedSize: 30,
-        getTitlesWidget: getBottomTitles,
+        getTitlesWidget: (double value, TitleMeta meta) {
+          return SideTitleWidget(
+            meta: meta,
+            space: 4,
+            child: Text('Facility $value',
+                style: TextStyle(
+                  color: AppColors.primary300,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                )),
+          );
+        },
       ),
     ),
     leftTitles: AxisTitles(
       sideTitles: SideTitles(
         showTitles: true,
         reservedSize: 42,
-        getTitlesWidget: getLeftTitles,
+        getTitlesWidget: (double value, TitleMeta meta) {
+          return SideTitleWidget(
+            meta: meta,
+            space: 8,
+            child: Text(value.toStringAsFixed(1),
+                style: TextStyle(
+                  color: AppColors.neutral1000,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                )),
+          );
+        },
       ),
     ),
     topTitles: const AxisTitles(
@@ -160,108 +183,4 @@ class _BarChart extends StatelessWidget {
     begin: Alignment.bottomCenter,
     end: Alignment.topCenter,
   );
-
-  List<BarChartGroupData> get barGroups => [
-    BarChartGroupData(
-      x: 0,
-      barRods: [
-        BarChartRodData(
-          toY: 8,
-          gradient: _barsGradient,
-          width: 12,
-          borderRadius: BorderRadius.zero,
-        )
-      ],
-      showingTooltipIndicators: [0],
-    ),
-    BarChartGroupData(
-      x: 1,
-      barRods: [
-        BarChartRodData(
-          toY: 10,
-          gradient: _barsGradient,
-          width: 12,
-          borderRadius: BorderRadius.zero,
-        )
-      ],
-      showingTooltipIndicators: [0],
-    ),
-    BarChartGroupData(
-      x: 2,
-      barRods: [
-        BarChartRodData(
-          toY: 14,
-          gradient: _barsGradient,
-          width: 12,
-          borderRadius: BorderRadius.zero,
-        )
-      ],
-      showingTooltipIndicators: [0],
-    ),
-    BarChartGroupData(
-      x: 3,
-      barRods: [
-        BarChartRodData(
-          toY: 15,
-          gradient: _barsGradient,
-          width: 12,
-          borderRadius: BorderRadius.zero,
-        )
-      ],
-      showingTooltipIndicators: [0],
-    ),
-    BarChartGroupData(
-      x: 4,
-      barRods: [
-        BarChartRodData(
-          toY: 13,
-          gradient: _barsGradient,
-          width: 12,
-          borderRadius: BorderRadius.zero,
-        )
-      ],
-      showingTooltipIndicators: [0],
-    ),
-    BarChartGroupData(
-      x: 5,
-      barRods: [
-        BarChartRodData(
-          toY: 10,
-          gradient: _barsGradient,
-          width: 12,
-          borderRadius: BorderRadius.zero,
-        )
-      ],
-      showingTooltipIndicators: [0],
-    ),
-    BarChartGroupData(
-      x: 6,
-      barRods: [
-        BarChartRodData(
-          toY: 16,
-          gradient: _barsGradient,
-          width: 12,
-          borderRadius: BorderRadius.zero,
-        )
-      ],
-      showingTooltipIndicators: [0],
-    ),
-  ];
-}
-
-class BarChartWidget extends StatefulWidget {
-  const BarChartWidget({super.key});
-
-  @override
-  State<StatefulWidget> createState() => BarChartWidgetState();
-}
-
-class BarChartWidgetState extends State<BarChartWidget> {
-  @override
-  Widget build(BuildContext context) {
-    return const AspectRatio(
-      aspectRatio: 1.70,
-      child: _BarChart(),
-    );
-  }
 }

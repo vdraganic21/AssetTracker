@@ -249,9 +249,9 @@ class DataComparisonReportWidget extends StatelessWidget {
           SizedBox(height: 10),
           Divider(color: AppColors.neutral300, thickness: 2, height: 16),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Adjust spacing
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Flexible( // Use Flexible to control spacing
+              Flexible(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -260,7 +260,7 @@ class DataComparisonReportWidget extends StatelessWidget {
                   ],
                 ),
               ),
-              Flexible( // Use Flexible to control spacing
+              Flexible(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
