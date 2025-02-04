@@ -31,9 +31,9 @@ class _AssetIdleTimeReportState extends State<AssetIdleTimeReport> {
   PageController _pageController = PageController(initialPage: 1);
 
   List<Map<String, String>> items = [
-    {'name': 'Asset A', 'facility': 'Facility 1', 'zone': 'Zone X'},
-    {'name': 'Asset B', 'facility': 'Facility 2', 'zone': 'Zone Y'},
-    {'name': 'Asset C', 'facility': 'Facility 3', 'zone': 'Zone Z'},
+    {'name': 'Viljuškar', 'facility': 'Warehouse 1', 'zone': 'Loading Bay'},
+    {'name': 'Pallet AX75', 'facility': 'Warehouse 1', 'zone': 'Storage Area'},
+    {'name': 'Pallete Y2K1', 'facility': 'Warehouse 1', 'zone': 'Loading Bay'},
   ];
 
   @override
@@ -154,19 +154,19 @@ class _AssetIdleTimeReportState extends State<AssetIdleTimeReport> {
                   child: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(4, (index) {
+                      children: List.generate(dataComparisonItems.length, (index) {
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 15.0),
                           child: Container(
                             width: MediaQuery.of(context).size.width * 0.8,
                             height: 180,
                             child: DataComparisonReportWidget(
-                              mainData: "2h 17min",
-                              mainDescription: "Viljuškar idle time last 24h",
-                              secondaryDataLeft: "5h 33min",
-                              secondaryDescriptionLeft: "Last week",
-                              secondaryDataRight: "3h 16min",
-                              secondaryDescriptionRight: "Last month",
+                              mainData: dataComparisonItems[index]["mainData"]!,
+                              mainDescription: dataComparisonItems[index]["mainDescription"]!,
+                              secondaryDataLeft: dataComparisonItems[index]["secondaryDataLeft"]!,
+                              secondaryDescriptionLeft: dataComparisonItems[index]["secondaryDescriptionLeft"]!,
+                              secondaryDataRight: dataComparisonItems[index]["secondaryDataRight"]!,
+                              secondaryDescriptionRight: dataComparisonItems[index]["secondaryDescriptionRight"]!,
                             ),
                           ),
                         );
@@ -208,6 +208,41 @@ class _AssetIdleTimeReportState extends State<AssetIdleTimeReport> {
     );
   }
 }
+
+List<Map<String, String>> dataComparisonItems = [
+  {
+    "mainData": "35min",
+    "mainDescription": "Viljuškar idle time last 24h",
+    "secondaryDataLeft": "17min",
+    "secondaryDescriptionLeft": "Last week",
+    "secondaryDataRight": "16min",
+    "secondaryDescriptionRight": "Last month",
+  },
+  {
+    "mainData": "1h 25min",
+    "mainDescription": "Average idle time last 24h",
+    "secondaryDataLeft": "2h 13min",
+    "secondaryDescriptionLeft": "Last week",
+    "secondaryDataRight": "5h 13min",
+    "secondaryDescriptionRight": "Last month",
+  },
+  {
+    "mainData": "3h 7min",
+    "mainDescription": "Max idle time last 24h",
+    "secondaryDataLeft": "2h 13min",
+    "secondaryDescriptionLeft": "Last week",
+    "secondaryDataRight": "5h 13min",
+    "secondaryDescriptionRight": "Last month",
+  },
+  {
+    "mainData": "12min",
+    "mainDescription": "Min idle time last 24h",
+    "secondaryDataLeft": "17min",
+    "secondaryDescriptionLeft": "Last week",
+    "secondaryDataRight": "16min",
+    "secondaryDescriptionRight": "Last month",
+  },
+];
 
 class DataComparisonReportWidget extends StatelessWidget {
   final String mainData;

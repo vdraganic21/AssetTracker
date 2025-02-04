@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:indoor_localization/domain/entities/asset_position_history_log.dart';
-import 'package:indoor_localization/domain/services/asset_position_log_history_service.dart';
-import '../../managers/asset_idle_time_stats_manager.dart';
 import '../../config/app_colors.dart';
 
 class LineChartWidget extends StatefulWidget {
@@ -18,7 +15,7 @@ class _LineChartWidgetState extends State<LineChartWidget> {
     AppColors.primary500,
   ];
 
-  List<FlSpot> idleTimeData = [];
+  List<FlSpot> retentionTimeData = [];
   bool isLoading = true;
 
   @override
@@ -27,45 +24,17 @@ class _LineChartWidgetState extends State<LineChartWidget> {
     _loadChartData();
   }
 
-  Future<void> _loadChartData() async {
-    List<AssetPositionHistoryLog> dataset = await AssetPositionHistoryLogService.getAll();
+  void _loadChartData() {
+    List<int> retentionTimes = [120, 180, 150, 200, 170];
 
-    List<AssetPositionHistoryLog> filteredDataset =
-    dataset.where((log) => log.assetId == 1).toList();
-
-    DateTime now = DateTime.now();
-    List<FlSpot> spots = [];
-
-    for (int i = 0; i < 30; i++) {
-      DateTime targetDate = now.subtract(Duration(days: 30 - i));
-      double idleTime = await _calculateIdleTimeForDate(filteredDataset, targetDate);
-
-      idleTime = idleTime.clamp(0, 6);
-
-      spots.add(FlSpot(i.toDouble(), idleTime));
-    }
+    List<FlSpot> spots = List.generate(retentionTimes.length, (index) {
+      return FlSpot(index.toDouble(), retentionTimes[index].toDouble());
+    });
 
     setState(() {
-      idleTimeData = spots;
+      retentionTimeData = spots;
       isLoading = false;
     });
-  }
-
-  Future<double> _calculateIdleTimeForDate(
-      List<AssetPositionHistoryLog> dataset, DateTime date) async {
-    DateTime startOfDay = DateTime(date.year, date.month, date.day);
-    DateTime endOfDay = startOfDay.add(const Duration(days: 1));
-
-    List<AssetPositionHistoryLog> logsForDate = dataset
-        .where((log) => log.dateTime.isAfter(startOfDay) && log.dateTime.isBefore(endOfDay))
-        .toList();
-
-    if (logsForDate.isEmpty) return 0;
-
-    AssetIdleTimeStatsManager statsManager = AssetIdleTimeStatsManager(logsForDate);
-    double idleTime = statsManager.getAvgIdleTime();
-
-    return idleTime / 3600;
   }
 
   @override
@@ -95,10 +64,12 @@ class _LineChartWidgetState extends State<LineChartWidget> {
       gridData: FlGridData(
         show: true,
         drawVerticalLine: true,
-        horizontalInterval: 1,
+        horizontalInterval: 50,
         verticalInterval: 1,
-        getDrawingHorizontalLine: (_) => const FlLine(color: AppColors.neutral400, strokeWidth: 1),
-        getDrawingVerticalLine: (_) => const FlLine(color: AppColors.neutral400, strokeWidth: 1),
+        getDrawingHorizontalLine: (_) =>
+        const FlLine(color: AppColors.neutral400, strokeWidth: 1),
+        getDrawingVerticalLine: (_) =>
+        const FlLine(color: AppColors.neutral400, strokeWidth: 1),
       ),
       titlesData: FlTitlesData(
         show: true,
@@ -108,14 +79,14 @@ class _LineChartWidgetState extends State<LineChartWidget> {
           sideTitles: SideTitles(
             showTitles: true,
             reservedSize: 30,
-            interval: 5,
+            interval: 1,
             getTitlesWidget: bottomTitleWidgets,
           ),
         ),
         leftTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
-            interval: 1,
+            interval: 50,
             getTitlesWidget: leftTitleWidgets,
             reservedSize: 42,
           ),
@@ -126,13 +97,13 @@ class _LineChartWidgetState extends State<LineChartWidget> {
         border: Border.all(color: const Color(0xFF101213)),
       ),
       minX: 0,
-      maxX: 29,
+      maxX: 4,
       minY: 0,
-      maxY: 6,
+      maxY: 250,
       lineBarsData: [
         LineChartBarData(
-          spots: idleTimeData,
-          isCurved: false,
+          spots: retentionTimeData,
+          isCurved: true,
           gradient: LinearGradient(colors: gradientColors),
           barWidth: 5,
           isStrokeCapRound: true,
@@ -150,13 +121,17 @@ class _LineChartWidgetState extends State<LineChartWidget> {
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
     const style = TextStyle(fontWeight: FontWeight.bold, fontSize: 12);
-    DateTime now = DateTime.now();
-    DateTime date = now.subtract(Duration(days: 30 - value.toInt()));
+    List<String> days = [
+      "Jan 05", "Jan 12", "Jan 19", "Jan 26", "Feb 03"
+    ];
 
-    return SideTitleWidget(
-      meta: meta,
-      child: Text("${date.day}/${date.month}", style: style),
-    );
+    if (value.toInt() >= 0 && value.toInt() < days.length) {
+      return SideTitleWidget(
+        meta: meta,
+        child: Text(days[value.toInt()], style: style),
+      );
+    }
+    return const SizedBox();
   }
 
   Widget leftTitleWidgets(double value, TitleMeta meta) {
@@ -164,7 +139,7 @@ class _LineChartWidgetState extends State<LineChartWidget> {
     return SideTitleWidget(
       meta: meta,
       space: 8,
-      child: Text("${value.toInt()}h", style: style, textAlign: TextAlign.left),
+      child: Text("${value.toInt()}", style: style, textAlign: TextAlign.left),
     );
   }
 }

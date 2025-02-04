@@ -1,9 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import '../../config/app_colors.dart';
-import 'package:indoor_localization/domain/entities/asset_position_history_log.dart';
-import 'package:indoor_localization/domain/services/asset_position_log_history_service.dart';
-import '../../managers/asset_idle_time_counter.dart';
 
 class BarChartWidget extends StatefulWidget {
   const BarChartWidget();
@@ -13,7 +10,7 @@ class BarChartWidget extends StatefulWidget {
 }
 
 class _BarChartState extends State<BarChartWidget> {
-  Map<int, double> idleTimes = {};
+  Map<int, double> retentionTimes = {};
   List<BarChartGroupData> barGroups = [];
   bool isLoading = true;
 
@@ -23,28 +20,22 @@ class _BarChartState extends State<BarChartWidget> {
     _loadChartData();
   }
 
-  Future<void> _loadChartData() async {
-    List<AssetPositionHistoryLog> dataset = await AssetPositionHistoryLogService.getAll();
-    List<AssetPositionHistoryLog> filteredDataset =
-    dataset.where((log) => log.assetId == 1).toList();
-
-    final counter = AssetIdleTimeCounter(filteredDataset);
-    final facilityIds = counter.getFacilityIdsInDataset();
-
-    idleTimes.clear();
-    for (var facilityId in facilityIds) {
-      double idleTimeInSeconds = counter.getIdleTimeInFacility(facilityId);
-      idleTimes[facilityId] = idleTimeInSeconds / 3600;
-    }
+  void _loadChartData() {
+    retentionTimes = {
+      1: 150,
+      2: 230,
+      3: 120,
+      4: 180,
+    };
 
     setState(() {
-      barGroups = _createBarGroups(idleTimes);
+      barGroups = _createBarGroups(retentionTimes);
       isLoading = false;
     });
   }
 
-  List<BarChartGroupData> _createBarGroups(Map<int, double> idleTimes) {
-    return idleTimes.entries.map((entry) {
+  List<BarChartGroupData> _createBarGroups(Map<int, double> retentionTimes) {
+    return retentionTimes.entries.map((entry) {
       return BarChartGroupData(
         x: entry.key,
         barRods: [
@@ -53,7 +44,7 @@ class _BarChartState extends State<BarChartWidget> {
             gradient: _barsGradient,
             width: 12,
             borderRadius: BorderRadius.zero,
-          )
+          ),
         ],
         showingTooltipIndicators: [0],
       );
@@ -80,7 +71,7 @@ class _BarChartState extends State<BarChartWidget> {
           gridData: FlGridData(
             show: true,
             drawVerticalLine: true,
-            horizontalInterval: 1,
+            horizontalInterval: 50,
             verticalInterval: 1,
             getDrawingHorizontalLine: (value) {
               return const FlLine(
@@ -96,7 +87,9 @@ class _BarChartState extends State<BarChartWidget> {
             },
           ),
           alignment: BarChartAlignment.spaceAround,
-          maxY: idleTimes.isNotEmpty ? idleTimes.values.reduce((a, b) => a > b ? a : b) + 1 : 5,
+          maxY: retentionTimes.isNotEmpty
+              ? retentionTimes.values.reduce((a, b) => a > b ? a : b) + 20
+              : 300,
         ),
       ),
     );
@@ -115,7 +108,7 @@ class _BarChartState extends State<BarChartWidget> {
           int rodIndex,
           ) {
         return BarTooltipItem(
-          '${rod.toY.toStringAsFixed(2)} h',
+          '${rod.toY.toStringAsFixed(0)}',
           const TextStyle(
             color: AppColors.primary300,
             fontWeight: FontWeight.bold,
@@ -153,7 +146,7 @@ class _BarChartState extends State<BarChartWidget> {
           return SideTitleWidget(
             meta: meta,
             space: 8,
-            child: Text(value.toStringAsFixed(1),
+            child: Text("${value.toInt()}",
                 style: TextStyle(
                   color: AppColors.neutral1000,
                   fontWeight: FontWeight.bold,
