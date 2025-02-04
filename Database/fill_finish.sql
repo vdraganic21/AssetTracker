@@ -28,7 +28,7 @@ SET
         WHEN id = 19 THEN 'Accountant'
         WHEN id = 20 THEN 'Storehouse Manager'
         --- Fifth Floormap
-        WHEN id = 21 THEN 'While (1) Winowshop'
+        WHEN id = 21 THEN 'While (1) Windowshop'
         WHEN id = 22 THEN 'Delivery Deril'
         WHEN id = 23 THEN 'Elevator Eddie'
         WHEN id = 24 THEN 'Shopaholic Shannon'
@@ -85,8 +85,8 @@ SET
         --- Third Floormap
         WHEN id = 11 THEN 814
         WHEN id = 12 THEN 730
-        WHEN id = 13 THEN 903
-        WHEN id = 14 THEN 905
+        WHEN id = 13 THEN 129
+        WHEN id = 14 THEN 271
         WHEN id = 15 THEN 253
         --- Fourth Floormap
         WHEN id = 16 THEN 613
@@ -118,8 +118,8 @@ SET
         --- Third Floormap
         WHEN id = 11 THEN 731
         WHEN id = 12 THEN 220
-        WHEN id = 13 THEN 836
-        WHEN id = 14 THEN 880
+        WHEN id = 13 THEN 867
+        WHEN id = 14 THEN 889
         WHEN id = 15 THEN 828
         --- Fourth Floormap
         WHEN id = 16 THEN 632
@@ -188,5 +188,18 @@ SET
     END
 WHERE
     id IN (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+
+UPDATE FloorMaps
+SET
+    name = CASE
+        WHEN id = 1 THEN 'Warehouse 1'
+        WHEN id = 2 THEN 'Hangar'
+        WHEN id = 3 THEN 'Warehouse 2'
+        WHEN id = 4 THEN 'Warehouse 3'
+        WHEN id = 5 THEN 'Shopping Mall'
+        ELSE name
+    END
+WHERE
+    id IN(1, 2, 3, 4, 5);
 
 COMMIT;
