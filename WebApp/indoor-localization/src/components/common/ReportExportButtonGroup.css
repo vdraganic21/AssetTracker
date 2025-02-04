@@ -1,0 +1,14 @@
+.asset-report-button-group {
+  display: flex;
+  gap: 8px;
+}
+
+.export-buttons-top-margin {
+  margin-top: var(--syn-spacing-x-small);
+}
+
+.export-input-label {
+  text-align: left;
+  font-size: 14px;
+  margin-bottom: 30px;
+}

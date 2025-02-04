@@ -1,0 +1,38 @@
+.no-assets-message{
+    font-size: var(--syn-font-size-x-medium);
+    text-align: center;
+    color: var(--syn-color-neutral-700);
+}
+
+.syn-table--default {
+    width: 100% !important;
+}
+
+.syn-table--default thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.icon-cell .table-icon {
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.05s ease-in-out;
+}
+
+.hover-row:hover .table-icon {
+  visibility: visible;
+  opacity: 1;
+}
+
+.hover-row {
+  transition: background-color 0.05s ease-in-out;
+}
+
+.hover-row:hover {
+  background-color: var(--syn-color-neutral-100);
+}
+
+.hover-row:hover td {
+  background: transparent;
+}

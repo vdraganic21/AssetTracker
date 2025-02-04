@@ -1,0 +1,196 @@
+.zone-retention-container {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
+}
+
+.retention-panel {
+  width: 420px;
+  display: flex;
+  flex-direction: column;
+}
+
+.zone-export-buttons {
+  max-width: 420px;
+}
+
+.panel-title {
+  font-size: large;
+}
+
+.input-group {
+  flex-direction: column;
+}
+
+.input-label {
+  padding-bottom: 10px;
+  padding-top: 20px;
+  font-size: 14px;
+  font-weight: bold;
+  margin: 0;
+  display: block;
+  white-space: nowrap;
+  position: relative;
+}
+
+.picker-row {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  overflow: visible;
+}
+
+.picker-row .input-label {
+  padding-bottom: 4px;
+}
+
+.date-picker {
+  width: 100%;
+  background-color: white;
+  font-size: 14px;
+  text-align: center;
+  border-radius: 0% !important;
+}
+
+.date-picker-input {
+  padding: 10px;
+  width: 100%;
+  border: 1px solid var(--syn-color-neutral-400);
+}
+
+.time-picker .colon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: bold;
+  margin: 0 5px;
+}
+
+.time-picker select {
+  width: 60px;
+  height: 40px;
+  padding: 8px;
+  border: 1px solid var(--syn-color-neutral-400);
+  background-color: white;
+  font-size: 14px;
+  text-align: center;
+  margin: 0;
+}
+
+.date-picker:focus {
+  border-color: var(--syn-color-primary-500);
+}
+
+.button-group {
+  display: flex;
+  justify-self: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+  align-self: flex-end;
+}
+
+.reset-button,
+.apply-button {
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-weight: bold;
+  text-transform: none;
+  background-color: var(--syn-color-neutral-400);
+  color: var(--syn-color-primary-500);
+}
+
+.reset-button:hover {
+  background-color: var(--syn-color-primary-800);
+}
+
+.apply-button:hover {
+  background-color: var(--syn-color-primary-800);
+}
+
+.stats-container {
+  padding: 20px;
+}
+
+.retention-time-card-group {
+  text-align: center;
+}
+
+.retention-line-chart,
+.retention-column-chart {
+  border: 1px solid var(--syn-color-neutral-400);
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  max-width: 590px;
+}
+
+img.retention-line-chart,
+img.retention-column-chart {
+  text-align: center;
+}
+
+.MuiIconButton-root {
+  color: var(--syn-color-primary-600) !important;
+}
+
+.Mui-selected {
+  background-color: var(--syn-color-primary-600) !important;
+  color: white !important;
+}
+
+.MuiButton-root {
+  background-color: var(--syn-color-primary-600) !important;
+  color: white !important;
+  font-weight: bold !important;
+  text-transform: none !important;
+  border-radius: 1px !important;
+  padding: 10px 20px !important;
+}
+
+.MuiButton-root:hover {
+  background-color: var(--syn-color-primary-800) !important;
+}
+
+.number-input {
+  flex: 1;
+  padding: 6px;
+  max-width: calc(50% - 2px);
+}
+
+.number-input input {
+  width: 100%;
+  font-size: 16px;
+  border: 1px solid black;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.number-input-label {
+  font-size: 14px;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.MuiOutlinedInput-root {
+  border: 1px !important;
+  border-color: black !important;
+}
+
+.MuiOutlinedInput-root {
+  border-radius: 1px !important;
+  border-color: black !important;
+}
+
+.MuiOutlinedInput-notchedOutline {
+  border-color: var(--syn-color-primary-700) !important;
+}
+
+.disabled-dropdown {
+  pointer-events: none;
+  opacity: 0.6;
+}

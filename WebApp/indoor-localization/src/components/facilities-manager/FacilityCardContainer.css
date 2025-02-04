@@ -1,0 +1,6 @@
+.facility-card-container {
+    flex-wrap: wrap;
+    display: flex;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    gap: 16px
+  }

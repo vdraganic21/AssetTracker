@@ -1,0 +1,47 @@
+.facility-card {
+  background-color: var(--syn-color-neutral-0);
+  border: var(--syn-border-width-small) solid var(--syn-color-neutral-400);
+  border-radius: var(--syn-border-radius-medium);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 340px;
+  height: 190px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  cursor: pointer;
+}
+
+.facility-card:hover {
+  border-color: var(--syn-color-primary-500);
+}
+
+.facility-card-title {
+  padding: var(--syn-spacing-2x-small);
+  padding-top: 0;
+  font-size: var(--syn-font-size-medium);
+  color: var(--syn-color-neutral-1000);
+  text-align: center;
+}
+
+.facility-card-image {
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  padding: var(--syn-spacing-x-small);
+}
+
+.facility-card-image img {
+  object-fit: cover;
+}
+
+.facility-edit-icon{
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  cursor: pointer;
+  transition: color 0.1s ease-in-out;
+  background-color: var(--syn-color-neutral-0);
+  padding: var(--syn-spacing-4x-small);
+}

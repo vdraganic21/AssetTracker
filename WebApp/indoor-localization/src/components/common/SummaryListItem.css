@@ -1,0 +1,15 @@
+.summary-list-item {
+  display: flex;
+  align-items: center;
+  padding: 6px;
+}
+
+.summary-note {
+  font-size: 14px;
+  color: #333;
+}
+
+.summary-icon {
+  margin: 8px;
+  font-size: 14px;
+}

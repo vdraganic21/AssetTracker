@@ -1,0 +1,21 @@
+.report-column {
+    display: flex;
+    flex-direction: column;
+    gap: var(--syn-spacing-medium);
+    justify-content: space-between;
+  }
+  
+  .report-row {
+    display: flex;
+    flex-direction: row;
+    gap: var(--syn-spacing-medium);
+    justify-content: space-between;
+  }
+  
+  .take-space {
+    flex: 1
+  }
+  
+  .report-padding {
+    margin: var(--syn-spacing-medium);
+  }
