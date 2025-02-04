@@ -35,10 +35,19 @@ function ZoneRetentionTimeReport() {
 	const [fromDate, setFromDate] = useState<dayjs.Dayjs | null>(
 		dayjs().subtract(30, "days")
 	);
+	const [averageRetentionTimeLastMonth, setAverageRetentionTimeLastMonth] =
+		useState(0);
+	const [maxRetentionTimeLastMonth, setMaxRetentionTimeLastMonth] = useState(0);
+	const [minRetentionTimeLastMonth, setMinRetentionTimeLastMonth] = useState(0);
+	const [averageRetentionTimeLastWeek, setAverageRetentionTimeLastWeek] =
+		useState(0);
+	const [maxRetentionTimeLastWeek, setMaxRetentionTimeLastWeek] = useState(0);
+	const [minRetentionTimeLastWeek, setMinRetentionTimeLastWeek] = useState(0);
+	const [averageRetentionTimeLast24h, setAverageRetentionTimeLast24h] =
+		useState(0);
+	const [maxRetentionTimeLast24h, setMaxRetentionTimeLast24h] = useState(0);
+	const [minRetentionTimeLast24h, setMinRetentionTimeLast24h] = useState(0);
 	const [toDate, setToDate] = useState<dayjs.Dayjs | null>(dayjs());
-	const [averageRetentionTime, setAverageRetentionTime] = useState(0);
-	const [maxRetentionTime, setMaxRetentionTime] = useState(0);
-	const [minRetentionTime, setMinRetentionTime] = useState(0);
 	const [lineGraphDataset, setLineGraphDataset] = useState<
 		DateValueGraphPoint[]
 	>([]);
@@ -101,9 +110,9 @@ function ZoneRetentionTimeReport() {
 			const facilityWithZones = facilities[0] as Facility & { zones?: Zone[] };
 			setSelectedFacility(facilityWithZones);
 
-			setAverageRetentionTime(0);
-			setMaxRetentionTime(0);
-			setMinRetentionTime(0);
+			setAverageRetentionTimeLastMonth(0);
+			setMaxRetentionTimeLastMonth(0);
+			setMinRetentionTimeLastMonth(0);
 		} else {
 			setSelectedFacility(null);
 			setSelectedZone(null);
@@ -216,21 +225,47 @@ function ZoneRetentionTimeReport() {
 
 	const processLogsStats = (logs: AssetZoneHistoryLog[]) => {
 		if (logs.length === 0) {
-			setAverageRetentionTime(0);
-			setMaxRetentionTime(0);
-			setMinRetentionTime(0);
+			setAverageRetentionTimeLastMonth(0);
+			setMaxRetentionTimeLastMonth(0);
+			setMinRetentionTimeLastMonth(0);
+			setAverageRetentionTimeLastWeek(0);
+			setMaxRetentionTimeLastWeek(0);
+			setMinRetentionTimeLastWeek(0);
+			setAverageRetentionTimeLast24h(0);
+			setMaxRetentionTimeLast24h(0);
+			setMinRetentionTimeLast24h(0);
 			return;
 		}
 
-		let retentionManager = new ZoneRetentionTimeManager(logs);
+		const now = new Date();
+		const oneWeekAgo = new Date(now);
+		oneWeekAgo.setDate(now.getDate() - 7);
+		const oneDayAgo = new Date(now);
+		oneDayAgo.setDate(now.getDate() - 1);
 
-		const avgRetention = retentionManager.getAvgRetentionTime();
-		const maxRetention = retentionManager.getMaxRetentionTime();
-		const minRetention = retentionManager.getMinRetentionTime();
+		const lastMonthLogs = logs;
+		const lastWeekLogs = logs.filter(
+			(log) => new Date(log.exitDateTime) >= oneWeekAgo
+		);
+		const last24hLogs = logs.filter(
+			(log) => new Date(log.exitDateTime) >= oneDayAgo
+		);
 
-		setAverageRetentionTime(avgRetention);
-		setMaxRetentionTime(maxRetention);
-		setMinRetentionTime(minRetention);
+		const monthManager = new ZoneRetentionTimeManager(lastMonthLogs);
+		const weekManager = new ZoneRetentionTimeManager(lastWeekLogs);
+		const dayManager = new ZoneRetentionTimeManager(last24hLogs);
+
+		setAverageRetentionTimeLastMonth(monthManager.getAvgRetentionTime());
+		setMaxRetentionTimeLastMonth(monthManager.getMaxRetentionTime());
+		setMinRetentionTimeLastMonth(monthManager.getMinRetentionTime());
+
+		setAverageRetentionTimeLastWeek(weekManager.getAvgRetentionTime());
+		setMaxRetentionTimeLastWeek(weekManager.getMaxRetentionTime());
+		setMinRetentionTimeLastWeek(weekManager.getMinRetentionTime());
+
+		setAverageRetentionTimeLast24h(dayManager.getAvgRetentionTime());
+		setMaxRetentionTimeLast24h(dayManager.getMaxRetentionTime());
+		setMinRetentionTimeLast24h(dayManager.getMinRetentionTime());
 	};
 
 	return (
@@ -397,27 +432,27 @@ function ZoneRetentionTimeReport() {
 			<div className="report-column take-space">
 				<div className="report-row">
 					<DataComparisonReportWidget
-						mainData={secondsToString(averageRetentionTime)}
+						mainData={secondsToString(averageRetentionTimeLast24h)}
 						mainDescription="Average retention time last 24h"
-						secondaryDataLeft={secondsToString(averageRetentionTime)}
+						secondaryDataLeft={secondsToString(averageRetentionTimeLastWeek)}
 						secondaryDescriptionLeft="Last week"
-						secondaryDataRight={secondsToString(averageRetentionTime)}
+						secondaryDataRight={secondsToString(averageRetentionTimeLastMonth)}
 						secondaryDescriptionRight="Last month"
 					/>
 					<DataComparisonReportWidget
-						mainData={secondsToString(maxRetentionTime)}
+						mainData={secondsToString(maxRetentionTimeLast24h)}
 						mainDescription="Maximum retention time last 24h"
-						secondaryDataLeft={secondsToString(maxRetentionTime)}
+						secondaryDataLeft={secondsToString(maxRetentionTimeLastWeek)}
 						secondaryDescriptionLeft="Last week"
-						secondaryDataRight={secondsToString(maxRetentionTime)}
+						secondaryDataRight={secondsToString(maxRetentionTimeLastMonth)}
 						secondaryDescriptionRight="Last month"
 					/>
 					<DataComparisonReportWidget
-						mainData={secondsToString(minRetentionTime)}
+						mainData={secondsToString(minRetentionTimeLast24h)}
 						mainDescription="Minimum retention time last 24h"
-						secondaryDataLeft={secondsToString(minRetentionTime)}
+						secondaryDataLeft={secondsToString(minRetentionTimeLastWeek)}
 						secondaryDescriptionLeft="Last week"
-						secondaryDataRight={secondsToString(minRetentionTime)}
+						secondaryDataRight={secondsToString(minRetentionTimeLastMonth)}
 						secondaryDescriptionRight="Last month"
 					/>
 				</div>
