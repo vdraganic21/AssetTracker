@@ -110,7 +110,9 @@ class _LineChartWidgetState extends State<LineChartWidget> {
           belowBarData: BarAreaData(
             show: true,
             gradient: LinearGradient(
-              colors: gradientColors.map((color) => color.withOpacity(0.3)).toList(),
+              colors: gradientColors.map((color) {
+                return color.withValues();
+              }).toList(),
             ),
           ),
           dotData: const FlDotData(show: false),
