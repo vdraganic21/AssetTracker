@@ -21,16 +21,16 @@ class MockDataInitializer {
           id: 1,
           name: "Warehouse 1",
           imageBase64: floorMapDemo,
-          containedAssetsIds: [1, 2],
-          containedZonesIds: [5],
+          assets: [],
+          zones: [],
         ));
     FacilityService.add(
         Facility(
           id: 2,
           name: "Warehouse 35",
           imageBase64: floorMapDemo,
-          containedAssetsIds: [1, 3],
-          containedZonesIds: [2],
+          assets: [],
+          zones: [],
         )
     );
     FacilityService.add(
@@ -38,8 +38,8 @@ class MockDataInitializer {
           id: 3,
           name: "Production Line",
           imageBase64: floorMapDemo,
-          containedAssetsIds: [],
-          containedZonesIds: [4],
+          assets: [],
+          zones: [],
         )
     );
 
