@@ -17,6 +17,7 @@ export default function DateLineGraph({
 
 	return (
 		<LineChart
+			height={475}
 			margin={{ left: 80, top: 32, right: 0, bottom: 32 }}
 			xAxis={[{ scaleType: "time", dataKey: "date", stroke: "red" }]}
 			yAxis={[

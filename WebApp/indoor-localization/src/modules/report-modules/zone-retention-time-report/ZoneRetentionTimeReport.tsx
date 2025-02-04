@@ -31,8 +31,6 @@ function ZoneRetentionTimeReport() {
 	const [selectedFacilityZones, setSelectedFacilityZones] = useState<Zone[]>(
 		[]
 	);
-	const [hours, setHours] = useState(0);
-	const [minutes, setMinutes] = useState(0);
 	const [timeSpan, setTimeSpan] = useState("lastMonth");
 	const [fromDate, setFromDate] = useState<dayjs.Dayjs | null>(
 		dayjs().subtract(30, "days")
@@ -98,25 +96,6 @@ function ZoneRetentionTimeReport() {
 			setFromDate(calculatedFrom);
 		}
 	}, [timeSpan]);
-
-	const handleHoursChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const value = e.target.value;
-		setHours(value === "" ? NaN : Math.max(0, Math.min(999, Number(value))));
-	};
-
-	const handleMinutesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const value = e.target.value;
-		setMinutes(value === "" ? NaN : Math.max(0, Math.min(59, Number(value))));
-	};
-
-	const handleFocusHours = () => {
-		if (hours === 0) setHours(NaN);
-	};
-
-	const handleFocusMinutes = () => {
-		if (minutes === 0) setMinutes(NaN);
-	};
-
 	const resetInputs = () => {
 		if (facilities.length > 0) {
 			const facilityWithZones = facilities[0] as Facility & { zones?: Zone[] };
@@ -129,8 +108,6 @@ function ZoneRetentionTimeReport() {
 			setSelectedFacility(null);
 			setSelectedZone(null);
 		}
-		setHours(0);
-		setMinutes(0);
 		setTimeSpan("lastMonth");
 		setToDate(dayjs());
 		setFromDate(dayjs().subtract(30, "days"));
@@ -259,7 +236,7 @@ function ZoneRetentionTimeReport() {
 	return (
 		<div className="report-row report-padding">
 			<div className="report-column">
-				<div className="retention-panel content-border">
+				<div className="retention-panel content-border take-space">
 					<div>
 						<p className="panel-title">Retention Report</p>
 						<div className="input-group">
@@ -320,33 +297,6 @@ function ZoneRetentionTimeReport() {
 									</SynOption>
 								)}
 							</SynSelect>
-						</div>
-						<div className="input-group">
-							<span className="input-label">Retention Threshold</span>
-							<div className="picker-row">
-								<div className="number-input">
-									<span className="number-input-label">Hours:</span>
-									<input
-										type="number"
-										min="0"
-										max="999"
-										value={hours}
-										onFocus={handleFocusHours}
-										onChange={handleHoursChange}
-									/>
-								</div>
-								<div className="number-input">
-									<span className="number-input-label">Minutes:</span>
-									<input
-										type="number"
-										min="0"
-										max="59"
-										value={minutes}
-										onFocus={handleFocusMinutes}
-										onChange={(e) => handleMinutesChange(e)}
-									/>
-								</div>
-							</div>
 						</div>
 					</div>
 					<div className="input-group">

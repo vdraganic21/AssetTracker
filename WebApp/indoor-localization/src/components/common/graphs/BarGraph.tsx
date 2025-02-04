@@ -14,6 +14,7 @@ export default function BarGraph({ graphDataset, yLabel }: DateBarGraphProps) {
 
 	return (
 		<BarChart
+			height={475}
 			barLabel="value"
 			borderRadius={5}
 			margin={{ left: 80, top: 32, right: 0, bottom: 32 }}

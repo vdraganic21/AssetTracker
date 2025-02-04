@@ -21,28 +21,47 @@ export class RESTAssetZoneHistoryLogRepository implements IAssetZoneHistoryLogRe
 
   async GetLogs(assetZoneHistoryLogFilter: AssetZoneHistoryLogFilter): Promise<AssetZoneHistoryLog[]> {
     try {
-      const response = await axiosInstance.get(`/assetZoneHistory`, {
-        params: {
-            zoneId: assetZoneHistoryLogFilter.zoneId,
-            assetId: assetZoneHistoryLogFilter.assetId,
-            enterStartDate: assetZoneHistoryLogFilter.enterStartDate.toISOString(),
-            enterEndDate: assetZoneHistoryLogFilter.enterEndDate.toISOString(),
-            exitStartDate: assetZoneHistoryLogFilter.exitStartDate.toISOString(),
-            exitEndDate: assetZoneHistoryLogFilter.exitEndDate.toISOString(),
-            minRetentionTime: assetZoneHistoryLogFilter.minRetentionTime,
-            maxRetentionTime: assetZoneHistoryLogFilter.maxRetentionTime,
-        },
-      });
-      let logs: AssetZoneHistoryLog[] = [];
+        const params: Record<string, any> = {};
 
-      for (let log of response.data) logs.push(this.ParseDataToLog(log));
+        if (assetZoneHistoryLogFilter.zoneId != null) {
+            params.zoneId = assetZoneHistoryLogFilter.zoneId;
+        }
+        if (assetZoneHistoryLogFilter.assetId != null) {
+            params.assetId = assetZoneHistoryLogFilter.assetId;
+        }
+        if (assetZoneHistoryLogFilter.enterStartDate != null) {
+            params.enterStartDate = assetZoneHistoryLogFilter.enterStartDate.toISOString();
+        }
+        if (assetZoneHistoryLogFilter.enterEndDate != null) {
+            params.enterEndDate = assetZoneHistoryLogFilter.enterEndDate.toISOString();
+        }
+        if (assetZoneHistoryLogFilter.exitStartDate != null) {
+            params.exitStartDate = assetZoneHistoryLogFilter.exitStartDate.toISOString();
+        }
+        if (assetZoneHistoryLogFilter.exitEndDate != null) {
+            params.exitEndDate = assetZoneHistoryLogFilter.exitEndDate.toISOString();
+        }
+        if (assetZoneHistoryLogFilter.minRetentionTime != null) {
+            params.minRetentionTime = assetZoneHistoryLogFilter.minRetentionTime;
+        }
+        if (assetZoneHistoryLogFilter.maxRetentionTime != null) {
+            params.maxRetentionTime = assetZoneHistoryLogFilter.maxRetentionTime;
+        }
 
-      return logs;
+        const response = await axiosInstance.get(`/assetZoneHistory`, {
+            params: params,
+        });
+
+        let logs: AssetZoneHistoryLog[] = [];
+
+        for (let log of response.data) logs.push(this.ParseDataToLog(log));
+
+        return logs;
     } catch (error) {
-      console.error("Failed to fetch asset position history logs:", error);
-      return [];
+        console.error("Failed to fetch asset position history logs:", error);
+        return [];
     }
-  }
+}
 
   async GetAll(): Promise<AssetZoneHistoryLog[]> {
     try {
