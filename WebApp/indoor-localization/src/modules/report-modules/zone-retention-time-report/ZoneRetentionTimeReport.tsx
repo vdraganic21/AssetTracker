@@ -3,7 +3,6 @@ import "./ZoneRetentionTimeReport.css";
 import { SynButton, SynOption, SynSelect } from "@synergy-design-system/react";
 import "../../../components/common/Report.css";
 import DataComparisonReportWidget from "../../../components/common/DataComparisonReportWidget";
-import ReportExportButtonGroup from "../../../components/common/ReportExportButtonGroup";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
@@ -11,8 +10,12 @@ import "dayjs/locale/en-gb";
 import { SynChangeEvent } from "@synergy-design-system/react/components/checkbox.js";
 import { Facility } from "../../../entities/Facility";
 import { FacilityService } from "../../../services/FacilityService";
-import { ZoneService } from "../../../services/ZoneService";
 import { Zone } from "../../../entities/Zone";
+import { AssetZoneHistoryLogService } from "../../../services/AssetZoneHistoryLogService";
+import { AssetZoneHistoryLog } from "../../../entities/AssetZoneHistoryLog";
+import { AssetZoneHistoryLogFilter } from "../../../entities/AssetZoneHistoryLogFilter";
+import ZoneRetentionTimeManager from "./managers/ZoneRetentionTimeManager";
+import { secondsToString } from "./managers/SecondsToStringConverter";
 
 function ZoneRetentionTimeReport() {
   const [selectedFacility, setSelectedFacility] = useState<Facility | null>(
@@ -30,24 +33,23 @@ function ZoneRetentionTimeReport() {
     dayjs().subtract(30, "days")
   );
   const [toDate, setToDate] = useState<dayjs.Dayjs | null>(dayjs());
+  const [averageRetentionTime, setAverageRetentionTime] = useState(0);
+  // const [totalRetentionTime, setTotalRetentionTime] = useState(0);
+  const [filteredLogs, setFilteredLogs] = useState<AssetZoneHistoryLog[]>([]);
+  const [maxRetentionTime, setMaxRetentionTime] = useState(0);
+  const [minRetentionTime, setMinRetentionTime] = useState(0);
+  const [retentionManager, setRetentionManager] =
+    useState<ZoneRetentionTimeManager | null>(null);
 
   useEffect(() => {
-    let isInitialized = false;
-
     const fetchData = async () => {
-      if (isInitialized) return;
-
       const loadedFacilities = await FacilityService.GetAll();
-      const uniqueFacilities = Array.from(
-        new Map(loadedFacilities.map((f) => [f.id, f])).values()
-      );
-      setFacilities(uniqueFacilities);
 
-      if (uniqueFacilities.length > 0) {
-        setSelectedFacility(uniqueFacilities[0]);
+      setFacilities(loadedFacilities);
+      if (!loadedFacilities[0]) {
+        setSelectedFacility(null);
       }
-
-      isInitialized = true;
+      setSelectedFacility(loadedFacilities[0]);
     };
 
     fetchData();
@@ -56,21 +58,19 @@ function ZoneRetentionTimeReport() {
   useEffect(() => {
     const loadZones = async () => {
       if (!selectedFacility) return;
-
-      const loadedZones = await ZoneService.GetAll();
-      const facilityZones = Array.from(
-        new Map(
-          loadedZones
-            .filter((zone) => zone.parentFacilityId === selectedFacility.id)
-            .map((z) => [z.id, z])
-        ).values()
-      );
+      const facilityZones = selectedFacility.containedZones;
       setSelectedFacilityZones(facilityZones);
       setSelectedZone(facilityZones.length > 0 ? facilityZones[0] : null);
     };
 
     loadZones();
   }, [selectedFacility]);
+
+  useEffect(() => {
+    if (selectedFacility && selectedZone) {
+      handleApply();
+    }
+  }, [selectedFacility, selectedZone, fromDate, toDate]);
 
   useEffect(() => {
     if (timeSpan !== "custom") {
@@ -121,6 +121,9 @@ function ZoneRetentionTimeReport() {
       setSelectedZone(
         facilityWithZones.zones?.length ? facilityWithZones.zones[0] : null
       );
+      setAverageRetentionTime(0);
+      setMaxRetentionTime(0);
+      setMinRetentionTime(0);
     } else {
       setSelectedFacility(null);
       setSelectedZone(null);
@@ -130,6 +133,57 @@ function ZoneRetentionTimeReport() {
     setTimeSpan("lastMonth");
     setToDate(dayjs());
     setFromDate(dayjs().subtract(30, "days"));
+  };
+
+  const handleApply = async () => {
+    if (!selectedFacility || !selectedZone) return;
+
+    const filter = new AssetZoneHistoryLogFilter(
+      selectedZone.id,
+      null,
+      null,
+      null,
+      fromDate ? fromDate.toDate() : null,
+      toDate ? toDate.toDate() : null,
+      null,
+      null
+    );
+
+    const logs = await AssetZoneHistoryLogService.GetLogs(filter); // ?
+
+    if (!logs || logs.length === 0) {
+      setFilteredLogs([]);
+      setRetentionManager(new ZoneRetentionTimeManager([]));
+      processLogsStats([]);
+      return;
+    }
+
+    setFilteredLogs(logs);
+    setRetentionManager(new ZoneRetentionTimeManager(logs));
+    processLogsStats(logs);
+  };
+
+  const processLogsStats = (logs: AssetZoneHistoryLog[]) => {
+    if (logs.length === 0) {
+      setAverageRetentionTime(0);
+      setMaxRetentionTime(0);
+      setMinRetentionTime(0);
+      return;
+    }
+
+    if (!retentionManager) {
+      setAverageRetentionTime(0);
+      setMaxRetentionTime(0);
+      setMinRetentionTime(0);
+      return;
+    }
+    const avgRetention = retentionManager.getAvgRetentionTime();
+    const maxRetention = retentionManager.getMaxRetentionTime();
+    const minRetention = retentionManager.getMinRetentionTime();
+
+    setAverageRetentionTime(avgRetention);
+    setMaxRetentionTime(maxRetention);
+    setMinRetentionTime(minRetention);
   };
 
   return (
@@ -247,7 +301,7 @@ function ZoneRetentionTimeReport() {
               >
                 <DateTimePicker
                   className="date-picker"
-                  label="From"
+                  label="Select Date & Time"
                   ampm={false}
                   value={fromDate}
                   onChange={(newValue) => {
@@ -275,7 +329,7 @@ function ZoneRetentionTimeReport() {
               >
                 <DateTimePicker
                   className="date-picker"
-                  label="To"
+                  label="Select Date & Time"
                   ampm={false}
                   value={toDate}
                   onChange={(newValue) => {
@@ -307,11 +361,7 @@ function ZoneRetentionTimeReport() {
             </SynButton>
             <SynButton
               variant="filled"
-              onClick={() => {
-                if (selectedFacility && selectedZone) {
-                  console.log("Apply button clicked.");
-                }
-              }}
+              onClick={handleApply}
               className={
                 !selectedFacility || !selectedZone
                   ? "disabled-button"
@@ -323,45 +373,35 @@ function ZoneRetentionTimeReport() {
             </SynButton>
           </div>
         </div>
-        <div className="zone-export-buttons content-border">
-          <ReportExportButtonGroup />
-        </div>
       </div>
       <div className="report-column take-space">
         <div className="report-row">
           <DataComparisonReportWidget
-            mainData="17min"
-            mainDescription="Viljuškar idle time last 24h"
-            secondaryDataLeft="15min"
+            mainData={secondsToString(averageRetentionTime)}
+            mainDescription="Average retention time last 24h"
+            secondaryDataLeft={secondsToString(averageRetentionTime)}
             secondaryDescriptionLeft="Last week"
-            secondaryDataRight="16min"
+            secondaryDataRight={secondsToString(averageRetentionTime)}
             secondaryDescriptionRight="Last month"
           />
           <DataComparisonReportWidget
-            mainData="12h 15min"
-            mainDescription="Viljuškar idle time last 24h"
-            secondaryDataLeft="15min"
+            mainData={secondsToString(maxRetentionTime)}
+            mainDescription="Maximum retention time last 24h"
+            secondaryDataLeft={secondsToString(maxRetentionTime)}
             secondaryDescriptionLeft="Last week"
-            secondaryDataRight="16min"
+            secondaryDataRight={secondsToString(maxRetentionTime)}
             secondaryDescriptionRight="Last month"
           />
           <DataComparisonReportWidget
-            mainData="17min"
-            mainDescription="Viljuškar idle time last 24h"
-            secondaryDataLeft="12h 15min"
+            mainData={secondsToString(minRetentionTime)}
+            mainDescription="Minimum retention time last 24h"
+            secondaryDataLeft={secondsToString(minRetentionTime)}
             secondaryDescriptionLeft="Last week"
-            secondaryDataRight="16min"
-            secondaryDescriptionRight="Last month"
-          />
-          <DataComparisonReportWidget
-            mainData="17min"
-            mainDescription="Viljuškar idle time last 24h"
-            secondaryDataLeft="15min"
-            secondaryDescriptionLeft="Last week"
-            secondaryDataRight="16min"
+            secondaryDataRight={secondsToString(minRetentionTime)}
             secondaryDescriptionRight="Last month"
           />
         </div>
+        {/* graphs go here*/}
         <div className="report-row take-space">
           <div className="content-border take-space">blah</div>
           <div className="content-border take-space">blah</div>
