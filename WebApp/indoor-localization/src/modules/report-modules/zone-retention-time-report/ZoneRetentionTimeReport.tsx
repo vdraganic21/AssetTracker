@@ -20,6 +20,7 @@ import DateLineGraph from "../../../components/common/graphs/DateLineGraph";
 import DateValueGraphPoint from "../../../components/common/graphs/DateValueGraphPoint";
 import BarGraph from "../../../components/common/graphs/BarGraph";
 import BarData from "../../../components/common/graphs/BarData";
+import { AssetService } from "../../../services/AssetService";
 
 function ZoneRetentionTimeReport() {
 	const [selectedFacility, setSelectedFacility] = useState<Facility | null>(
@@ -38,13 +39,12 @@ function ZoneRetentionTimeReport() {
 	);
 	const [toDate, setToDate] = useState<dayjs.Dayjs | null>(dayjs());
 	const [averageRetentionTime, setAverageRetentionTime] = useState(0);
-	// const [totalRetentionTime, setTotalRetentionTime] = useState(0);
-	const [filteredLogs, setFilteredLogs] = useState<AssetZoneHistoryLog[]>([]);
 	const [maxRetentionTime, setMaxRetentionTime] = useState(0);
 	const [minRetentionTime, setMinRetentionTime] = useState(0);
 	const [lineGraphDataset, setLineGraphDataset] = useState<
 		DateValueGraphPoint[]
 	>([]);
+	const [barChartDataset, setBarChartDataset] = useState<BarData[]>([]);
 	useEffect(() => {
 		const fetchData = async () => {
 			const loadedFacilities = await FacilityService.GetAll();
@@ -153,19 +153,17 @@ function ZoneRetentionTimeReport() {
 			null
 		);
 
-		const logs = await AssetZoneHistoryLogService.GetLogs(filter); // ?
+		const logs = await AssetZoneHistoryLogService.GetLogs(filter);
 
 		if (!logs || logs.length === 0) {
-			setFilteredLogs([]);
-			processLogsStats([]);
+			fillDataElements([]);
 			return;
 		}
 
-		setFilteredLogs(logs);
-		fillDataElements();
+		fillDataElements(logs);
 	};
 
-	const fillDataElements = async () => {
+	const fillDataElements = async (filteredLogs: AssetZoneHistoryLog[]) => {
 		if (!selectedFacility || !selectedZone) return;
 
 		const filter = new AssetZoneHistoryLogFilter(
@@ -183,6 +181,34 @@ function ZoneRetentionTimeReport() {
 
 		processLogsStats(logs);
 		processLastMonthLineGraph(logs);
+		processBarChart(filteredLogs);
+	};
+
+	const processBarChart = async (logs: AssetZoneHistoryLog[]) => {
+		const manager = new ZoneRetentionTimeManager(logs);
+		const assetRetentionMap = new Map<number, number>();
+
+		logs.forEach((log) => {
+			assetRetentionMap.set(
+				log.assetId,
+				(assetRetentionMap.get(log.assetId) || 0) +
+					manager.getAssetRetentionTime(log.assetId)
+			);
+		});
+
+		const sortedAssets = Array.from(assetRetentionMap.entries()).sort(
+			(a, b) => b[1] - a[1]
+		);
+
+		const dataset: BarData[] = await Promise.all(
+			sortedAssets.map(async ([assetId, value]) => {
+				const asset = await AssetService.Get(assetId);
+				if (!asset) return new BarData(value, "-");
+				return new BarData(Math.floor(value / 60), asset.name);
+			})
+		);
+
+		setBarChartDataset(dataset);
 	};
 
 	const processLastMonthLineGraph = (logs: AssetZoneHistoryLog[]) => {
@@ -456,7 +482,10 @@ function ZoneRetentionTimeReport() {
 						/>
 					</div>
 					<div className="content-border take-space">
-						<BarGraph yLabel="Retention time / minutes" graphDataset={[]} />
+						<BarGraph
+							yLabel="Retention time / minutes"
+							graphDataset={barChartDataset}
+						/>
 					</div>
 				</div>
 			</div>
