@@ -15,8 +15,7 @@ import {
 	SynInputEvent,
 } from "@synergy-design-system/react/components/checkbox.js";
 import { useNavigate } from "react-router-dom";
-
-const assets = AssetService.GetAll();
+import Spinner from "../common/Spinner";
 
 const sortOptions = [
 	{ name: "Name - asc", value: "nameAsc" },
@@ -30,28 +29,46 @@ const sortOptions = [
 function AssetsManager() {
 	const navigate = useNavigate();
 	const [searchTerm, setSearchTerm] = useState("");
-	const [sortedAssets, setSortedAssets] = useState(assets);
+	const [assets, setAssets] = useState<any[]>([]);
+	const [sortedAssets, setSortedAssets] = useState<any[]>([]);
 	const [filterIndex, setFilterIndex] = useState(0);
+	const [isLoading, setIsLoading] = useState(true);
+
+	useEffect(() => {
+		const fetchAssets = async () => {
+			setIsLoading(true);
+			const fetchedAssets = await AssetService.GetAll();
+
+			const enrichedAssets = await Promise.all(
+				fetchedAssets.map(async (asset) => ({
+					...asset,
+					facilityName:
+						(await AssetService.GetAssetParentFacility(asset))?.name ?? "-",
+					zoneName:
+						(await AssetService.GetAssetCurrentZones(asset))[0]?.name ?? "-",
+				}))
+			);
+
+			setAssets(enrichedAssets);
+			setSortedAssets(enrichedAssets);
+			setIsLoading(false);
+		};
+
+		fetchAssets();
+	}, []);
 
 	const handleSearch = (event: SynInputEvent) => {
 		const term = (event.target as HTMLInputElement).value;
 		setSearchTerm(term);
-
 		applyFilterAndSort(term, filterIndex);
-	};
-
-	const handleAddButtonClick = () => {
-		navigate("/assets/add");
 	};
 
 	const handleFilterChange = (event: SynChangeEvent) => {
 		const selectedValue = (event.target as HTMLInputElement).value;
-
 		const selectedIndex = sortOptions.findIndex(
 			(option) => option.value === selectedValue
 		);
 		setFilterIndex(selectedIndex);
-
 		applyFilterAndSort(searchTerm, selectedIndex);
 	};
 
@@ -68,36 +85,20 @@ function AssetsManager() {
 				filteredAssets.sort((a, b) => b.name.localeCompare(a.name));
 				break;
 			case "facilityAsc":
-				filteredAssets.sort(
-					(a, b) =>
-						a
-							.GetCurrentFacility()
-							?.name?.localeCompare(b.GetCurrentFacility()?.name || "") || 0
+				filteredAssets.sort((a, b) =>
+					a.facilityName.localeCompare(b.facilityName)
 				);
 				break;
 			case "facilityDesc":
-				filteredAssets.sort(
-					(a, b) =>
-						b
-							.GetCurrentFacility()
-							?.name?.localeCompare(a.GetCurrentFacility()?.name || "") || 0
+				filteredAssets.sort((a, b) =>
+					b.facilityName.localeCompare(a.facilityName)
 				);
 				break;
 			case "zoneAsc":
-				filteredAssets.sort(
-					(a, b) =>
-						a
-							.GetCurrentFacility()
-							?.name?.localeCompare(b.GetCurrentFacility()?.name || "") || 0
-				);
+				filteredAssets.sort((a, b) => a.zoneName.localeCompare(b.zoneName));
 				break;
 			case "zoneDesc":
-				filteredAssets.sort(
-					(a, b) =>
-						b
-							.GetCurrentFacility()
-							?.name?.localeCompare(a.GetCurrentFacility()?.name || "") || 0
-				);
+				filteredAssets.sort((a, b) => b.zoneName.localeCompare(a.zoneName));
 				break;
 			default:
 				break;
@@ -105,10 +106,6 @@ function AssetsManager() {
 
 		setSortedAssets(filteredAssets);
 	};
-
-	useEffect(() => {
-		applyFilterAndSort(searchTerm, filterIndex);
-	}, []);
 
 	return (
 		<>
@@ -119,7 +116,7 @@ function AssetsManager() {
 						<SynButton
 							variant="filled"
 							className="syn-border-radius-medium"
-							onClick={handleAddButtonClick}
+							onClick={() => navigate("/assets/add")}
 						>
 							Add
 						</SynButton>
@@ -143,7 +140,7 @@ function AssetsManager() {
 							<SynOption
 								key={index}
 								tabIndex={index}
-								selected={index == filterIndex}
+								selected={index === filterIndex}
 								value={sortOption.value}
 							>
 								{sortOption.name}
@@ -152,11 +149,14 @@ function AssetsManager() {
 					</SynSelect>
 				</div>
 				<SynDivider className="content-divider" />
-				<div className="scrollable-list">
-					<AssetsTable assets={sortedAssets} />
-				</div>
+				{isLoading && <Spinner text="Loading assets." />}
+				{!isLoading && (
+					<div className="scrollable-list">
+						<AssetsTable assets={sortedAssets} />
+					</div>
+				)}
 			</div>
-			<Footer></Footer>
+			<Footer />
 		</>
 	);
 }

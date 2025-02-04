@@ -2,8 +2,8 @@ import CookieService from "./CookieService";
 import { FacilityService } from "./FacilityService";
 
 export default class SelectedFacilityService {
-    private static getSelectedFaciltiyDefault() {
-		let selectedFacility = FacilityService.GetAll()[0];
+    private static async getSelectedFacilityDefault() {
+		let selectedFacility = (await FacilityService.GetAll())[0];
 		if (!selectedFacility) {
 			CookieService.delete("selectedFacility");
 			return null;
@@ -13,22 +13,30 @@ export default class SelectedFacilityService {
 		return selectedFacility;
 	}
 
-	static getSelectedFacility() {
+	static async getSelectedFacility() {
 		let selectedFacilityId = CookieService.get("selectedFacility");
 		let selectedFacility;
 
 		if (!selectedFacilityId) {
-			return this.getSelectedFaciltiyDefault();
+			return await this.getSelectedFacilityDefault();
 		}
 
 		selectedFacility = FacilityService.Get(parseInt(selectedFacilityId));
 		if (!selectedFacility) {
-			return this.getSelectedFaciltiyDefault();
+			return await this.getSelectedFacilityDefault();
 		}
 
 		return selectedFacility;
 	}
-	static setSelectedFacilityId(facilityId: number) {
+
+	static async setSelectedFacilityId(facilityId: number) {
 		CookieService.set("selectedFacility", facilityId.toString());
+	}
+
+	static async getSelectedFacilityId() {
+		const selectedFacilityId = CookieService.get("selectedFacility")
+		if (!selectedFacilityId) return -1;
+
+		return parseInt(selectedFacilityId);
 	}
 }

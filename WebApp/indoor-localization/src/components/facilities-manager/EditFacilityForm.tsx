@@ -15,25 +15,40 @@ import {
 } from "@synergy-design-system/react/components/checkbox.js";
 import { FacilityService } from "../../services/FacilityService";
 import PopUpConfirmation from "../common/PopUpConfirmation";
+import { Facility } from "../../entities/Facility";
 
 function EditFacilityForm() {
 	const navigate = useNavigate();
 	const { id } = useParams();
 	const facilityId = parseInt(id ?? "0", 10);
-	const facility = FacilityService.Get(facilityId);
 
-	useEffect(() => {
-		if (facility == null) navigate("/facilities");
-	}, [facility, navigate]);
-
-	const [facilityName, setFacilityName] = useState(facility?.name ?? "");
+	const [facility, setFacility] = useState<Facility | null>(null);
+	const [facilityName, setFacilityName] = useState("");
 	const [file, setFile] = useState<File | null>(null);
 	const [fileError, setFileError] = useState("");
-	const [previewSrc, setPreviewSrc] = useState<string | null>(
-		facility?.imageBase64 ?? null
-	);
+	const [previewSrc, setPreviewSrc] = useState<string | null>(null);
 	const [isFormValid, setIsFormValid] = useState(false);
 	const [isPopupOpen, setPopupOpen] = useState(false);
+
+	useEffect(() => {
+		const fetchFacility = async () => {
+			try {
+				const facilityData = await FacilityService.Get(facilityId);
+				if (!facilityData) {
+					navigate("/facilities");
+					return;
+				}
+				setFacility(facilityData);
+				setFacilityName(facilityData.name);
+				setPreviewSrc(facilityData.imageBase64 ?? null);
+			} catch (err) {
+				console.error(err);
+				navigate("/facilities");
+			}
+		};
+
+		fetchFacility();
+	}, [facilityId, navigate]);
 
 	const handleCancel = () => {
 		navigate("/facilities");
@@ -77,26 +92,34 @@ function EditFacilityForm() {
 		);
 	};
 
-	const handleEdit = () => {
+	const handleEdit = async () => {
 		if (!facility) return;
 
-		if (facilityName.trim() !== "") facility.name = facilityName;
-
-		if (file) {
-			const reader = new FileReader();
-			reader.onload = () => {
-				const base64ImageString = reader.result as string;
-				facility.imageBase64 = base64ImageString;
-			};
-			reader.readAsDataURL(file);
+		if (facilityName.trim() !== "") {
+			facility.name = facilityName;
 		}
 
-		let isUpdated = FacilityService.Update(facility);
+		if (file) {
+			const base64ImageString = await new Promise<string>((resolve, reject) => {
+				const reader = new FileReader();
+				reader.onload = () => {
+					resolve(reader.result as string);
+				};
+				reader.onerror = () => {
+					reject(new Error("Failed to read the file."));
+				};
+				reader.readAsDataURL(file);
+			});
 
+			facility.imageBase64 = base64ImageString;
+		}
+
+		const isUpdated = await FacilityService.Update(facility);
 		if (isUpdated) {
 			navigate("/facilities");
 		}
 	};
+
 	const handleDelete = () => {
 		FacilityService.Delete(facilityId);
 		navigate("/facilities");

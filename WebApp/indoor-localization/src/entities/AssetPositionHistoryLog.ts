@@ -1,24 +1,22 @@
-import { Asset } from "./Asset";
-import { Facility } from "./Facility";
 import { Point } from "./Point";
 
 export class AssetPositionHistoryLog {
     id: number;
-    asset: Asset;
-    facility: Facility;
+    assetId: number;
+    facilityId: number;
     position: Point;
     dateTime: Date;
   
     constructor(
       id: number,
-      asset: Asset,
-      facility: Facility,
+      assetId: number,
+      facilityId: number,
       position: Point,
       dateTime: Date
     ) {
       this.id = id;
-      this.asset = asset;
-      this.facility = facility;
+      this.assetId = assetId;
+      this.facilityId = facilityId;
       this.position = position;
       this.dateTime = dateTime;
     }
