@@ -1,0 +1,43 @@
+name: indoor_localization
+description: "Indoor localization"
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.5.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  google_nav_bar: ^5.0.7
+  http: ^1.2.2
+  custom_report_module:
+    path: ../modules/report_asset_idle_time_module
+  report_module_core:
+    path: ../modules/report_module_core
+  zone_retention_time_report:
+    path: ../modules/zone_retention_time_report
+  fl_chart: ^0.70.2
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^4.0.0
+
+flutter:
+  fonts:
+    - family: OpenSans
+      fonts:
+        - asset: assets/fonts/OpenSans-Regular.ttf
+        - asset: assets/fonts/OpenSans-Bold.ttf
+          weight: 700
+  uses-material-design: true
+
+  assets:
+    - assets/floor_map.png
+
