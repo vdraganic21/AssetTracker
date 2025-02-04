@@ -33,8 +33,8 @@ public class PositionHistoryController : ControllerBase
             {
                 FloorMapId = floorMapId,
                 AssetId = assetId,
-                StartDate = startDate,
-                EndDate = endDate
+                StartDate = startDate.HasValue ? startDate.Value.ToUniversalTime() : null,
+                EndDate = endDate.HasValue ? endDate.Value.ToUniversalTime() : null
             };
 
             var positionHistories = _repository.GetFilteredPositionHistories(queryParams);
@@ -53,9 +53,9 @@ public class PositionHistoryController : ControllerBase
         try
         {
             _repository.AddPositionHistory(positionHistory);
-            
+
             await _zoneTrackingService.ProcessPositionUpdate(positionHistory);
-            
+
             return CreatedAtAction(nameof(GetPositionHistories), new { id = positionHistory.Id }, positionHistory);
         }
         catch (Exception ex)
