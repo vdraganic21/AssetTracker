@@ -8,7 +8,7 @@ export function secondsToString(seconds: number): string {
 
   let result = "";
   if (seconds < 60) {
-    return seconds + "s";
+    return Math.floor(seconds) + "s";
   }
 
   if (hours > 0) {
