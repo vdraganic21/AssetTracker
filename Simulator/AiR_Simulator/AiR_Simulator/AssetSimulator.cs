@@ -117,6 +117,7 @@ namespace AssetDataSimulator
                     AssetId = asset.AssetId,
                     FloorMapId = asset.FloorplanId,
                     DateTime = DateTime.UtcNow,
+                    DateOfMovement = DateTime.UtcNow.ToString("yyyy-MM-dd"),
                     X = Math.Round(asset.X, 2),
                     Y = Math.Round(asset.Y, 2)
                 };
