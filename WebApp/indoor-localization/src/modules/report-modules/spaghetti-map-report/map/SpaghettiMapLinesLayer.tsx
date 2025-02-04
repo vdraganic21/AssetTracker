@@ -3,12 +3,10 @@ import { AssetPositionHistoryLog } from "../../../../entities/AssetPositionHisto
 
 export default function SpaghettiMapLinesLayer({
 	logs,
-	scale,
 	x,
 	y,
 }: {
 	logs: AssetPositionHistoryLog[];
-	scale: { x: number; y: number };
 	x: number;
 	y: number;
 }) {
@@ -25,7 +23,7 @@ export default function SpaghettiMapLinesLayer({
 	}
 
 	return (
-		<Layer scale={scale}>
+		<>
 			<Line points={points} stroke={"#ea0823"} strokeWidth={4} />
 			{logs.map((log, index) => {
 				if (
@@ -44,6 +42,6 @@ export default function SpaghettiMapLinesLayer({
 					);
 				}
 			})}
-		</Layer>
+		</>
 	);
 }

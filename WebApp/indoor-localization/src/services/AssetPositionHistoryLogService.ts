@@ -1,9 +1,10 @@
 import { MockAssetPositionHistoryLogRepository } from "../data-access/mock-repositories/MockAssetPositionHistoryLogRepository";
+import { RESTAssetPositionHistoryLogRepository } from "../data-access/REST-repositories/RESTAssetPositionHistoryLogRepository";
 import { AssetPositionHistoryLog } from "../entities/AssetPositionHistoryLog";
 import { AssetPositionHistoryLogFilter } from "../entities/AssetPositionHistoryLogFilter";
 
 export class AssetPositionHistoryLogService {
-  private static logRepo = new MockAssetPositionHistoryLogRepository();
+  private static logRepo = new RESTAssetPositionHistoryLogRepository();
 
   static async Get(id: number): Promise<AssetPositionHistoryLog | null> {
     return this.logRepo.Get(id);
@@ -28,8 +29,6 @@ export class AssetPositionHistoryLogService {
   static async GetLogs(
     filter: AssetPositionHistoryLogFilter
   ): Promise<AssetPositionHistoryLog[]> {
-    const allLogs = await this.logRepo.GetAll();
-
-    return allLogs;
+    return this.logRepo.GetLogs(filter);
   }
 }
