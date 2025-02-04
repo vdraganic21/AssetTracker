@@ -25,7 +25,6 @@ class AssetList extends StatelessWidget {
     return FutureBuilder<List<_AssetWithFacilityName>>(
       future: _fetchAssetFacilityNames(),
       builder: (context, snapshot) {
-        // Show loading indicator while fetching asset-facility data
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
@@ -105,7 +104,6 @@ class AssetListItem extends StatelessWidget {
   }
 }
 
-/// Helper class to pair an asset with its resolved facility name
 class _AssetWithFacilityName {
   final Asset asset;
   final String facilityName;
