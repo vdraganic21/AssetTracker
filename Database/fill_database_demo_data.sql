@@ -113,6 +113,8 @@ DECLARE
     exitDateTime TIMESTAMP;
     retentionTime INT;
     zoneId INT;
+    movementsPerDay INT;
+    movementTime TIMESTAMP;
 BEGIN
     FOR assetId IN 1..25 LOOP
         SELECT floorMapId INTO currentFloorMapId FROM Assets WHERE id = assetId;
@@ -121,22 +123,45 @@ BEGIN
         FOR i IN 1..30 LOOP
             currentDateTime := NOW() - INTERVAL '1 month' + INTERVAL '1 day' * i;
 
-            x := (random() * 100)::INT;
-            y := (random() * 100)::INT;
+            movementsPerDay := 3 + (random() * 7)::INT;
 
-            INSERT INTO PositionHistories (assetId, floorMapId, x, y, dateTime) VALUES
-            (assetId, currentFloorMapId, x, y, currentDateTime);
+            FOR j IN 1..movementsPerDay LOOP
+                -- Spread movements throughout the day
+                movementTime := currentDateTime + INTERVAL '1 hour' * (random() * 24)::INT;
 
-            -- Check if the asset entered a zone
-            FOR zoneId IN (SELECT id FROM Zones WHERE floorMapId = currentFloorMapId) LOOP
-                IF (x BETWEEN 20 AND 30 AND y BETWEEN 20 AND 30) THEN
-                    enterDateTime := currentDateTime;
-                    exitDateTime := enterDateTime + INTERVAL '1 hour';
-                    retentionTime := EXTRACT(EPOCH FROM (exitDateTime - enterDateTime));
+                x := (random() * 1000)::INT;
+                y := (random() * 1000)::INT;
 
-                    INSERT INTO AssetZoneHistory (assetId, zoneId, enterDateTime, exitDateTime, retentionTime) VALUES
-                    (assetId, zoneId, enterDateTime, exitDateTime, retentionTime);
-                END IF;
+                INSERT INTO PositionHistories (assetId, floorMapId, x, y, dateTime) VALUES
+                (assetId, currentFloorMapId, x, y, movementTime);
+
+                -- Check if the asset entered a zone
+                FOR zoneId IN (SELECT id FROM Zones WHERE floorMapId = currentFloorMapId) LOOP
+                    -- Retrieve zone coordinates from points JSON
+                    DECLARE
+                        zonePoints JSON;
+                        zoneStartX INT;
+                        zoneStartY INT;
+                        zoneWidth INT;
+                        zoneHeight INT;
+                    BEGIN
+                        SELECT points INTO zonePoints FROM Zones WHERE id = zoneId;
+                        zoneStartX := (zonePoints->0->>'x')::INT;
+                        zoneStartY := (zonePoints->0->>'y')::INT;
+                        zoneWidth := (zonePoints->1->>'x')::INT - zoneStartX;
+                        zoneHeight := (zonePoints->2->>'y')::INT - zoneStartY;
+
+                        IF (x >= zoneStartX AND x <= zoneStartX + zoneWidth AND 
+                            y >= zoneStartY AND y <= zoneStartY + zoneHeight) THEN
+                            enterDateTime := movementTime;
+                            exitDateTime := enterDateTime + INTERVAL '1 hour';
+                            retentionTime := EXTRACT(EPOCH FROM (exitDateTime - enterDateTime));
+
+                            INSERT INTO AssetZoneHistory (assetId, zoneId, enterDateTime, exitDateTime, retentionTime) VALUES
+                            (assetId, zoneId, enterDateTime, exitDateTime, retentionTime);
+                        END IF;
+                    END;
+                END LOOP;
             END LOOP;
         END LOOP;
     END LOOP;
